@@ -1,0 +1,82 @@
+<div class="modal-container">
+  <h2>Skala-Frage bearbeiten</h2>
+
+  <!-- Fragetitel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input matInput [(ngModel)]="data.title" placeholder="z.B. Wie bewerten Sie...?" />
+  </mat-form-field>
+
+  <!-- Fragetext -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input matInput [(ngModel)]="data.text" placeholder="z.B. Ihre Meinung ist uns wichtig..." />
+  </mat-form-field>
+
+  <!-- Min -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Min Wert</mat-label>
+    <input
+      matInput
+      type="number"
+      [(ngModel)]="data.min"
+      [max]="data.max - 1"
+      class="no-spinner"
+    />
+  </mat-form-field>
+
+  <!-- Max -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Max Wert</mat-label>
+    <input
+      matInput
+      type="number"
+      [(ngModel)]="data.max"
+      [min]="data.min + 1"
+      class="no-spinner"
+    />
+  </mat-form-field>
+
+
+  <!-- Step -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Schrittgröße</mat-label>
+    <input matInput type="number" [(ngModel)]="data.step" />
+  </mat-form-field>
+
+  <!-- Thumb Label -->
+  <mat-checkbox [(ngModel)]="data.thumbLabel">Wertanzeige beim Ziehen anzeigen</mat-checkbox>
+
+  <!-- Aktionen -->
+  <div class="modal-actions">
+    <button mat-button (click)="onClose()">Abbrechen</button>
+    <button mat-raised-button color="primary" [disabled]="isInvalidRange" (click)="onSave()">Speichern</button>
+
+  </div>
+</div>
+<div *ngIf="isInvalidRange" class="error-text">
+  Die Differenz zwischen Min und Max muss mindestens 1 betragen.
+</div>
+<!-- Vorschau Bereich -->
+<p class="preview-label-titel">Vorschau:</p>
+<div class="preview-container">
+  <p class="preview-label">Fragetitel</p>
+  <p class="frage-text">{{ data.title }}</p>
+
+  <p class="preview-label">Fragetext</p>
+  <p class="frage-text">{{ data.text }}</p>
+
+  <div class="slider-container">
+    <mat-slider
+      class="skala-slider"
+      [(ngModel)]="data.value"
+      [min]="data.min"
+      [max]="data.max"
+      [step]="data.step"
+      [showTickMarks]="true"
+      [discrete]="true">
+    </mat-slider>
+
+    <span class="slider-value">{{ data.value }}</span>
+  </div>
+</div>

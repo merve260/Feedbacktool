@@ -1,12 +1,11 @@
+// app.component.ts
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { SurveyBuilderComponent } from './features/survey/survey-builder/survey-builder.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  standalone: true,
+  imports: [SurveyBuilderComponent],
+  template: `<app-survey-builder></app-survey-builder>`,
 })
-export class AppComponent {
-  title = 'feedback-tool';
-}
+export class AppComponent {}

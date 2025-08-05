@@ -1,0 +1,80 @@
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 60vh;
+  overflow-y: auto;
+
+  box-sizing: border-box;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .full-width {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+
+
+.preview-container {
+  margin-top: 24px;
+  padding: 16px;
+  border: 2px dashed #d3d3d3;
+  border-radius: 8px;
+  background-color: #fafafa;
+  color: #333;
+
+
+  .preview-label {
+    font-size: 0.75rem;
+    color: #888;
+    margin: 0.25rem 0 0;
+  }
+
+  .preview-label-titel {
+    color: #5e5b5b;
+    font-size: 16px;
+    margin-bottom: 8px;
+    padding: 10px;
+    font-weight: 500;
+  }
+
+  .frage-text {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .preview-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #444;
+
+    span {
+      flex: 1;
+      text-align: center;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #777;
+    }
+  }
+}

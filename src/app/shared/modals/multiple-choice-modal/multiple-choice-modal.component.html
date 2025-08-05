@@ -1,0 +1,64 @@
+<div class="modal-container">
+  <h2>Mehrfachauswahl bearbeiten</h2>
+
+  <!-- Fragetitel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input [(ngModel)]="data.title" matInput placeholder="z.B. 1. Frage"/>
+  </mat-form-field>
+
+  <!-- Fragetext -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input [(ngModel)]="data.text" matInput placeholder="z.B. Was gefällt Ihnen am besten?"/>
+  </mat-form-field>
+
+  <!-- Antwortoptionen -->
+  <div *ngFor="let option of data.options; let i = index; trackBy: trackByIndex" class="option-row">
+    <mat-form-field class="option-field">
+      <mat-label>{{ getOptionLetter(i) }}</mat-label>
+      <input
+        (input)="updateOption(i, $event)"
+        [value]="option"
+        matInput
+        name="option-{{ i }}"
+        placeholder="Antwortoption"
+      />
+
+    </mat-form-field>
+
+    <button (click)="removeOption(i)" *ngIf="data.options.length > 1" color="warn" mat-icon-button>
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+
+
+  <!-- Weitere Option hinzufügen -->
+  <div>
+    <button (click)="addOption()" color="primary" mat-stroked-button>
+      <mat-icon>add</mat-icon>
+      Weitere Option
+    </button>
+  </div>
+  <!--Vorschau-->
+  <p class="preview-label-titel">  Vorschau:</p>
+  <div class="preview-container">
+    <p class="preview-label">Fragetitel</p>
+    <p class="frage-text">{{ data.title }}</p>
+
+    <p class="preview-label">Fragetext</p>
+    <p class="frage-text">{{ data.text }}</p>
+
+    <div class="preview-multiple-options">
+      <mat-checkbox *ngFor="let option of data.options" disabled>
+        {{ option }}
+      </mat-checkbox>
+    </div>
+  </div>
+
+  <!-- Aktionen -->
+  <div class="modal-actions">
+    <button (click)="onClose()" mat-button>Abbrechen</button>
+    <button (click)="onSave()" color="primary" mat-raised-button>Speichern</button>
+  </div>
+</div>

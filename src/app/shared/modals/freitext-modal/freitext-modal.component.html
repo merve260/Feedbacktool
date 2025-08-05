@@ -1,0 +1,43 @@
+<div class="modal-container">
+  <h2>Freitext-Frage bearbeiten</h2>
+
+  <!-- Fragetitel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input matInput [(ngModel)]="data.title" placeholder="z.B. 3. Frage" />
+  </mat-form-field>
+
+  <!-- Fragetext -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input matInput [(ngModel)]="data.text" placeholder="z.B. Was denken Sie über unser Produkt?" />
+  </mat-form-field>
+
+  <!-- Antwort Placeholder -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Ihre Antwort:</mat-label>
+    <input matInput [(ngModel)]="data.placeholderText" placeholder="z.B. Bitte hier schreiben…" />
+  </mat-form-field>
+
+  <!-- Aktionen -->
+  <div class="modal-actions">
+    <button mat-button (click)="onClose()">Abbrechen</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+  </div>
+</div>
+
+<!--Vorschau-->
+<p class="preview-label-titel">  Vorschau:</p>
+<div class="preview-container">
+  <p class="preview-label">Fragetitel:</p>
+  <p class="preview-text">{{ data.title }}</p>
+
+  <p class="preview-label">Fragetext:</p>
+  <p class="preview-text">{{ data.text }}</p>
+
+  <textarea
+    matInput
+    [placeholder]="data.placeholderText || 'Ihre Antwort...'"
+    disabled
+  ></textarea>
+</div>

@@ -1,0 +1,44 @@
+<div class="modal-container">
+  <h2>Ja / Nein Frage bearbeiten</h2>
+
+  <!-- Fragetitel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input matInput [(ngModel)]="data.title" placeholder="z.B. 1. Frage" />
+  </mat-form-field>
+
+  <!-- Fragetext (falls notwendig) -->
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input matInput [(ngModel)]="data.text" placeholder="z.B. Möchten Sie unseren Newsletter abonnieren?" />
+  </mat-form-field>
+  <!--Vorschau-->
+  <p class="preview-label-titel">  Vorschau:</p>
+  <div class="preview-container">
+    <p class="preview-label">Fragetitel:</p>
+    <p class="preview-value">{{ data.title }}</p>
+
+    <p class="preview-label">Fragetext:</p>
+    <p class="preview-value">{{ data.text }}</p>
+
+    <p class="preview-label">Antwortoptionen (Vorschau):</p>
+    <mat-radio-group>
+      <mat-radio-button
+        *ngFor="let option of data.options"
+        [disabled]="true"
+        class="preview-radio"
+      >
+        {{ option }}
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+
+
+  <!-- Aktionen -->
+  <div class="modal-actions">
+    <button mat-button (click)="onClose()">Abbrechen</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+  </div>
+</div>

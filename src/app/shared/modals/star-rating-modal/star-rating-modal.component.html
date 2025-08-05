@@ -1,0 +1,41 @@
+<div class="modal-container">
+  <h2>Sternebewertung bearbeiten</h2>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input matInput [(ngModel)]="data.title" placeholder="z.B. Wie zufrieden sind Sie?" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input matInput [(ngModel)]="data.text" placeholder="z.B. Bewerten Sie unsere Dienstleistung." />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Maximale Sterne</mat-label>
+    <mat-select [(ngModel)]="data.maxStars">
+      <mat-option *ngFor="let star of [3, 5, 7, 10]" [value]="star">{{ star }} Sterne</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="modal-actions">
+    <button mat-button (click)="onClose()">Abbrechen</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+  </div>
+</div>
+<!--Vorschau-->
+<p class="preview-label-titel">  Vorschau:</p>
+<div class="preview-container">
+  <p class="preview-label">Fragetitel:</p>
+  <p class="preview-text">{{ data.title }}</p>
+
+  <p class="preview-label">Fragetext:</p>
+  <p class="preview-text">{{ data.text }}</p>
+
+  <div class="stars">
+    <ng-container *ngFor="let star of [].constructor(data.maxStars)">
+      <mat-icon color="warn">star</mat-icon>
+    </ng-container>
+  </div>
+</div>
+

@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  max-width: 500px;
+  margin: auto;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.antwort-optionen {
+  margin-top: 20px;
+  margin-bottom: 24px;
+
+  .option-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .option-field {
+    flex: 1;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.modal-container {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.option-field {
+  flex: 1;
+}
+.preview-label {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 0.25rem 0 0;
+}
+.preview-label-titel{
+  color: #5e5b5b;
+  font-size: 16px;
+  margin-bottom: 8px;
+  padding: 5px;
+}
+
+.frage-text {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.preview-multiple-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+

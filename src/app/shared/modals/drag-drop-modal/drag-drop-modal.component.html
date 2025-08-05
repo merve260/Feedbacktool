@@ -1,0 +1,73 @@
+<div class="modal-container">
+  <h2>Drag & Drop Frage bearbeiten</h2>
+
+  <!-- Fragetitel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input matInput [(ngModel)]="data.title" placeholder="z.B. Ordnen Sie die Schritte korrekt" />
+  </mat-form-field>
+
+  <!-- Fragetext -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input matInput [(ngModel)]="data.text" placeholder="z.B. Wie läuft ein Bewerbungsprozess ab?" />
+  </mat-form-field>
+
+  <!-- Drag-Elemente -->
+  <div *ngFor="let item of data.items; let i = index; trackBy: trackByIndex" class="drag-item-row">
+    <mat-form-field class="item-field">
+      <mat-label>Element {{ i + 1 }}</mat-label>
+      <input
+        matInput
+        [(ngModel)]="data.items[i]"
+        name="item-{{ i }}"
+        placeholder="Drag & Drop Element"
+      />
+    </mat-form-field>
+    <button mat-icon-button color="warn" (click)="removeItem(i)" *ngIf="data.items.length > 1">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+
+  <!-- Neues Element hinzufügen -->
+  <div>
+    <button mat-stroked-button color="primary" (click)="addItem()">
+      <mat-icon>add</mat-icon>
+      Weiteres Element
+    </button>
+  </div>
+
+  <!--Vorschau-->
+  <p class="preview-label-titel">  Vorschau:</p>
+  <div class="preview-container">
+    <p class="preview-label">Fragetitel</p>
+    <p class="frage-text">{{ data.title }}</p>
+
+    <p class="preview-label">Fragetext</p>
+    <p class="frage-text">{{ data.text }}</p>
+
+    <div
+      cdkDropList
+      [cdkDropListData]="data.items"
+      class="preview-drag-list"
+      (cdkDropListDropped)="dropPreview($event)"
+    >
+      <div
+        *ngFor="let item of data.items"
+        cdkDrag
+        class="preview-drag-item"
+      >
+        {{ item }}
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Aktionen -->
+  <div class="modal-actions">
+    <button mat-button (click)="onClose()">Abbrechen</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+  </div>
+</div>
+
