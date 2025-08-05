@@ -19,8 +19,8 @@
     <input
       matInput
       type="number"
-      [(ngModel)]="data.min"
-      [max]="data.max - 1"
+      [(ngModel)]="min"
+      [max]="max - 1"
       class="no-spinner"
     />
   </mat-form-field>
@@ -31,8 +31,8 @@
     <input
       matInput
       type="number"
-      [(ngModel)]="data.max"
-      [min]="data.min + 1"
+      [(ngModel)]="max"
+      [min]="min + 1"
       class="no-spinner"
     />
   </mat-form-field>
@@ -41,11 +41,11 @@
   <!-- Step -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Schrittgröße</mat-label>
-    <input matInput type="number" [(ngModel)]="data.step" />
+    <input matInput type="number" [(ngModel)]="step" />
   </mat-form-field>
 
   <!-- Thumb Label -->
-  <mat-checkbox [(ngModel)]="data.thumbLabel">Wertanzeige beim Ziehen anzeigen</mat-checkbox>
+  <mat-checkbox [(ngModel)]="thumbLabel">Wertanzeige beim Ziehen anzeigen</mat-checkbox>
 
   <!-- Aktionen -->
   <div class="modal-actions">
@@ -69,14 +69,15 @@
   <div class="slider-container">
     <mat-slider
       class="skala-slider"
-      [(ngModel)]="data.value"
-      [min]="data.min"
-      [max]="data.max"
-      [step]="data.step"
-      [showTickMarks]="true"
-      [discrete]="true">
+      [disabled]="disabled"
+      [min]="min"
+      [max]="max"
+      [step]="step"
+      [showTickMarks]="showTicks"
+      [discrete]="thumbLabel">
+      <input matSliderThumb [(ngModel)]="value" #slider>
     </mat-slider>
 
-    <span class="slider-value">{{ data.value }}</span>
+    <span class="slider-value">{{slider.value}}</span>
   </div>
 </div>

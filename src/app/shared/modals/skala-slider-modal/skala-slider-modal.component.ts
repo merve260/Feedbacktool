@@ -35,6 +35,13 @@ export class SliderModalComponent implements OnInit {
     if (data.step === undefined) data.step = 1;
     if (data.thumbLabel === undefined) data.thumbLabel = true;
   }
+  disabled = false;
+  max = 100;
+  min = 0;
+  showTicks = false;
+  step = 1;
+  thumbLabel = false;
+  value = 0;
   ngOnInit() {
     if ((this.data.value - this.data.min) % this.data.step !== 0) {
       this.data.value = this.data.min;
@@ -49,7 +56,7 @@ export class SliderModalComponent implements OnInit {
     this.dialogRef.close(this.data);
   }
   get isInvalidRange(): boolean {
-    return this.data.max - this.data.min < 2;
+    return this.max - this.min < 3;
   }
 
 }

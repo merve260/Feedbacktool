@@ -240,10 +240,13 @@ export class SurveyBuilderComponent {
       width: '500px',
       data: {
         ...questionData,
-        title: '',
-        text: '',
-        min: 0,
-        max: 10,
+        title: questionData?.title || '',
+        text: questionData?.text || '',
+        min: questionData?.min ?? 0,
+        max: questionData?.max ?? 10,
+        step: questionData?.step ?? 1,
+        thumbLabel: questionData?.thumbLabel ?? true,
+        value: questionData?.value ?? questionData?.min ?? 0
       },
       disableClose: true,
     });
