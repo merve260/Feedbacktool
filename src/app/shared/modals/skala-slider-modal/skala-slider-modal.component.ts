@@ -28,12 +28,6 @@ export class SliderModalComponent implements OnInit {
     public dialogRef: MatDialogRef<SliderModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    // Default değerler
-    if (data.value === undefined) data.value = data.min;
-    if (data.min === undefined) data.min = 0;
-    if (data.max === undefined) data.max = 10;
-    if (data.step === undefined) data.step = 1;
-    if (data.thumbLabel === undefined) data.thumbLabel = true;
   }
   disabled = false;
   max = 100;
@@ -56,7 +50,7 @@ export class SliderModalComponent implements OnInit {
     this.dialogRef.close(this.data);
   }
   get isInvalidRange(): boolean {
-    return this.max - this.min < 3;
+    return this.max - this.min < 2;
   }
 
 }

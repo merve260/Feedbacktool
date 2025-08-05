@@ -20,7 +20,7 @@
       matInput
       type="number"
       [(ngModel)]="min"
-      [max]="max - 1"
+      [max]="max - 2"
       class="no-spinner"
     />
   </mat-form-field>
@@ -32,7 +32,7 @@
       matInput
       type="number"
       [(ngModel)]="max"
-      [min]="min + 1"
+      [min]="min + 2"
       class="no-spinner"
     />
   </mat-form-field>
@@ -55,7 +55,7 @@
   </div>
 </div>
 <div *ngIf="isInvalidRange" class="error-text">
-  Die Differenz zwischen Min und Max muss mindestens 1 betragen.
+  Die Differenz zwischen Max und Min muss mindestens 2 betragen.
 </div>
 <!-- Vorschau Bereich -->
 <p class="preview-label-titel">Vorschau:</p>
