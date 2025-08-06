@@ -12,11 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { YesNoModalComponent } from '../../../shared/modals/yesno-modal/yesno-modal.component';
 import { MultipleChoiceModalComponent } from '../../../shared/modals/multiple-choice-modal/multiple-choice-modal.component';
-import { DatetimeModalComponent } from '../../../shared/modals/datetime-modal/datetime-modal.component';
+import { DateTimeModalComponent } from '../../../shared/modals/datetime-modal/datetime-modal.component';
 import { DragDropModalComponent } from '../../../shared/modals/drag-drop-modal/drag-drop-modal.component';
 import { FreitextModalComponent } from '../../../shared/modals/freitext-modal/freitext-modal.component';
 import {StarRatingModalComponent} from '../../../shared/modals/star-rating-modal/star-rating-modal.component';
-import { SliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
+import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
+import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
 import { MatSliderModule } from '@angular/material/slider';
 
 
@@ -38,9 +39,10 @@ import { MatSliderModule } from '@angular/material/slider';
     MatSliderModule,
     YesNoModalComponent,
     MultipleChoiceModalComponent,
-    DatetimeModalComponent,
+    DateTimeModalComponent,
     DragDropModalComponent,
     FreitextModalComponent,
+    RadioModalComponent
   ],
   templateUrl: './survey-builder.component.html',
   styleUrls: ['./survey-builder.component.scss']
@@ -113,6 +115,12 @@ export class SurveyBuilderComponent {
         this.openSliderModal(draggedItem);
         return;
       }
+      //radio -> Modal öffnen
+      if (draggedItem.type === 'radio') {
+        this.openRadioModal(draggedItem);
+        return;
+      }
+
 
 
       const copiedItem = {
@@ -162,7 +170,7 @@ export class SurveyBuilderComponent {
 
   // Datum / Uhrzeit Modal öffnen
   openDateTimeModal(questionData: any) {
-    const dialogRef = this.dialog.open(DatetimeModalComponent, {
+    const dialogRef = this.dialog.open(DateTimeModalComponent, {
       width: '500px',
       data: {
         ...questionData,
@@ -236,7 +244,7 @@ export class SurveyBuilderComponent {
   }
 //Slider modal öffnen
   openSliderModal(questionData: any) {
-    const dialogRef = this.dialog.open(SliderModalComponent, {
+    const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
       width: '500px',
       data: {
         ...questionData,
@@ -257,6 +265,26 @@ export class SurveyBuilderComponent {
       }
     });
   }
+  //radio modal öffnen
+  openRadioModal(questionData: any) {
+    const dialogRef = this.dialog.open(RadioModalComponent, {
+      width: '500px',
+      data: {
+        ...questionData,
+        title: '',
+        text: '',
+        options: ['Option 1', 'Option 2']
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.canvasQuestions.push(result);
+      }
+    });
+  }
+
 
 
   // Frage bearbeiten
@@ -286,7 +314,7 @@ export class SurveyBuilderComponent {
     }
 
     if (question.type === 'date') {
-      const dialogRef = this.dialog.open(DatetimeModalComponent, {
+      const dialogRef = this.dialog.open(DateTimeModalComponent, {
         width: '500px',
         data: { ...question },
         disableClose: true
@@ -340,7 +368,7 @@ export class SurveyBuilderComponent {
       return;
     }
     if (question.type === 'slider') {
-      const dialogRef = this.dialog.open(SliderModalComponent, {
+      const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
         width: '500px',
         data: { ...question },
         disableClose: true
@@ -353,6 +381,20 @@ export class SurveyBuilderComponent {
       });
       return;
     }
+
+    if (question.type === 'radio') {
+      const dialogRef = this.dialog.open(RadioModalComponent, {
+        width: '500px',
+        data: { ...question },
+        disableClose: true
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) this.canvasQuestions[index] = result;
+      });
+      return;
+    }
+
     // Weitere Typen hier ergänzen
   }
 

@@ -1,40 +1,132 @@
-import { Component, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {
+  Component,
+  Inject,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions
+} from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { DatePipe } from '@angular/common';
+import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
-  selector: 'app-datetime-modal',
+  selector: 'app-date-time-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    MatNativeDateModule
-  ],
   templateUrl: './datetime-modal.component.html',
-  styleUrls: ['./datetime-modal.component.scss']
+  styleUrls: ['./datetime-modal.component.scss'],
+  imports: [
+    MatInputModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    DatePipe,
+    MatDialogActions,
+    MatIcon
+  ]
 })
-export class DatetimeModalComponent {
+export class DateTimeModalComponent implements OnInit {
+  title: string = '';
+  text: string = '';
+  date: Date | null = null;
+  time: string = '';
+  private initialState: string = '';
+  private canClose = true;
+
+
   constructor(
-    public dialogRef: MatDialogRef<DatetimeModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+    private dialogRef: MatDialogRef<DateTimeModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {
+    this.title = data?.title || '';
+    this.text = data?.text || '';
+    this.date = data?.date || null;
+    this.time = data?.time || '';
 
-  onSave() {
-    this.dialogRef.close(this.data);
+    this.initialState = JSON.stringify({
+      title: this.title,
+      text: this.text,
+      date: this.date,
+      time: this.time
+    });
+
   }
 
-  onClose() {
-    this.dialogRef.close(null);
+  ngOnInit(): void {
+    this.dialogRef.backdropClick().subscribe(() => {
+      this.onCancel();
+    });
   }
+
+
+  checkClose(): void {
+    if (this.isDirty()) {
+      this.confirmLeave();
+    } else {
+      this.dialogRef.close();
+    }
+  }
+
+  onCancel(): void {
+    if (this.isDirty()) {
+      this.confirmLeave();
+    } else {
+      this.dialogRef.close();
+    }
+  }
+
+
+
+  onSave(): void {
+    this.dialogRef.close({
+      type: 'date',
+      title: this.title,
+      text: this.text,
+      date: this.date,
+      time: this.time
+    });
+  }
+
+  isDirty(): boolean {
+    const current = JSON.stringify({
+      title: this.title,
+      text: this.text,
+      date: this.date,
+      time: this.time
+    });
+    return current !== this.initialState;
+  }
+
+  confirmLeave(): void {
+    const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        message: 'Sie haben ungespeicherte Änderungen. Wirklich verlassen?',
+        confirmText: 'Verlassen',
+        cancelText: 'Im Dialog bleiben'
+      },
+      disableClose: true
+    });
+
+    confirmRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.canClose = true;
+        this.dialogRef.close();
+      } else {
+        this.canClose = false;
+      }
+    });
+  }
+
 }
-

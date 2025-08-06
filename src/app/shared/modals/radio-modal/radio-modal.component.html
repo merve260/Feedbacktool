@@ -1,0 +1,63 @@
+<!-- X button -->
+<div class="modal-header">
+  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="modal-container">
+  <h2>Einfachauswahl (Radio) bearbeiten</h2>
+
+  <!-- Fragetitel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetitel</mat-label>
+    <input matInput [(ngModel)]="title" placeholder="z.B. 1. Frage" />
+  </mat-form-field>
+
+  <!-- Fragetext -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Fragetext</mat-label>
+    <input matInput [(ngModel)]="text" placeholder="z.B. Welche Farbe mögen Sie am liebsten?" />
+  </mat-form-field>
+
+  <!-- Antwortoptionen -->
+  <div class="option-row" *ngFor="let option of options; let i = index; trackBy: trackByIndex">
+    <mat-form-field class="option-field" appearance="outline">
+      <mat-label>Antwort {{ i + 1 }}</mat-label>
+      <input matInput [(ngModel)]="options[i]" />
+    </mat-form-field>
+    <button mat-icon-button color="warn" (click)="removeOption(i)" *ngIf="options.length > 1">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+
+  <button mat-button (click)="addOption()">+ Neue Option hinzufügen</button>
+
+  <!-- Vorschau -->
+  <p class="preview-label-titel">Vorschau:</p>
+  <div class="preview-box">
+    <p class="preview-label">Fragetitel:</p>
+    <p class="frage-text">{{ title }}</p>
+
+    <p class="preview-label">Fragetext:</p>
+    <p class="frage-text">{{ text }}</p>
+
+    <div class="preview-radio-scroll">
+      <mat-radio-group>
+        <mat-radio-button
+          *ngFor="let option of options"
+          disabled
+          class="preview-radio"
+        >
+          {{ option }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </div>
+
+  <!-- Aktionen -->
+  <div class="modal-actions">
+    <button mat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+  </div>
+</div>

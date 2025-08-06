@@ -1,17 +1,19 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
 
 @Component({
-  selector: 'app-multiple-choice-modal',
+  selector: 'app-radio-modal',
   standalone: true,
+  templateUrl: './radio-modal.component.html',
+  styleUrls: ['./radio-modal.component.scss'],
   imports: [
     CommonModule,
     FormsModule,
@@ -19,47 +21,41 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatCheckbox,
+    MatRadioModule,
     ConfirmDialogComponent
-  ],
-  templateUrl: './multiple-choice-modal.component.html',
-  styleUrls: ['./multiple-choice-modal.component.scss']
+  ]
 })
-export class MultipleChoiceModalComponent implements OnInit {
+export class RadioModalComponent {
+  title: string = '';
+  text: string = '';
+  options: string[] = [];
   private initialState: string = '';
 
   constructor(
-    public dialogRef: MatDialogRef<MultipleChoiceModalComponent>,
+    public dialogRef: MatDialogRef<RadioModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.title = data?.title || '';
+    this.text = data?.text || '';
+    this.options = data?.options?.length ? [...data.options] : ['Option 1'];
 
-  ngOnInit(): void {
-    this.initialState = JSON.stringify(this.data);
+    this.initialState = JSON.stringify({
+      title: this.title,
+      text: this.text,
+      options: this.options
+    });
   }
 
-  addOption() {
-    this.data.options.push('');
+  addOption(): void {
+    this.options.push('');
   }
 
-  updateOption(index: number, event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.data.options[index] = input.value;
+  removeOption(index: number): void {
+    this.options.splice(index, 1);
   }
 
-  removeOption(index: number) {
-    this.data.options.splice(index, 1);
-  }
-
-  getOptionLetter(index: number): string {
-    return String.fromCharCode(65 + index);
-  }
-
-  onSave() {
-    this.dialogRef.close(this.data);
-  }
-
-  onCancel() {
+  onCancel(): void {
     if (this.isDirty()) {
       this.confirmLeave();
     } else {
@@ -67,8 +63,21 @@ export class MultipleChoiceModalComponent implements OnInit {
     }
   }
 
+  onSave(): void {
+    this.dialogRef.close({
+      type: 'radio',
+      title: this.title,
+      text: this.text,
+      options: this.options
+    });
+  }
+
   isDirty(): boolean {
-    const currentState = JSON.stringify(this.data);
+    const currentState = JSON.stringify({
+      title: this.title,
+      text: this.text,
+      options: this.options
+    });
     return currentState !== this.initialState;
   }
 
@@ -90,7 +99,7 @@ export class MultipleChoiceModalComponent implements OnInit {
     });
   }
 
-  trackByIndex(index: number, _: any): number {
+  trackByIndex(index: number, item: string): number {
     return index;
   }
 }

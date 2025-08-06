@@ -1,16 +1,23 @@
+<!-- X button -->
+<div class="modal-header">
+  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
 <div class="modal-container">
   <h2>Mehrfachauswahl bearbeiten</h2>
 
   <!-- Fragetitel -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Fragetitel</mat-label>
-    <input [(ngModel)]="data.title" matInput placeholder="z.B. 1. Frage"/>
+    <input [(ngModel)]="data.title" matInput placeholder="z.B. 1. Frage" />
   </mat-form-field>
 
   <!-- Fragetext -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Fragetext</mat-label>
-    <input [(ngModel)]="data.text" matInput placeholder="z.B. Was gefällt Ihnen am besten?"/>
+    <input [(ngModel)]="data.text" matInput placeholder="z.B. Was gefällt Ihnen am besten?" />
   </mat-form-field>
 
   <!-- Antwortoptionen -->
@@ -24,14 +31,12 @@
         name="option-{{ i }}"
         placeholder="Antwortoption"
       />
-
     </mat-form-field>
 
     <button (click)="removeOption(i)" *ngIf="data.options.length > 1" color="warn" mat-icon-button>
       <mat-icon>delete</mat-icon>
     </button>
   </div>
-
 
   <!-- Weitere Option hinzufügen -->
   <div>
@@ -40,9 +45,10 @@
       Weitere Option
     </button>
   </div>
-  <!--Vorschau-->
-  <p class="preview-label-titel">  Vorschau:</p>
-  <div class="preview-container">
+
+  <!-- Vorschau -->
+  <p class="preview-label-titel">Vorschau:</p>
+  <div class="preview-box">
     <p class="preview-label">Fragetitel</p>
     <p class="frage-text">{{ data.title }}</p>
 
@@ -58,7 +64,7 @@
 
   <!-- Aktionen -->
   <div class="modal-actions">
-    <button (click)="onClose()" mat-button>Abbrechen</button>
+    <button (click)="onCancel()" mat-button>Abbrechen</button>
     <button (click)="onSave()" color="primary" mat-raised-button>Speichern</button>
   </div>
 </div>

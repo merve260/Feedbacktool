@@ -1,71 +1,65 @@
-:host {
-  display: block;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding: 24px;
+  width: 100%;
   max-width: 500px;
-  margin: auto;
-  font-family: 'Segoe UI', sans-serif;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
 }
 
 .full-width {
   width: 100%;
-}
-
-.antwort-optionen {
-  margin-top: 20px;
-  margin-bottom: 24px;
-
-  .option-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .option-field {
-    flex: 1;
-  }
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-.modal-container {
-  max-height: 70vh;
-  overflow-y: auto;
-  padding-right: 8px;
+  margin: 5px 0;
 }
 
 .option-row {
   display: flex;
   align-items: center;
+  gap: 8px;
   margin-bottom: 8px;
 }
 
 .option-field {
   flex: 1;
 }
-.preview-label {
-  font-size: 0.75rem;
-  color: #888;
-  margin: 0.25rem 0 0;
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+  background-color: #fff;
 }
-.preview-label-titel{
-  color: #5e5b5b;
-  font-size: 16px;
+
+.preview-label-titel {
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 20px;
   margin-bottom: 8px;
-  padding: 5px;
+}
+
+.preview-label {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 4px;
+  margin-top: 12px;
 }
 
 .frage-text {
   font-weight: 500;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
   color: #333;
+  margin-bottom: 8px;
 }
 
 .preview-multiple-options {
@@ -75,4 +69,23 @@
   padding: 0.5rem 0;
 }
 
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 
+  .close-button {
+    margin-left: auto;
+  }
+}
+.preview-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px solid #bbb;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

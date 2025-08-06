@@ -1,22 +1,29 @@
+<div class="modal-header">
+  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+
 <div class="modal-container">
   <h2>Datum / Uhrzeit bearbeiten</h2>
 
   <!-- Fragetitel -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Fragetitel</mat-label>
-    <input matInput [(ngModel)]="data.title" placeholder="z.B. 1. Frage" />
+    <input matInput [(ngModel)]="title" placeholder="z.B. 1. Frage" />
   </mat-form-field>
 
   <!-- Fragetext -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Fragetext</mat-label>
-    <input matInput [(ngModel)]="data.text" placeholder="z.B. Bitte wählen Sie ein Datum und eine Uhrzeit" />
+    <input matInput [(ngModel)]="text" placeholder="z.B. Bitte wählen Sie ein Datum" />
   </mat-form-field>
 
   <!-- Datum -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Datum</mat-label>
-    <input matInput [matDatepicker]="picker" [(ngModel)]="data.date" />
+    <input matInput [matDatepicker]="picker" [(ngModel)]="date" />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
@@ -24,33 +31,28 @@
   <!-- Uhrzeit -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Uhrzeit</mat-label>
-    <input matInput type="time" [(ngModel)]="data.time" />
+    <input matInput type="time" [(ngModel)]="time" />
   </mat-form-field>
+
+  <!-- Vorschau -->
+  <p class="preview-label-titel">Vorschau:</p>
+  <div class="preview-box">
+    <p class="preview-label">Fragetitel</p>
+    <p class="frage-text">{{ title }}</p>
+
+    <p class="preview-label">Fragetext</p>
+    <p class="frage-text">{{ text }}</p>
+
+    <p class="preview-label">Datum</p>
+    <p class="frage-text">{{ date | date: 'dd.MM.yyyy' }}</p>
+
+    <p class="preview-label">Uhrzeit</p>
+    <p class="frage-text">{{ time }}</p>
+  </div>
 
   <!-- Aktionen -->
-  <div class="modal-actions">
-    <button mat-button (click)="onClose()">Abbrechen</button>
+  <mat-dialog-actions align="end" class="modal-actions">
+    <button mat-button (click)="onCancel()">Abbrechen</button>
     <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
-  </div>
+  </mat-dialog-actions>
 </div>
-
-<!--Vorschau-->
-<p class="preview-label-titel">  Vorschau:</p>
-<div class="preview-container">
-  <p class="preview-label">Fragetitel</p>
-  <p class="frage-text">{{ data.title }}</p>
-
-  <p class="preview-label">Fragetext</p>
-  <p class="frage-text">{{ data.text }}</p>
-
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Datum</mat-label>
-    <input matInput [value]="data.date | date:'dd.MM.yyyy'" disabled />
-  </mat-form-field>
-
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Uhrzeit</mat-label>
-    <input matInput [value]="data.time" disabled />
-  </mat-form-field>
-</div>
-

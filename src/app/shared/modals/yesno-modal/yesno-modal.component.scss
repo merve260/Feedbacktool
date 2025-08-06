@@ -59,11 +59,11 @@ mat-form-field {
 .preview-container {
   margin-top: 1rem;
   padding: 0.5rem;
-  border: 1px dashed #bbb;
   border-radius: 6px;
-  background-color: #f9f9f9;
   max-height: 200px;
   overflow-y: auto;
+  border: 1px solid #ccc; // düz çizgi
+  background-color: #fafafa;
 }
 
 .preview-label {
@@ -89,5 +89,20 @@ mat-radio-button.preview-radio {
   opacity: 0.6;
   pointer-events: none;
 }
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  margin: -20px -20px 0 0;
+
+  .close-button {
+    color: #666;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
+
 
 

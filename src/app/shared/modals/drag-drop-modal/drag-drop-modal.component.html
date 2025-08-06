@@ -1,3 +1,11 @@
+<!-- X button -->
+<div class="modal-header">
+  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+
 <div class="modal-container">
   <h2>Drag & Drop Frage bearbeiten</h2>
 
@@ -37,9 +45,9 @@
     </button>
   </div>
 
-  <!--Vorschau-->
-  <p class="preview-label-titel">  Vorschau:</p>
-  <div class="preview-container">
+  <!-- Vorschau -->
+  <p class="preview-label-titel">Vorschau:</p>
+  <div class="preview-box">
     <p class="preview-label">Fragetitel</p>
     <p class="frage-text">{{ data.title }}</p>
 
@@ -62,12 +70,10 @@
     </div>
   </div>
 
-
-
   <!-- Aktionen -->
   <div class="modal-actions">
-    <button mat-button (click)="onClose()">Abbrechen</button>
+    <button mat-button (click)="onCancel()">Abbrechen</button>
     <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
   </div>
-</div>
 
+</div>
