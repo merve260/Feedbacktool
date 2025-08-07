@@ -27,7 +27,6 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    ConfirmDialogComponent
   ],
   templateUrl: './freitext-modal.component.html',
   styleUrls: ['./freitext-modal.component.scss']

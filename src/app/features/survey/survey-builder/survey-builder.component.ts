@@ -19,6 +19,7 @@ import {StarRatingModalComponent} from '../../../shared/modals/star-rating-modal
 import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
 import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
 import { MatSliderModule } from '@angular/material/slider';
+import {SurveyPublishComponent} from '../survey-publish/survey-publish.component';
 
 
 
@@ -42,7 +43,8 @@ import { MatSliderModule } from '@angular/material/slider';
     DateTimeModalComponent,
     DragDropModalComponent,
     FreitextModalComponent,
-    RadioModalComponent
+    RadioModalComponent,
+    SurveyPublishComponent
   ],
   templateUrl: './survey-builder.component.html',
   styleUrls: ['./survey-builder.component.scss']
@@ -403,21 +405,4 @@ export class SurveyBuilderComponent {
     this.canvasQuestions.splice(index, 1);
   }
 
-  // Umfragelink generieren
-  getSurveyLink(): string {
-    if (!this.startDate || !this.endDate) return '';
-    const timestamp = new Date().getTime();
-    return `https://mein-umfragetool.de/umfrage/${timestamp}`;
-  }
-
-  // Link kopieren
-  copyLinkToClipboard() {
-    const link = this.getSurveyLink();
-    if (!link) return;
-
-    navigator.clipboard.writeText(link).then(() => {
-      this.copied = true;
-      setTimeout(() => (this.copied = false), 1000);
-    }).catch(err => console.error('Fehler beim Kopieren:', err));
-  }
 }

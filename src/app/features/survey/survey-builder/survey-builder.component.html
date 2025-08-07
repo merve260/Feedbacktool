@@ -1,21 +1,7 @@
-<!-- Datumsauswahl für die Umfrage -->
-<mat-form-field appearance="fill">
-  <mat-label>Startdatum</mat-label>
-  <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" />
-  <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-  <mat-datepicker #startPicker></mat-datepicker>
-</mat-form-field>
 
-<mat-form-field appearance="fill">
-  <mat-label>Enddatum</mat-label>
-  <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" />
-  <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-  <mat-datepicker #endPicker></mat-datepicker>
-</mat-form-field>
 
-<!-- Drag & Drop Bereich mit Fragetypen und Umfrage-Canvas -->
+<!-- 🧩 Drag & Drop Bereich -->
 <div class="builder-container">
-  <!-- Linke Seite: Fragetypen (nicht sortierbar) -->
   <div class="question-palette">
     <h3>Fragetypen</h3>
     <div
@@ -26,60 +12,67 @@
       class="palette"
       cdkDropListSortingDisabled
     >
-    <div
-      *ngFor="let question of questionTypes"
-      cdkDrag
-      [cdkDragData]="question"
-      class="question-item"
-    >
-      {{ question.label }}
+      <div
+        *ngFor="let question of questionTypes"
+        cdkDrag
+        [cdkDragData]="question"
+        class="question-item"
+      >
+        {{ question.label }}
+      </div>
+      <!-- 🗓️ Datumsauswahl -->
+      <div class="date-selection">
+        <mat-form-field appearance="fill">
+          <mat-label>Startdatum <span class="required">*</span></mat-label>
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" />
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Enddatum <span class="required">*</span></mat-label>
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" />
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
     </div>
   </div>
-</div>
 
-<!-- Rechte Seite: Umfrage-Canvas (sortierbar) -->
-<div class="survey-canvas">
-  <h3>Umfrage Canvas</h3>
-  <div
-    cdkDropList
-    #canvasList="cdkDropList"
-    [cdkDropListData]="canvasQuestions"
-    [cdkDropListConnectedTo]="[paletteList]"
-    class="canvas"
-    (cdkDropListDropped)="drop($event)"
-  >
+  <div class="survey-canvas">
+    <h3>Umfrage Canvas</h3>
     <div
-      *ngFor="let question of canvasQuestions; let i = index"
-      cdkDrag
-      class="canvas-item"
+      cdkDropList
+      #canvasList="cdkDropList"
+      [cdkDropListData]="canvasQuestions"
+      [cdkDropListConnectedTo]="[paletteList]"
+      class="canvas"
+      (cdkDropListDropped)="drop($event)"
     >
-      <!-- Titel der Frage -->
-      <span>{{ question.title }}</span>
-
-      <!-- Icons zum Bearbeiten oder Entfernen -->
-      <div class="icon-group">
-        <button mat-icon-button (click)="editQuestion(i)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="removeQuestion(i)">
-          <mat-icon>delete</mat-icon>
-        </button>
+      <div
+        *ngFor="let question of canvasQuestions; let i = index"
+        cdkDrag
+        class="canvas-item"
+      >
+        <span>{{ question.title }}</span>
+        <div class="icon-group">
+          <button mat-icon-button (click)="editQuestion(i)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="removeQuestion(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-</div>
+<!-- 📦 Survey Publish bileşeni -->
+<app-survey-publish
+  [canvasQuestions]="canvasQuestions"
+  [startDate]="startDate"
+  [endDate]="endDate"
+></app-survey-publish>
 
-<!-- 🔗 Umfragelink und Kopierfunktion -->
-<div *ngIf="startDate && endDate" class="link-section">
-  <strong>Umfragelink:</strong>
-  <a [href]="getSurveyLink()" target="_blank">{{ getSurveyLink() }}</a>
-  <button mat-icon-button (click)="copyLinkToClipboard()" aria-label="Link kopieren">
-    <mat-icon>content_copy</mat-icon>
-  </button>
-</div>
 
-<!-- Kopier-Bestätigung -->
-<div *ngIf="copied" class="toast">
-  Link kopiert!
-</div>

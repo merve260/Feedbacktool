@@ -1,0 +1,34 @@
+<div class="publish-actions">
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="!isReady()"
+    (click)="publishSurvey()"
+  >
+    Umfrage veröffentlichen
+  </button>
+
+  <div *ngIf="linkVisible" class="link-section" id="linkSection">
+    <strong>Umfragelink:</strong>
+    <a [href]="getSurveyLink()" target="_blank">{{ getSurveyLink() }}</a>
+    <button
+      mat-icon-button
+      (click)="copyLinkToClipboard()"
+      matTooltip="Copy link"
+      matTooltipPosition="right"
+    >
+      <mat-icon>content_copy</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="copied" class="toast">Link kopiert!</div>
+
+  <button
+    *ngIf="linkVisible"
+    mat-stroked-button
+    color="accent"
+    (click)="goToViewer()"
+  >
+    Umfrage anzeigen
+  </button>
+</div>

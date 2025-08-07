@@ -2,3 +2,24 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.cdk-overlay-backdrop.mat-overlay-transparent-backdrop {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(8px);
+}
+.matTooltip {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  color: white !important;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin-top: -8px !important;
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+}
+
+
+
+
+
+

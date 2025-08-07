@@ -1,0 +1,82 @@
+<div class="survey-viewer" *ngIf="!isCompleted">
+  <h2>{{ surveyData?.title }}</h2>
+
+
+  <div class="progress-info">
+    <p>Frage {{ currentIndex + 1 }} von {{ surveyData?.questions.length }}</p>
+    <mat-progress-bar
+      mode="determinate"
+      [value]="getProgress()"
+    ></mat-progress-bar>
+  </div>
+
+
+  <div class="question-box" *ngIf="currentQuestion">
+    <h3>{{ currentQuestion.title }}</h3>
+
+    <ng-container [ngSwitch]="currentQuestion.type">
+      <!-- Ja / Nein -->
+      <div *ngSwitchCase="'yesno'">
+        <mat-radio-group [(ngModel)]="answers[currentIndex]">
+          <mat-radio-button value="yes">Ja</mat-radio-button>
+          <mat-radio-button value="no">Nein</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- Slider -->
+      <div *ngSwitchCase="'slider'">
+        <mat-slider>
+          <input
+            matSliderThumb
+            min="1"
+            max="10"
+            step="1"
+            [(ngModel)]="answers[currentIndex]"
+          />
+        </mat-slider>
+      </div>
+
+      <!-- Freitext -->
+      <div *ngSwitchCase="'freitext'">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Ihre Antwort</mat-label>
+          <input matInput [(ngModel)]="answers[currentIndex]" />
+        </mat-form-field>
+      </div>
+
+      <!-- Bilinmeyen -->
+      <div *ngSwitchDefault>
+        <p>Unbekannter Fragetyp</p>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Navigation -->
+  <button mat-raised-button color="basic" (click)="zurueck()" [disabled]="currentIndex === 0">
+    Zurück
+  </button>
+
+    <!-- Speichern Button-->
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="currentIndex < surveyData.questions.length - 1"
+      (click)="weiter()"
+    >
+      Weiter
+    </button>
+
+    <button
+      mat-raised-button
+      color="accent"
+      *ngIf="currentIndex === surveyData.questions.length - 1"
+      (click)="speichern()"
+    >
+      Speichern
+    </button>
+</div>
+<div class="survey-complete" *ngIf="isCompleted">
+  <h2>Vielen Dank für Ihre Teilnahme!</h2>
+  <p>Ihre Umfrage wurde erfolgreich übermittelt.</p>
+</div>
+

@@ -1,0 +1,212 @@
+$primary-lila: #b47ac7;
+$primary-lila-dark: #9e5db6;
+$accent-lila: #7b4683;
+
+.survey-viewer {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid #e2cdea;
+  background-color: #fbfbfb;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  color: #53305e;
+
+  h2 {
+    text-align: center;
+    color: #412549;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .progress-info {
+    margin-bottom: 1.5rem;
+
+    p {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #5e5b5b;
+      margin-bottom: 0.5rem;
+    }
+
+    mat-progress-bar {
+      height: 8px;
+      border-radius: 8px;
+      background-color: #fef6ff;
+
+      ::ng-deep .mat-progress-bar-fill::after {
+        background-color: $primary-lila !important;
+      }
+    }
+  }
+
+  .question-box {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background-color: #fef6ff;
+    border: 1px solid #e2cdea;
+
+    h3 {
+      margin-top: 0;
+      color: #3b2a45;
+      font-weight: 600;
+    }
+
+    mat-radio-group {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1rem;
+      border: 1px solid #e2cdea;
+      border-radius: 12px;
+      background-color: #fbfbfb;
+      margin-top: 1rem;
+
+      mat-radio-button {
+        font-weight: 500;
+        color: #3b2a45;
+      }
+
+      ::ng-deep .mat-radio-outer-circle {
+        border-color: $primary-lila !important;
+      }
+
+      ::ng-deep .mat-radio-inner-circle {
+        background-color: $primary-lila !important;
+      }
+    }
+
+    mat-slider {
+      width: 100%;
+
+      ::ng-deep {
+        .mat-slider-track-fill {
+          background-color: $primary-lila !important;
+        }
+
+        .mat-slider-thumb {
+          background-color: $primary-lila !important;
+        }
+
+        .mat-slider-thumb-label {
+          background-color: $primary-lila !important;
+        }
+
+        .mat-slider-thumb-label-text {
+          color: white;
+          font-weight: bold;
+          font-size: 0.9rem;
+        }
+
+        .mdc-slider__thumb {
+          border-radius: 50% !important;
+          width: 16px !important;
+          height: 16px !important;
+        }
+      }
+    }
+
+    .mat-form-field-appearance-fill {
+      width: 100%;
+
+      ::ng-deep .mat-form-field-ripple {
+        background-color: $primary-lila !important;
+      }
+    }
+  }
+
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+  }
+
+  button {
+    min-width: 120px;
+    border-radius: 24px;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  button[color="basic"] {
+    background-color: transparent;
+    color: $primary-lila;
+
+    &:hover {
+      background-color: rgba(180, 122, 199, 0.1);
+    }
+  }
+
+  button[color="primary"],
+  button[color="accent"] {
+    background-color: $accent-lila;
+    color: white;
+
+    &:hover {
+      background-color: $primary-lila-dark;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+
+    .question-box {
+      padding: 1rem;
+    }
+
+    button {
+      min-width: 100px;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+    }
+
+    mat-radio-group {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .button-group {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+}
+.survey-complete {
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: #fef6ff;
+  border: 1px solid #e2cdea;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  color: #53305e;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #7b4683;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #3b2a45;
+  }
+
+  img {
+    margin-top: 2rem;
+  }
+}
+
