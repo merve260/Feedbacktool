@@ -1,10 +1,7 @@
-<div style="padding: 24px; text-align: center;">
-  <p style="font-size: 16px; font-weight: 500;">
-    {{ data.message }}
-  </p>
-
-  <div style="margin-top: 24px; display: flex; justify-content: center; gap: 12px;">
-    <button mat-stroked-button (click)="stay()">Im Dialog bleiben</button>
-    <button mat-flat-button color="warn" (click)="leave()">Verlassen</button>
-  </div>
+<div class="confirm-root">
+  <p class="confirm-msg">{{ data.message }}</p>
+  <mat-dialog-actions class="confirm-actions" align="center">
+    <button mat-stroked-button (click)="stay()">{{ data.cancelText || 'Im Dialog bleiben' }}</button>
+    <button mat-flat-button color="warn" (click)="leave()">{{ data.confirmText || 'Verlassen' }}</button>
+  </mat-dialog-actions>
 </div>

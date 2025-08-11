@@ -47,6 +47,7 @@
 
   <!-- Vorschau -->
   <p class="preview-label-titel">Vorschau:</p>
+
   <div class="preview-box">
     <p class="preview-label">Fragetitel</p>
     <p class="frage-text">{{ data.title }}</p>
@@ -54,21 +55,31 @@
     <p class="preview-label">Fragetext</p>
     <p class="frage-text">{{ data.text }}</p>
 
+    <!-- Dropzone -->
     <div
       cdkDropList
       [cdkDropListData]="data.items"
       class="preview-drag-list"
       (cdkDropListDropped)="dropPreview($event)"
     >
+
+      <div class="empty-hint" *ngIf="!data.items?.length">
+        Hier ablegen, um die Reihenfolge zu testen.
+      </div>
+
       <div
         *ngFor="let item of data.items"
         cdkDrag
         class="preview-drag-item"
       >
-        {{ item }}
+      <span cdkDragHandle class="drag-handle">
+        <mat-icon>drag_indicator</mat-icon>
+      </span>
+        <span>{{ item }}</span>
       </div>
     </div>
   </div>
+
 
   <!-- Aktionen -->
   <div class="modal-actions">

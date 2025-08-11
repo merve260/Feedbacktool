@@ -110,23 +110,24 @@ export class DateTimeModalComponent implements OnInit {
 
   confirmLeave(): void {
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
+      width: '420px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog pol-confirm',
+      backdropClass: 'pol-backdrop',
       data: {
-        message: 'Sie haben ungespeicherte Änderungen. Wirklich verlassen?',
+        message: 'Sie haben ungespeicherte Änderungen. Möchten Sie wirklich verlassen?',
         confirmText: 'Verlassen',
         cancelText: 'Im Dialog bleiben'
       },
       disableClose: true
     });
 
-    confirmRef.afterClosed().subscribe(result => {
-      if (result === true) {
-        this.canClose = true;
+    confirmRef.afterClosed().subscribe(ok => {
+      if (ok === true) {
         this.dialogRef.close();
-      } else {
-        this.canClose = false;
       }
     });
   }
+
 
 }

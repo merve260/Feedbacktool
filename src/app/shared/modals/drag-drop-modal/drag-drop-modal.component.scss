@@ -1,13 +1,37 @@
+
+$brand: #824CFF;
+
+/* Kopfzeile */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .close-button {
+    margin-left: auto;
+  }
+}
+
+/* Container & Grundlayout */
 .modal-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding: 24px;
   width: 100%;
-  max-width: 500px;
   max-height: 70vh;
   overflow-y: auto;
+  max-width: 600px;
   box-sizing: border-box;
+  margin: 0 auto;
+  box-shadow: inset 0 0 0 1px var(--brand-border);
 
   h2 {
     margin: 0;
@@ -46,6 +70,7 @@
     font-size: 14px;
     margin-top: 20px;
     margin-bottom: 8px;
+    color: #6f48d9;
   }
 
   .preview-label {
@@ -61,48 +86,85 @@
     margin-bottom: 8px;
   }
 
+  /* Vorschau-Box */
+  .preview-box {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: calc(100% + 30px);
+    margin-left: -16px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+  }
+
+  /* Dropzone – lila Rahmen + Zustände */
   .preview-drag-list {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    width: 100%;
-    padding: 0.5rem 0;
+    width: 95%;
+    padding: 0.75rem;
+    border: 2px dashed rgba($brand, 0.25);
+    border-radius: 10px;
+    transition: border-color .15s ease, background-color .15s ease;
   }
 
+  .preview-drag-list.cdk-drop-list-dragging,
+  .preview-drag-list.cdk-drop-list-receiving {
+    border-color: $brand;
+    background-color: rgba($brand, 0.06);
+  }
+
+  /* Elemente */
   .preview-drag-item {
     min-height: 35px;
     padding: 0.8rem 1rem;
     background-color: #e0e0e0;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: 500;
-    cursor: move;
+    cursor: grab;
     display: flex;
     align-items: center;
+    gap: .5rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-
-  h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
+    transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
   }
 
-  .close-button {
-    margin-left: auto;
+  .preview-drag-item:hover {
+    background-color: #e7e7e7;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
   }
-}
-.preview-box {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fafafa;
+
+  .preview-drag-item:active {
+    cursor: grabbing;
+  }
+
+  /* Optionaler Griff (wenn im HTML genutzt) */
+  .drag-handle {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    background: #f0eef8;
+    color: #6f48d9;
+    flex: 0 0 26px;
+  }
+
+  /* CDK-Preview/Placeholder schöner */
+  .cdk-drag-preview {
+    border-radius: 8px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    transform: rotate(0.5deg);
+  }
+
+  .cdk-drag-placeholder {
+    opacity: 0; /* Platzhalter unsichtbar */
+  }
+
+  .preview-drag-item.cdk-drag-animating {
+    transition: transform .18s ease;
+  }
 }

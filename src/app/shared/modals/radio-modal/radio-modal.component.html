@@ -22,8 +22,8 @@
 
   <!-- Antwortoptionen -->
   <div class="option-row" *ngFor="let option of options; let i = index; trackBy: trackByIndex">
-    <mat-form-field class="option-field" appearance="outline">
-      <mat-label>Antwort {{ i + 1 }}</mat-label>
+    <mat-form-field class="option-field" appearance="fill">
+      <mat-label>Option {{ i + 1 }}</mat-label>
       <input matInput [(ngModel)]="options[i]" />
     </mat-form-field>
     <button mat-icon-button color="warn" (click)="removeOption(i)" *ngIf="options.length > 1">
@@ -31,7 +31,11 @@
     </button>
   </div>
 
-  <button mat-button (click)="addOption()">+ Neue Option hinzufügen</button>
+  <button mat-stroked-button color="primary" class="add-option" (click)="addOption()">
+    <mat-icon>add</mat-icon>
+    Neue Option hinzufügen
+  </button>
+
 
   <!-- Vorschau -->
   <p class="preview-label-titel">Vorschau:</p>

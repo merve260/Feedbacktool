@@ -90,7 +90,7 @@ export class SkalaSliderModalComponent implements OnInit {
         disableClose: true,
         data: {
           title: 'Änderungen verwerfen?',
-          message: 'Sie haben ungespeicherte Änderungen. Möchten Sie den Dialog wirklich schließen?'
+          message: 'Sie haben ungespeicherte Änderungen. Möchten Sie wirklich verlassen?'
         }
       });
 

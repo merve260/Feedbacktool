@@ -10,7 +10,7 @@ import {
   MatDialog,
 } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
 import {MatFormField, MatInput} from '@angular/material/input';
@@ -37,7 +37,8 @@ import { MatInputModule } from '@angular/material/input';
     CdkDrag,
     MatFormFieldModule,
     MatInputModule,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    CdkDragHandle
   ],
   templateUrl: './drag-drop-modal.component.html',
   styleUrls: ['./drag-drop-modal.component.scss']
@@ -100,7 +101,7 @@ export class DragDropModalComponent implements OnInit {
       width: '400px',
       disableClose: true,
       data: {
-        message: 'Sie haben ungespeicherte Änderungen. Wirklich verlassen?',
+        message: 'Sie haben ungespeicherte Änderungen. Möchten Sie wirklich verlassen?',
         confirmText: 'Verlassen',
         cancelText: 'Im Dialog bleiben'
       }

@@ -1,25 +1,159 @@
-/* You can add global styles to this file, and also import other style files */
-
+/* =======================
+   Globale Basis-Styles
+   ======================= */
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-.cdk-overlay-backdrop.mat-overlay-transparent-backdrop {
-  background-color: rgba(0, 0, 0, 0.2) !important;
-  backdrop-filter: blur(8px);
+
+/* Markenfarben (frei anpassbar) */
+:root {
+  --brand-primary: #824CFF;   /* Primär */
+  --brand-border:  #e6e2f3;   /* zarte Linie */
+  --brand-soft:    #faf7ff;   /* softer Hintergrund */
 }
-.matTooltip {
-  background-color: rgba(0, 0, 0, 0.75) !important;
-  color: white !important;
+
+/* =======================
+   Overlay/Backdrop
+   ======================= */
+/* Allgemeiner, weicher Backdrop (Datepicker/Dialogs etc.) */
+.cdk-overlay-backdrop.mat-overlay-transparent-backdrop {
+  background-color: rgba(14, 9, 30, 0.28) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* Spezieller Backdrop für Dialogs mit panelClass/backdropClass */
+.pol-backdrop.cdk-overlay-backdrop {
+  background: rgba(14, 9, 30, 0.28) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* =======================
+   Dialog-Oberfläche
+   ======================= */
+/* Verwende panelClass: 'pol-dialog' beim Öffnen */
+.pol-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
+  width: min(92vw, 720px) !important;     /* genügend Breite */
+  border-radius: 18px !important;          /* runde Ecken */
+  background: #fff !important;
+  border: 1px solid var(--brand-border);
+  box-shadow: 0 16px 40px rgba(22, 8, 56, 0.18) !important;
+  overflow: hidden;
+}
+.pol-dialog .mat-mdc-dialog-title  { padding: 20px 24px 8px; font-weight: 700; }
+.pol-dialog .mat-mdc-dialog-content{ padding: 8px 24px 0; }
+.pol-dialog .mat-mdc-dialog-actions{ padding: 16px 24px 24px; gap: 12px; }
+
+/* Formfelder im Dialog: „Soft-Box“-Look */
+.pol-dialog .mat-mdc-form-field { width: 100%; }
+.pol-dialog .mat-mdc-text-field-wrapper {
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  transition: box-shadow .2s, border-color .2s, background .2s;
+}
+.pol-dialog .mat-mdc-form-field:focus-within .mat-mdc-text-field-wrapper {
+  background: #fff;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(130, 76, 255, 0.14);
+}
+/* Unterlinie neutralisieren */
+.pol-dialog .mdc-line-ripple::before,
+.pol-dialog .mdc-line-ripple::after { border-bottom-color: transparent !important; }
+
+/* Buttons im Dialog als „Pill“ */
+.pol-dialog .mat-mdc-raised-button.mat-primary {
+  --mdc-filled-button-container-color: var(--brand-primary) !important;
+  --mdc-filled-button-label-text-color: #fff !important;
+  border-radius: 6px !important;
+  padding: 0 20px;
+}
+.pol-dialog .mat-mdc-outlined-button {
+  border-radius: 999px !important;
+  --mdc-outlined-button-outline-color: var(--brand-primary) !important;
+  --mdc-outlined-button-label-text-color: var(--brand-primary) !important;
+}
+
+/* =======================
+   Tooltip (global)
+   ======================= */
+.mat-mdc-tooltip {
+  background-color: rgba(0, 0, 0, 0.82) !important;
+  color: #fff !important;
   font-size: 13px;
   padding: 6px 10px;
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  margin-top: -8px !important;
-  transform: translateY(-4px);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.2px;
+  max-width: 240px;
+  line-height: 1.4;
+  text-align: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+/* Positions-Feinschliff */
+.mat-mdc-tooltip-show { transform: translateY(-4px); }
+.cdk-tooltip-position-below .mat-mdc-tooltip  { transform: translateY(4px);  }
+.cdk-tooltip-position-above .mat-mdc-tooltip  { transform: translateY(-4px); }
+.cdk-tooltip-position-left  .mat-mdc-tooltip  { transform: translateX(-4px); }
+.cdk-tooltip-position-right .mat-mdc-tooltip  { transform: translateX(4px);  }
+
+/* =======================
+   Mat-Select Panel (Overlay)
+   ======================= */
+.mdc-menu-surface.mat-mdc-select-panel,
+.mat-mdc-select-panel {
+  background: #fff !important;
+  --mdc-menu-container-color: #fff !important;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.18);
+}
+.mat-mdc-option { background: #fff !important; }
+.mat-mdc-option:hover { background: #f3eaff !important; }
+.mat-mdc-option.mdc-list-item--selected { background: #ede7f6 !important; }
+
+/* =======================
+   Datepicker (Beispiel: aktiver Tag)
+   ======================= */
+.mat-calendar-body-cell.mat-calendar-body-active {
+  background-color: var(--brand-primary) !important;
+  color: #fff !important;
+  border-radius: 50%;
 }
 
+/* =======================
+   Link-/Icon-Bereich im Publisher (optional)
+   ======================= */
+.link-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  a {
+    color: #1e40af;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  button:hover mat-icon { color: #000; }
+}
+.modal-actions button {
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: 500;
+}
 
+.modal-actions button[mat-button] {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
 
+.modal-actions button[mat-button]:hover {
+  background: #eee;
+}
 
+.modal-actions button[mat-raised-button] {
+  background-color: #824CFF;
+  color: #fff;
+}
 
-
+.modal-actions button[mat-raised-button]:hover {
+  background-color: #6f3fd6;
+}

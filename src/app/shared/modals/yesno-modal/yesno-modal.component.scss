@@ -1,108 +1,76 @@
-:host {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.25);
-  z-index: 1000;
-  font-family: 'Segoe UI', sans-serif;
+/* ===== Ja/Nein Modal – kompakt ===== */
+$brand:  #824CFF;
+$border: #e6e2f3;
+$soft:   #faf7ff;
+
+/* Kopfzeile */
+.modal-header{
+  display:flex; justify-content:flex-end; margin-bottom:0;
+  .close-button{ color:#666; transition:color .2s; &:hover{ color:#000; } }
 }
 
-.modal-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-  padding: 32px;
-  width: 90%;
-  max-width: 520px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+/* Container (nur Inhalt – kein eigenes Overlay!) */
+.modal-container{
+  display:flex; flex-direction:column; gap:16px;
+  padding:24px; width:100%; max-width:650px; margin:20px auto;
+  max-height:70vh; overflow-y:auto; box-sizing:border-box;
+  border-radius:14px;
+  box-shadow: inset 0 0 0 1px var(--brand-border, #e6e2f3);
 }
 
-h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+/* Titel */
+h2{ margin:0 0 6px; font-size:22px; font-weight:700; }
+mat-form-field, .full-width{ width:100%; }
+
+/* Antwort-Optionen (Ja/Nein) */
+.antwort-optionen{
+  display:flex; align-items:center; gap:20px; font-size:15px;
+  .label{ font-weight:500; margin-right:8px; }
+  mat-radio-button{ margin-top:4px; }
 }
 
-mat-form-field {
-  width: 100%;
+/* Vorschau-Box */
+.preview-label-titel{ color:#5e5b5b; font-size:15px; margin:12px 0 8px; }
+.preview-container{
+  margin-top:.5rem; padding:.75rem; border-radius:8px;
+  max-height:200px; overflow-y:auto;
+  border:1px solid #ccc; background:#fafafa;
 }
+.preview-label{ font-size:.8rem; color:#999; margin:.4rem 0 .1rem; }
+.preview-value{ margin:0 0 .5rem; font-size:.9rem; }
+mat-radio-button.preview-radio{ display:block; margin-bottom:2px; opacity:.6; pointer-events:none; }
 
-.antwort-optionen {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  font-size: 15px;
+/* Aktionen */
+.modal-actions{ display:flex; justify-content:flex-end; gap:12px; margin-top:12px; }
 
-  mat-radio-button {
-    margin-top: 4px;
+/* Material-Felder – Soft-Box, Label-Float, Buttons vereinheitlichen */
+:host ::ng-deep{
+  .mat-mdc-form-field{ width:100%; }
+  .mat-mdc-text-field-wrapper{
+    background:$soft; border:1px solid $border; border-radius:12px;
+    transition: box-shadow .2s, border-color .2s, background .2s;
   }
-
-  .label {
-    font-weight: 500;
-    margin-right: 8px;
+  .mat-mdc-form-field:focus-within .mat-mdc-text-field-wrapper{
+    background:#fff; border-color:$brand; box-shadow:0 0 0 3px rgba(130,76,255,.14);
   }
-}
+  .mdc-line-ripple::before, .mdc-line-ripple::after{ border-bottom-color:transparent !important; }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-}
-.preview-container {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  border-radius: 6px;
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ccc; // düz çizgi
-  background-color: #fafafa;
-}
+  /* Label-Position (falls paddingle kayma olursa) */
+  .mat-mdc-form-field.mat-mdc-form-field-should-float .mdc-floating-label,
+  .mat-mdc-form-field.mat-focused .mdc-floating-label,
+  .mdc-floating-label--float-above{ transform:translateY(-22px) scale(.75) !important; }
+  .mdc-text-field--filled .mdc-floating-label{ left:16px !important; }
 
-.preview-label {
-  font-size: 0.75rem;
-  color: #999;
-  margin: 0.5rem 0 0.1rem;
-}
-.preview-label-titel{
-  color: #5e5b5b;
-  font-size: 16px;
-  margin-bottom: 8px;
-  padding: 5px;
-}
-
-.preview-value {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.8rem;
-}
-
-mat-radio-button.preview-radio {
-  display: block;
-  margin-bottom: 2px;
-  opacity: 0.6;
-  pointer-events: none;
-}
-.modal-header {
-  display: flex;
-  justify-content: flex-end;
-  margin: -20px -20px 0 0;
-
-  .close-button {
-    color: #666;
-    transition: color 0.2s;
-
-    &:hover {
-      color: #000;
-    }
+  /* Buttons einheitlich oval */
+  .modal-actions .mat-mdc-button-base,
+  .modal-actions .mat-mdc-raised-button,
+  .modal-actions .mat-mdc-outlined-button,
+  .modal-actions .mat-mdc-unelevated-button,
+  .modal-actions .mat-mdc-text-button{
+     height:36px; padding:0 20px;
+  }
+  .mat-mdc-raised-button.mat-primary{
+    --mdc-filled-button-container-color:#824CFF !important;
+    --mdc-filled-button-label-text-color:#fff !important;
   }
 }
-
-
-

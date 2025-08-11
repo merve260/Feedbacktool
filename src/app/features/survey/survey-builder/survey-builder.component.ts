@@ -137,7 +137,10 @@ export class SurveyBuilderComponent {
   // Ja/Nein Modal öffnen
   openYesNoModal(questionData: any) {
     const dialogRef = this.dialog.open(YesNoModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',
@@ -155,7 +158,10 @@ export class SurveyBuilderComponent {
   // Mehrfachauswahl Modal öffnen
   openMultipleChoiceModal(questionData: any) {
     const dialogRef = this.dialog.open(MultipleChoiceModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',
@@ -173,7 +179,10 @@ export class SurveyBuilderComponent {
   // Datum / Uhrzeit Modal öffnen
   openDateTimeModal(questionData: any) {
     const dialogRef = this.dialog.open(DateTimeModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',
@@ -190,7 +199,10 @@ export class SurveyBuilderComponent {
 //Drag and Drop Modal öffnen
   openDragDropModal(questionData: any) {
     const dialogRef = this.dialog.open(DragDropModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',
@@ -209,7 +221,10 @@ export class SurveyBuilderComponent {
 //Freitext Modal öffnen
   openFreitextModal(questionData: any) {
     const dialogRef = this.dialog.open(FreitextModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',
@@ -228,7 +243,10 @@ export class SurveyBuilderComponent {
 // Star-rating modal öffnen
   openStarRatingModal(questionData: any) {
     const dialogRef = this.dialog.open(StarRatingModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',
@@ -247,7 +265,10 @@ export class SurveyBuilderComponent {
 //Slider modal öffnen
   openSliderModal(questionData: any) {
     const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: questionData?.title || '',
@@ -270,7 +291,10 @@ export class SurveyBuilderComponent {
   //radio modal öffnen
   openRadioModal(questionData: any) {
     const dialogRef = this.dialog.open(RadioModalComponent, {
-      width: '500px',
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
       data: {
         ...questionData,
         title: '',

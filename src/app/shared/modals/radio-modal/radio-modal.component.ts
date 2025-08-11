@@ -86,7 +86,7 @@ export class RadioModalComponent {
       width: '400px',
       disableClose: true,
       data: {
-        message: 'Sie haben ungespeicherte Änderungen. Wirklich verlassen?',
+        message: 'Sie haben ungespeicherte Änderungen.Möchten Sie wirklich verlassen?',
         confirmText: 'Verlassen',
         cancelText: 'Im Dialog bleiben'
       }
