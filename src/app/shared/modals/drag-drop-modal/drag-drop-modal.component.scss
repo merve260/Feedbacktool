@@ -32,6 +32,7 @@ $brand: #824CFF;
   box-sizing: border-box;
   margin: 0 auto;
   box-shadow: inset 0 0 0 1px var(--brand-border);
+  --mdc-filled-text-field-container-color:#faf5ff;
 
   h2 {
     margin: 0;
@@ -70,7 +71,7 @@ $brand: #824CFF;
     font-size: 14px;
     margin-top: 20px;
     margin-bottom: 8px;
-    color: #6f48d9;
+    color: #555;
   }
 
   .preview-label {
@@ -167,4 +168,10 @@ $brand: #824CFF;
   .preview-drag-item.cdk-drag-animating {
     transition: transform .18s ease;
   }
-}
+}.weitereOption{
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+   border-radius: 8px;
+   padding: 6px 12px;
+ }

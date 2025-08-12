@@ -35,7 +35,6 @@ export class YesNoModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Orijinal verileri yedekle
     this.originalData = {
       title: this.data.title,
       text: this.data.text,

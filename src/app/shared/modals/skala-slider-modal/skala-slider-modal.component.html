@@ -65,8 +65,18 @@
         [(ngModel)]="value"
         [disabled]="disabled"
         [style.background]="getSliderBackground()"
+        (input)="onSlide()"
       />
-      <span class="slider-value">{{ value }}</span>
+      <span
+        *ngIf="thumbLabel"
+        class="slider-bubble"
+        [style.left.%]="percent"
+      >
+    {{ value }} / {{max}}
+  </span>
+
+
+      <span class="slider-value" *ngIf="!thumbLabel">{{ value }}</span>
     </div>
 
 

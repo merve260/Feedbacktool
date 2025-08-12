@@ -1,15 +1,30 @@
 /* =======================
    Globale Basis-Styles
    ======================= */
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$my-theme: mat.define-theme((
+  color: (theme-type: light),
+  // typography/density istersen ekleyebilirsin
+));
+
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* Markenfarben (frei anpassbar) */
 :root {
-  --brand-primary: #824CFF;   /* Primär */
+  --brand-primary: #8f58e1;   /* Primär */
   --brand-border:  #e6e2f3;   /* zarte Linie */
   --brand-soft:    #faf7ff;   /* softer Hintergrund */
+
+  @include mat.core-theme($my-theme);
+  @include mat.all-component-themes($my-theme);
+  @include mat.all-component-typographies($my-theme);
 }
+
 
 /* =======================
    Overlay/Backdrop

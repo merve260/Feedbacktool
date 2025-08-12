@@ -16,7 +16,6 @@ $background-light: #fef6ff;
   flex-wrap: wrap;
 }
 
-
 .question-palette,
 .survey-canvas {
   flex: 1;
@@ -31,7 +30,7 @@ $background-light: #fef6ff;
 .question-palette h3,
 .survey-canvas h3 {
   font-size: 1.2rem;
-  color: #824CFF;
+  color: #4e2d9a;
   margin-bottom: 12px;
 }
 
@@ -43,14 +42,36 @@ $background-light: #fef6ff;
   padding: 10px;
   background-color: #fafafa;
   transition: background-color 0.2s;
+  position: relative;
 }
 
 .canvas.cdk-drop-list-dragging {
   background-color: #e8ddff;
   border-color: #824CFF;
 }
+.empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #808080;
+  font-size: 0.85rem;
+  max-width: 80%;
+  line-height: 1.3;
+  font-style: italic;
+  pointer-events: none;
+}
 
-// Drag edilen öğe
+
+  mat-icon {
+    font-size: 20px;
+    line-height: 1;
+    color: #9aa0a6;
+  }
+
+
+
 .question-item,
 .canvas-item {
   background-color: #E6DBFB;

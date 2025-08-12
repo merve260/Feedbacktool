@@ -50,6 +50,9 @@
       class="canvas"
       (cdkDropListDropped)="drop($event)"
     >
+      <div class="empty-state" *ngIf="!canvasQuestions?.length">
+        <span>Mindestens eine Frage hinzufügen, um zu veröffentlichen.</span>
+      </div>
       <div
         *ngFor="let question of canvasQuestions; let i = index"
         cdkDrag

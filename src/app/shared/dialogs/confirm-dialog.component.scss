@@ -6,10 +6,10 @@
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: #1f1f1f;
+  color: #070707;
 }
 
-/* Butonlar – diğer modallarla uyumlu, kısa kurallar */
+
 .confirm-actions { justify-content: center; gap: 12px; }
 
 .confirm-actions .mat-mdc-button-base {
@@ -22,13 +22,13 @@
 button[mat-stroked-button] {
   background: #f7f6fb;
   border-color: var(--brand-primary, #824CFF);
-  color: var(--brand-primary, #824CFF);
+  color: var(--brand-primary, #2f156a);
 }
-
-button[mat-stroked-button]:hover { background: #efeafc; }
+button[mat-stroked-button]{ background: #8d5cbd; color: #fff; }
+button[mat-stroked-button]:hover { background: #b27fe4; }
 
 button[mat-flat-button][color="warn"] { background: #8d5cbd; color: #fff; }
-button[mat-flat-button][color="warn"]:hover { background: #8d5cbd; }
+button[mat-flat-button][color="warn"]:hover { background: #b27fe4; }
 .confirm-root { text-align: center; padding: 12px 4px; }
 .confirm-msg  { margin: 0; font-size: 15px; font-weight: 600; }
 .confirm-actions { justify-content: center; gap: 12px; }

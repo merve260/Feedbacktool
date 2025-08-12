@@ -68,29 +68,28 @@ export class SurveyBuilderComponent {
   // Datumseinstellungen für Umfragelink
   startDate: Date | null = null;
   endDate: Date | null = null;
-  copied: boolean = false;
 
   constructor(private dialog: MatDialog) {}
 
   // Drag & Drop Aktion
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
-      // Aynı listede sürüklendiyse: reorder
+
       moveItemInArray(this.canvasQuestions, event.previousIndex, event.currentIndex);
     } else {
-      // Sol paletten sağa sürükleme
-      const draggedItem = event.item.data;
 
+      const draggedItem = event.item.data;
+      //Yes/No Frage-> Model öffnen
       if (draggedItem.type === 'yesno') {
         this.openYesNoModal(draggedItem);
         return;
       }
-
+      //Multiple Choice Frage-> Modal öffnen
       if (draggedItem.type === 'multiple') {
         this.openMultipleChoiceModal(draggedItem);
         return;
       }
-
+      // Date Time Frage -> Modal öffnen
       if (draggedItem.type === 'date') {
         this.openDateTimeModal(draggedItem);
         return;
@@ -107,23 +106,21 @@ export class SurveyBuilderComponent {
         this.openFreitextModal(draggedItem);
         return;
       }
-      //star-rating -> Modal öffnen
+      //Star-Rating Frage-> Modal öffnen
       if (draggedItem.type === 'star') {
         this.openStarRatingModal(draggedItem);
         return;
       }
-      //skala-slider -> Modal öffnen
+      //Skala-Slider Frage-> Modal öffnen
       if (draggedItem.type === 'slider') {
         this.openSliderModal(draggedItem);
         return;
       }
-      //radio -> Modal öffnen
+      //Radio-Button Frage-> Modal öffnen
       if (draggedItem.type === 'radio') {
         this.openRadioModal(draggedItem);
         return;
       }
-
-
 
       const copiedItem = {
         ...draggedItem,
@@ -134,7 +131,7 @@ export class SurveyBuilderComponent {
     }
   }
 
-  // Ja/Nein Modal öffnen
+  // Yes/No Modal öffnen
   openYesNoModal(questionData: any) {
     const dialogRef = this.dialog.open(YesNoModalComponent, {
       width: '720px',
@@ -240,7 +237,7 @@ export class SurveyBuilderComponent {
       }
     });
   }
-// Star-rating modal öffnen
+// Star-Rating modal öffnen
   openStarRatingModal(questionData: any) {
     const dialogRef = this.dialog.open(StarRatingModalComponent, {
       width: '720px',
@@ -262,7 +259,7 @@ export class SurveyBuilderComponent {
       }
     });
   }
-//Slider modal öffnen
+//Skala-Slider modal öffnen
   openSliderModal(questionData: any) {
     const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
       width: '720px',
@@ -288,7 +285,7 @@ export class SurveyBuilderComponent {
       }
     });
   }
-  //radio modal öffnen
+  //Radio-Buton Modal öffnen
   openRadioModal(questionData: any) {
     const dialogRef = this.dialog.open(RadioModalComponent, {
       width: '720px',

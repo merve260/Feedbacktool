@@ -33,7 +33,7 @@ export class SkalaSliderModalComponent implements OnInit {
   value: number = 5;
   thumbLabel: boolean = false;
   disabled: boolean = false;
-  showTicks: boolean = false;
+  percent = 0;
 
   originalData: any = {};
 
@@ -49,8 +49,9 @@ export class SkalaSliderModalComponent implements OnInit {
     this.step = this.data.step ?? 1;
     this.value = this.data.value ?? 5;
     this.thumbLabel = this.data.thumbLabel ?? false;
+    this.updatePercent();
 
-    // Orijinal değerleri sakla
+
     this.originalData = {
       title: this.data.title,
       text: this.data.text,
@@ -62,13 +63,22 @@ export class SkalaSliderModalComponent implements OnInit {
     };
   }
 
+  onSlide() {
+    this.updatePercent();
+  }
+
+  private updatePercent() {
+    const range = (this.max - this.min) || 1;
+    const pct = ((this.value - this.min) / range) * 100;
+    this.percent = Math.max(0, Math.min(100, pct));
+  }
   get isInvalidRange(): boolean {
     return this.max - this.min < 2;
   }
 
   getSliderBackground(): string {
     const percentage = ((this.value - this.min) / (this.max - this.min)) * 100;
-    return `linear-gradient(to right, #1976d2 0%, #1976d2 ${percentage}%, #c0c0c0 ${percentage}%, #c0c0c0 100%)`;
+    return `linear-gradient(to right, #8133ae 0%, #1976d2 ${percentage}%, #c0c0c0 ${percentage}%, #c0c0c0 100%)`;
   }
 
   isDirty(): boolean {
@@ -103,6 +113,7 @@ export class SkalaSliderModalComponent implements OnInit {
       this.dialogRef.close(null);
     }
   }
+
 
   onSave(): void {
     this.dialogRef.close({

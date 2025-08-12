@@ -19,6 +19,7 @@
   box-sizing: border-box;
   margin: 0 auto;
   box-shadow: inset 0 0 0 1px var(--brand-border);
+  --mdc-filled-text-field-container-color:#faf5ff;
 
   h2 {
     margin: 0;
@@ -71,27 +72,35 @@
 .preview-box {
   background-color: #f1f1f1;
   border-radius: 6px;
-  padding: 12px;
   margin-bottom: 10px;
   border: 1px solid #acaaaa;
+  overflow: visible;
+  padding-bottom: 16px;
+
 }
 
 
 .slider-container {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   margin-top: 8px;
+  color: #8133ae;
+
 }
 
 .skala-slider {
   flex: 1;
-  color: #7e57c2;
+  color: #8133ae;
+  background: #8133ae;
 }
 
 .slider-value {
   font-weight: bold;
   min-width: 32px;
+
+
 }
 .custom-slider {
   -webkit-appearance: none;
@@ -106,7 +115,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #1976d2;
+    background: #8133ae;
     cursor: pointer;
     border: none;
     margin-top: -2px;
@@ -116,9 +125,32 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #1976d2;
+    background: #8133ae;
     cursor: pointer;
     border: none;
+  }
+}
+.slider-bubble {
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, -140%);
+  background: #8133ae;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -4px;
+    border: 4px solid transparent;
+    border-top-color: #333;
   }
 }
 
