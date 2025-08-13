@@ -24,6 +24,9 @@ export class SurveyService {
   listQuestions(surveyId: string) {
     return this.backend.listQuestions(surveyId);
   }
+  submitResponse(surveyId: string, payload: { name?: string; answers: any[] }) {
+    return this.backend.submitResponse(surveyId, payload);
+  }
 
   createDraft(s: Partial<Survey>)              { return this.backend.createDraft(s); }
   getById(id: string)                          { return this.backend.getById(id); }

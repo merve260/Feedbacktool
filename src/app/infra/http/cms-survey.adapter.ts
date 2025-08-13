@@ -38,4 +38,13 @@ export class CmsSurveyAdapter implements SurveyBackend {
       })
     );
   }
+
+  async submitResponse(
+    surveyId: string,
+    payload: { name?: string; answers: any[] }
+  ): Promise<string> {
+
+    throw new Error('submitResponse is not implemented for CMS backend yet.');
+  }
+
 }
