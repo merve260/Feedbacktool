@@ -6,4 +6,11 @@ export interface SurveyBackend {
   listByOwner(ownerId: string): Promise<Survey[]>;
   addQuestion(surveyId: string, q: Question): Promise<void>;
   publish(surveyId: string, startAt: Date, endAt: Date): Promise<void>;
+  listQuestions(surveyId: string): Promise<Question[]>;
+
+  submitResponse(
+    surveyId: string,
+    payload: { name?: string; answers: any[] }
+  ): Promise<string>;
+
 }

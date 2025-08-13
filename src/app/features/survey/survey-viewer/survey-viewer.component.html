@@ -1,15 +1,21 @@
-<div class="survey-viewer" *ngIf="!isCompleted">
-  <h2>{{ surveyData?.title }}</h2>
+<div class="survey-viewer" *ngIf="!isCompleted && surveyData as data">
+  <h2>{{ data?.title }}</h2>
 
+  <!-- Teilnehmer-Name (optional) -->
+  <div style="margin: 12px 0;">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Ihr Name (optional)</mat-label>
+      <input matInput [(ngModel)]="respondentName" placeholder="Vor- und Nachname" />
+    </mat-form-field>
+  </div>
 
   <div class="progress-info">
-    <p>Frage {{ currentIndex + 1 }} von {{ surveyData?.questions.length }}</p>
+    <p>Frage {{ currentIndex + 1 }} von {{ data.questions.length }}</p>
     <mat-progress-bar
       mode="determinate"
       [value]="getProgress()"
     ></mat-progress-bar>
   </div>
-
 
   <div class="question-box" *ngIf="currentQuestion">
     <h3>{{ currentQuestion.title }}</h3>
@@ -52,31 +58,34 @@
   </div>
 
   <!-- Navigation -->
-  <button mat-raised-button color="basic" (click)="zurueck()" [disabled]="currentIndex === 0">
+  <button
+    mat-raised-button
+    color="basic"
+    (click)="zurueck()"
+    [disabled]="currentIndex === 0">
     Zurück
   </button>
 
-    <!-- Speichern Button-->
-    <button
-      mat-raised-button
-      color="primary"
-      *ngIf="currentIndex < surveyData.questions.length - 1"
-      (click)="weiter()"
-    >
-      Weiter
-    </button>
+  <!-- Weiter -->
+  <button
+    mat-raised-button
+    color="primary"
+    *ngIf="currentIndex < data.questions.length - 1"
+    (click)="weiter()">
+    Weiter
+  </button>
 
-    <button
-      mat-raised-button
-      color="accent"
-      *ngIf="currentIndex === surveyData.questions.length - 1"
-      (click)="speichern()"
-    >
-      Speichern
-    </button>
+  <!-- Speichern -->
+  <button
+    mat-raised-button
+    color="accent"
+    *ngIf="currentIndex === data.questions.length - 1"
+    (click)="speichern()">
+    Speichern
+  </button>
 </div>
+
 <div class="survey-complete" *ngIf="isCompleted">
   <h2>Vielen Dank für Ihre Teilnahme!</h2>
   <p>Ihre Umfrage wurde erfolgreich übermittelt.</p>
 </div>
-

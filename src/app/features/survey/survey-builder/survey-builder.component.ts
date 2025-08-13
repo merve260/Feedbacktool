@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { moveItemInArray} from '@angular/cdk/drag-drop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -73,7 +73,8 @@ export class SurveyBuilderComponent {
   startDate: Date | null = null;
   endDate: Date | null = null;
 
-  constructor(private dialog: MatDialog) {}
+
+  constructor(private dialog: MatDialog ) {}
 
   // Drag & Drop Aktion
   drop(event: CdkDragDrop<any[]>) {
@@ -427,33 +428,27 @@ export class SurveyBuilderComponent {
   removeQuestion(index: number) {
     this.canvasQuestions.splice(index, 1);
   }
-
+  //Datetime Regeln
   private startOfDay(d: Date | null | undefined): Date | null {
     if (!d) return null;
     const x = new Date(d);
     x.setHours(0, 0, 0, 0);
     return x;
   }
-
   get startMin(): Date {
     const t = new Date();
     t.setHours(0, 0, 0, 0);
     return t;
   }
-
   get endMin(): Date {
     return this.startOfDay(this.startDate) ?? this.startMin;
   }
-
   get endBeforeStart(): boolean {
     const s = this.startOfDay(this.startDate);
     const e = this.startOfDay(this.endDate);
     return !!(s && e && e < s);
   }
-
-
   onStartChange(): void {
-    // start ileri giderse, end geride kalmışsa yukarı çek
     if (this.endBeforeStart) this.endDate = this.startDate;
   }
 

@@ -2,16 +2,19 @@
   <button
     mat-raised-button
     color="primary"
-    [disabled]="!isReady()"
+    [disabled]="!isReady() || publishing"
     (click)="publishSurvey()"
   >
-    Umfrage veröffentlichen
+    {{ publishing ? 'Veröffentlichen...' : 'Umfrage veröffentlichen' }}
   </button>
-
-
   <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
   <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
   <div class="note" *ngIf="canvasQuestions.length === 0"></div>
+
+  <div *ngIf="errorMsg" class="error-message" style="margin-top:8px;">
+    <mat-icon>error_outline</mat-icon>
+    {{ errorMsg }}
+  </div>
 
   <div *ngIf="linkVisible" class="link-section" id="linkSection">
     <strong>Umfragelink:</strong>

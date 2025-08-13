@@ -151,7 +151,7 @@ $background-light: #fef6ff;
     justify-content: center;
   }
 }
-/* Hata kutusu – yumuşak, okunabilir */
+
 .error-message {
   display: flex;
   align-items: center;
@@ -169,7 +169,6 @@ $background-light: #fef6ff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
 }
 
-/* Form alanıyla boşluk */
 .survey-title-field,
 .date-selection mat-form-field {
   margin-bottom: 4px;

@@ -57,14 +57,12 @@ button[mat-stroked-button] {
     color: #000;
   }
 }
-
 .toast {
   margin-top: 0.5rem;
   color: #4CAF50;
   font-weight: bold;
   animation: fadeout 2s forwards;
 }
-
 @keyframes fadeout {
   0% {
     opacity: 1;
