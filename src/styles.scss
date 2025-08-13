@@ -7,7 +7,6 @@
 
 $my-theme: mat.define-theme((
   color: (theme-type: light),
-  // typography/density istersen ekleyebilirsin
 ));
 
 
@@ -16,7 +15,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 /* Markenfarben (frei anpassbar) */
 :root {
-  --brand-primary: #8f58e1;   /* Primär */
+  --brand-primary: #996dda;   /* Primär */
   --brand-border:  #e6e2f3;   /* zarte Linie */
   --brand-soft:    #faf7ff;   /* softer Hintergrund */
 

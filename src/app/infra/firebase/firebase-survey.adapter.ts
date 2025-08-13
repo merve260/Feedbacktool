@@ -23,7 +23,6 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async listByOwner(ownerId: string): Promise<Survey[]> {
-    // basit: tümünü çekip filtrele (demo). Gerçekte query kullan.
     const snaps = await getDocs(this.col);
     return snaps.docs
       .map(s => ({ id: s.id, ...s.data() } as any))

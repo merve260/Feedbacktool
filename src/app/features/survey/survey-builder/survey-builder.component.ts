@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
@@ -61,6 +61,10 @@ export class SurveyBuilderComponent {
     { type: 'slider', label: 'Skala / Slider' },
     { type: 'radio', label: 'Radiobutton Auswahl' }
   ];
+  //Umfrage Titel
+  surveyTitle: string = '';
+  titleTouched = false;
+
 
   // Fragen im rechten Canvas
   canvasQuestions: any[] = [];
@@ -308,15 +312,13 @@ export class SurveyBuilderComponent {
     });
   }
 
-
-
   // Frage bearbeiten
   editQuestion(index: number) {
     const question = this.canvasQuestions[index];
 
     if (question.type === 'yesno') {
       const dialogRef = this.dialog.open(YesNoModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -327,7 +329,7 @@ export class SurveyBuilderComponent {
 
     if (question.type === 'multiple') {
       const dialogRef = this.dialog.open(MultipleChoiceModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -338,7 +340,7 @@ export class SurveyBuilderComponent {
 
     if (question.type === 'date') {
       const dialogRef = this.dialog.open(DateTimeModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -351,7 +353,7 @@ export class SurveyBuilderComponent {
     }
     if (question.type === 'dragdrop') {
       const dialogRef = this.dialog.open(DragDropModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -365,7 +367,7 @@ export class SurveyBuilderComponent {
 
     if (question.type === 'freitext') {
       const dialogRef = this.dialog.open(FreitextModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -378,7 +380,7 @@ export class SurveyBuilderComponent {
     }
     if (question.type === 'star') {
       const dialogRef = this.dialog.open(StarRatingModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -392,7 +394,7 @@ export class SurveyBuilderComponent {
     }
     if (question.type === 'slider') {
       const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -407,7 +409,7 @@ export class SurveyBuilderComponent {
 
     if (question.type === 'radio') {
       const dialogRef = this.dialog.open(RadioModalComponent, {
-        width: '500px',
+        width: '800px',
         data: { ...question },
         disableClose: true
       });
@@ -424,6 +426,35 @@ export class SurveyBuilderComponent {
   // Frage entfernen
   removeQuestion(index: number) {
     this.canvasQuestions.splice(index, 1);
+  }
+
+  private startOfDay(d: Date | null | undefined): Date | null {
+    if (!d) return null;
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  }
+
+  get startMin(): Date {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  }
+
+  get endMin(): Date {
+    return this.startOfDay(this.startDate) ?? this.startMin;
+  }
+
+  get endBeforeStart(): boolean {
+    const s = this.startOfDay(this.startDate);
+    const e = this.startOfDay(this.endDate);
+    return !!(s && e && e < s);
+  }
+
+
+  onStartChange(): void {
+    // start ileri giderse, end geride kalmışsa yukarı çek
+    if (this.endBeforeStart) this.endDate = this.startDate;
   }
 
 }

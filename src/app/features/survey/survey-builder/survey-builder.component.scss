@@ -121,9 +121,6 @@ $background-light: #fef6ff;
   }
 }
 
-
-
-
 .publish-wrapper {
   margin-top: 1.5rem;
   display: flex;
@@ -145,7 +142,6 @@ $background-light: #fef6ff;
   }
 }
 
-
 @media (max-width: 768px) {
   .builder-container {
     flex-direction: column;
@@ -155,3 +151,27 @@ $background-light: #fef6ff;
     justify-content: center;
   }
 }
+/* Hata kutusu – yumuşak, okunabilir */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+
+  background: #fff2f2; /* soft red */
+  border: 1px solid #f3c6c6;
+  color: #575559; /* readable red */
+  font-size: 13px;
+  line-height: 1.25;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+}
+
+/* Form alanıyla boşluk */
+.survey-title-field,
+.date-selection mat-form-field {
+  margin-bottom: 4px;
+}
+

@@ -78,7 +78,7 @@ export class SkalaSliderModalComponent implements OnInit {
 
   getSliderBackground(): string {
     const percentage = ((this.value - this.min) / (this.max - this.min)) * 100;
-    return `linear-gradient(to right, #8133ae 0%, #1976d2 ${percentage}%, #c0c0c0 ${percentage}%, #c0c0c0 100%)`;
+    return `linear-gradient(to right, #8133ae 0%, #8133ae ${percentage}%, #c0c0c0 ${percentage}%, #c0c0c0 100%)`;
   }
 
   isDirty(): boolean {

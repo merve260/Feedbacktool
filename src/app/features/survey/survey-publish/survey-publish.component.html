@@ -8,13 +8,18 @@
     Umfrage veröffentlichen
   </button>
 
+
+  <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
+  <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
+  <div class="note" *ngIf="canvasQuestions.length === 0"></div>
+
   <div *ngIf="linkVisible" class="link-section" id="linkSection">
     <strong>Umfragelink:</strong>
     <a [href]="getSurveyLink()" target="_blank">{{ getSurveyLink() }}</a>
     <button
       mat-icon-button
       (click)="copyLinkToClipboard()"
-      matTooltip="Copy link"
+      matTooltip="Link kopieren"
       matTooltipPosition="right"
     >
       <mat-icon>content_copy</mat-icon>

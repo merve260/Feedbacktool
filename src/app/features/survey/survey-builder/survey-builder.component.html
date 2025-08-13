@@ -1,8 +1,7 @@
-
-
 <!-- Drag & Drop Bereich -->
 <div class="builder-container">
   <div class="question-palette">
+
     <h3>Fragetypen</h3>
     <div
       cdkDropList
@@ -22,19 +21,46 @@
       </div>
       <!-- Datumsauswahl -->
       <div class="date-selection">
-        <mat-form-field appearance="fill">
-          <mat-label>Startdatum <span class="required">*</span></mat-label>
-          <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" />
+        <mat-form-field>
+          <input matInput
+                 [matDatepicker]="startPicker"
+                 [(ngModel)]="startDate"
+                 [min]="startMin"
+                 placeholder="Startdatum *"
+                 required
+                 (dateChange)="onStartChange()">
           <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
-          <mat-label>Enddatum <span class="required">*</span></mat-label>
-          <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" />
+        <mat-form-field>
+          <input matInput
+                 [matDatepicker]="endPicker"
+                 [(ngModel)]="endDate"
+                 [min]="endMin"
+                 placeholder="Enddatum *"
+                 required>
           <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
         </mat-form-field>
+      </div>
+      <!-- Umfrage-Titel -->
+      <mat-form-field appearance="fill">
+        <mat-label>Umfragetitel <span class="required">*</span></mat-label>
+        <input
+          matInput
+          [(ngModel)]="surveyTitle"
+          (blur)="titleTouched = true"
+          placeholder="Titel eingeben"
+        />
+      </mat-form-field>
+
+      <!-- Fehlermeldung -->
+      <div
+        *ngIf="titleTouched && !surveyTitle"
+        class="error-message"
+      ><mat-icon>info</mat-icon>
+        Bitte einen Titel für die Umfrage eingeben.
       </div>
 
     </div>
@@ -73,9 +99,10 @@
 </div>
 <!-- Survey Publish -->
 <app-survey-publish
-  [canvasQuestions]="canvasQuestions"
+  [surveyTitle]="surveyTitle"
   [startDate]="startDate"
   [endDate]="endDate"
+  [canvasQuestions]="canvasQuestions"
 ></app-survey-publish>
 
 
