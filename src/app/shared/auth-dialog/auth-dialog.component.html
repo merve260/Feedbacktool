@@ -1,0 +1,48 @@
+<!-- src/app/features/shared/auth-dialog/auth-dialog.component.html -->
+<h2 mat-dialog-title>Willkommen! </h2>
+
+<mat-dialog-content>
+  <mat-tab-group [(selectedIndex)]="tabIndex">
+    <mat-tab label="Login">
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>E-Mail</mat-label>
+          <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Passwort</mat-label>
+          <input matInput formControlName="password" type="password" />
+        </mat-form-field>
+
+        <div class="error" *ngIf="error && tabIndex===0">{{ error }}</div>
+        <button mat-raised-button color="primary" class="full" [disabled]="loginForm.invalid || isLoading">
+          {{ isLoading ? 'Bitte warten…' : 'Login' }}
+        </button>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Registrieren">
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>E-Mail</mat-label>
+          <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Passwort (min. 6 Zeichen)</mat-label>
+          <input matInput formControlName="password" type="password" />
+        </mat-form-field>
+
+        <div class="error" *ngIf="error && tabIndex===1">{{ error }}</div>
+        <button mat-raised-button color="primary" class="full" [disabled]="registerForm.invalid || isLoading">
+          {{ isLoading ? 'Bitte warten…' : 'Registrieren' }}
+        </button>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="ref.close()">Schließen</button>
+</mat-dialog-actions>

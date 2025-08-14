@@ -1,27 +1,36 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { moveItemInArray} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  FormGroup,
+  FormControl
+} from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSliderModule } from '@angular/material/slider';
+
 import { YesNoModalComponent } from '../../../shared/modals/yesno-modal/yesno-modal.component';
 import { MultipleChoiceModalComponent } from '../../../shared/modals/multiple-choice-modal/multiple-choice-modal.component';
 import { DateTimeModalComponent } from '../../../shared/modals/datetime-modal/datetime-modal.component';
 import { DragDropModalComponent } from '../../../shared/modals/drag-drop-modal/drag-drop-modal.component';
 import { FreitextModalComponent } from '../../../shared/modals/freitext-modal/freitext-modal.component';
-import {StarRatingModalComponent} from '../../../shared/modals/star-rating-modal/star-rating-modal.component';
+import { StarRatingModalComponent } from '../../../shared/modals/star-rating-modal/star-rating-modal.component';
 import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
 import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
-import { MatSliderModule } from '@angular/material/slider';
-import {SurveyPublishComponent} from '../survey-publish/survey-publish.component';
-
-
+import { SurveyPublishComponent } from '../survey-publish/survey-publish.component';
 
 @Component({
   selector: 'app-survey-builder',
@@ -29,7 +38,8 @@ import {SurveyPublishComponent} from '../survey-publish/survey-publish.component
   imports: [
     CommonModule,
     DragDropModule,
-    FormsModule,
+    FormsModule,             // optional (falls irgendwo noch ngModel genutzt wird)
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatDatepickerModule,
     MatInputModule,
@@ -50,223 +60,171 @@ import {SurveyPublishComponent} from '../survey-publish/survey-publish.component
   styleUrls: ['./survey-builder.component.scss']
 })
 export class SurveyBuilderComponent {
-  // Verfügbare Fragetypen auf der linken Seite
+
+  // --- Linke Palette: verfügbare Fragetypen ---
   questionTypes = [
-    { type: 'yesno', label: 'Ja / Nein' },
+    { type: 'yesno',    label: 'Ja / Nein' },
     { type: 'multiple', label: 'Mehrfachauswahl' },
-    { type: 'date', label: 'Datum / Uhrzeit' },
+    { type: 'date',     label: 'Datum / Uhrzeit' },
     { type: 'dragdrop', label: 'Drag & Drop' },
     { type: 'freitext', label: 'Freitext' },
-    { type: 'star', label: 'Sternebewertung' },
-    { type: 'slider', label: 'Skala / Slider' },
-    { type: 'radio', label: 'Radiobutton Auswahl' }
+    { type: 'star',     label: 'Sternebewertung' },
+    { type: 'slider',   label: 'Skala / Slider' },
+    { type: 'radio',    label: 'Radiobutton Auswahl' }
   ];
-  //Umfrage Titel
-  surveyTitle: string = '';
-  titleTouched = false;
 
-
-  // Fragen im rechten Canvas
+  // --- Rechte Seite (Canvas): aktuell hinzugefügte Fragen ---
   canvasQuestions: any[] = [];
 
-  // Datumseinstellungen für Umfragelink
-  startDate: Date | null = null;
-  endDate: Date | null = null;
+  // --- Oberes Info-Formular: NUR Titel + Zeitraum (Hinweis ist statischer Text) ---
+  infoForm: FormGroup<{
+    title: FormControl<string>;
+    startDate: FormControl<Date | null>;
+    endDate: FormControl<Date | null>;
+  }>;
 
+  constructor(private dialog: MatDialog, private fb: FormBuilder) {
+    this.infoForm = this.fb.group(
+      {
+        // Titel ist Pflichtfeld
+        title: this.fb.nonNullable.control<string>('', { validators: [Validators.required] }),
+        // Date-Range (beide Pflicht)
+        startDate: this.fb.control<Date | null>(null, { validators: [Validators.required] }),
+        endDate:   this.fb.control<Date | null>(null, { validators: [Validators.required] }),
+      },
+      { validators: this.dateRangeValidator }   // Enddatum >= Startdatum
+    );
+  }
 
-  constructor(private dialog: MatDialog ) {}
+  // --- Komfort-Getter für Template ---
+  get titleCtrl() { return this.infoForm.controls.title; }
+  get startCtrl() { return this.infoForm.controls.startDate; }
+  get endCtrl()   { return this.infoForm.controls.endDate; }
 
-  // Drag & Drop Aktion
+  // --- Kompatibel zu <app-survey-publish> ---
+  get surveyTitle(): string    { return this.titleCtrl.value; }
+  get startDate(): Date | null { return this.startCtrl.value; }
+  get endDate(): Date | null   { return this.endCtrl.value; }
+
+  // --- Custom-Validator: Enddatum darf nicht vor Startdatum liegen ---
+  private dateRangeValidator = (group: AbstractControl): ValidationErrors | null => {
+    const s: Date | null = group.get('startDate')?.value ?? null;
+    const e: Date | null = group.get('endDate')?.value ?? null;
+    if (!s || !e) return null;
+    const s0 = new Date(s); s0.setHours(0,0,0,0);
+    const e0 = new Date(e); e0.setHours(0,0,0,0);
+    return e0 >= s0 ? null : { dateInvalid: true };
+  };
+
+  // --- Optionaler Filter: nur heutige/ zukünftige Tage ---
+  // WICHTIG: Beim Date-Range gehört der Filter auf <mat-date-range-input [dateFilter]>
+  dateFilter = (d: Date | null): boolean => {
+    if (!d) return false;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const x = new Date(d);    x.setHours(0,0,0,0);
+    return x >= today;
+  };
+
+  // --- Drag & Drop Logik ---
   drop(event: CdkDragDrop<any[]>) {
+    // Reordering im Canvas
     if (event.previousContainer === event.container) {
-
       moveItemInArray(this.canvasQuestions, event.previousIndex, event.currentIndex);
-    } else {
-
-      const draggedItem = event.item.data;
-      //Yes/No Frage-> Model öffnen
-      if (draggedItem.type === 'yesno') {
-        this.openYesNoModal(draggedItem);
-        return;
-      }
-      //Multiple Choice Frage-> Modal öffnen
-      if (draggedItem.type === 'multiple') {
-        this.openMultipleChoiceModal(draggedItem);
-        return;
-      }
-      // Date Time Frage -> Modal öffnen
-      if (draggedItem.type === 'date') {
-        this.openDateTimeModal(draggedItem);
-        return;
-      }
-
-      // Drag & Drop Frage -> Modal öffnen
-      if (draggedItem.type === 'dragdrop') {
-        this.openDragDropModal(draggedItem);
-        return;
-      }
-
-      // Freitext Frage -> Modal öffnen
-      if (draggedItem.type === 'freitext') {
-        this.openFreitextModal(draggedItem);
-        return;
-      }
-      //Star-Rating Frage-> Modal öffnen
-      if (draggedItem.type === 'star') {
-        this.openStarRatingModal(draggedItem);
-        return;
-      }
-      //Skala-Slider Frage-> Modal öffnen
-      if (draggedItem.type === 'slider') {
-        this.openSliderModal(draggedItem);
-        return;
-      }
-      //Radio-Button Frage-> Modal öffnen
-      if (draggedItem.type === 'radio') {
-        this.openRadioModal(draggedItem);
-        return;
-      }
-
-      const copiedItem = {
-        ...draggedItem,
-        title: draggedItem.label,
-        editing: false
-      };
-      this.canvasQuestions.splice(event.currentIndex, 0, copiedItem);
+      return;
     }
+
+    // Aus der Palette auf den Canvas gezogen → passenden Dialog öffnen
+    const draggedItem = event.item.data;
+
+    if (draggedItem.type === 'yesno')    { this.openYesNoModal(draggedItem);    return; }
+    if (draggedItem.type === 'multiple') { this.openMultipleChoiceModal(draggedItem); return; }
+    if (draggedItem.type === 'date')     { this.openDateTimeModal(draggedItem); return; }
+    if (draggedItem.type === 'dragdrop') { this.openDragDropModal(draggedItem); return; }
+    if (draggedItem.type === 'freitext') { this.openFreitextModal(draggedItem); return; }
+    if (draggedItem.type === 'star')     { this.openStarRatingModal(draggedItem); return; }
+    if (draggedItem.type === 'slider')   { this.openSliderModal(draggedItem);   return; }
+    if (draggedItem.type === 'radio')    { this.openRadioModal(draggedItem);    return; }
+
+    // Fallback: einfache Kopie einfügen
+    const copiedItem = { ...draggedItem, title: draggedItem.label, editing: false };
+    this.canvasQuestions.splice(event.currentIndex, 0, copiedItem);
   }
 
-  // Yes/No Modal öffnen
+  // --- Dialog-Öffner ---
   openYesNoModal(questionData: any) {
-    const dialogRef = this.dialog.open(YesNoModalComponent, {
+    const ref = this.dialog.open(YesNoModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        options: ['Ja', 'Nein']
-      },
+      data: { ...questionData, title: '', text: '', options: ['Ja', 'Nein'] },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) this.canvasQuestions.push(result);
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
 
-  // Mehrfachauswahl Modal öffnen
   openMultipleChoiceModal(questionData: any) {
-    const dialogRef = this.dialog.open(MultipleChoiceModalComponent, {
+    const ref = this.dialog.open(MultipleChoiceModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        options: ['', '']
-      },
+      data: { ...questionData, title: '', text: '', options: ['', ''] },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) this.canvasQuestions.push(result);
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
 
-  // Datum / Uhrzeit Modal öffnen
   openDateTimeModal(questionData: any) {
-    const dialogRef = this.dialog.open(DateTimeModalComponent, {
+    const ref = this.dialog.open(DateTimeModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        required: false
-      },
+      data: { ...questionData, title: '', text: '', required: false },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) this.canvasQuestions.push(result);
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
-//Drag and Drop Modal öffnen
+
   openDragDropModal(questionData: any) {
-    const dialogRef = this.dialog.open(DragDropModalComponent, {
+    const ref = this.dialog.open(DragDropModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        items: ['Element 1', 'Element 2']
-      },
+      data: { ...questionData, title: '', text: '', items: ['Element 1', 'Element 2'] },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.canvasQuestions.push(result);
-      }
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
-//Freitext Modal öffnen
+
   openFreitextModal(questionData: any) {
-    const dialogRef = this.dialog.open(FreitextModalComponent, {
+    const ref = this.dialog.open(FreitextModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        placeholderText: ''
-      },
+      data: { ...questionData, title: '', text: '', placeholderText: '' },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.canvasQuestions.push(result);
-      }
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
-// Star-Rating modal öffnen
+
   openStarRatingModal(questionData: any) {
-    const dialogRef = this.dialog.open(StarRatingModalComponent, {
+    const ref = this.dialog.open(StarRatingModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        maxStars: 5
-      },
+      data: { ...questionData, title: '', text: '', maxStars: 5 },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.canvasQuestions.push(result);
-      }
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
-//Skala-Slider modal öffnen
+
   openSliderModal(questionData: any) {
-    const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
+    const ref = this.dialog.open(SkalaSliderModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
@@ -274,182 +232,97 @@ export class SurveyBuilderComponent {
       data: {
         ...questionData,
         title: questionData?.title || '',
-        text: questionData?.text || '',
-        min: questionData?.min ?? 0,
-        max: questionData?.max ?? 10,
-        step: questionData?.step ?? 1,
+        text:  questionData?.text  || '',
+        min:   questionData?.min  ?? 0,
+        max:   questionData?.max  ?? 10,
+        step:  questionData?.step ?? 1,
         thumbLabel: questionData?.thumbLabel ?? true,
         value: questionData?.value ?? questionData?.min ?? 0
       },
-      disableClose: true,
+      disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.canvasQuestions.push(result);
-      }
-    });
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
   }
-  //Radio-Buton Modal öffnen
+
   openRadioModal(questionData: any) {
-    const dialogRef = this.dialog.open(RadioModalComponent, {
+    const ref = this.dialog.open(RadioModalComponent, {
       width: '720px',
       maxWidth: '92vw',
       panelClass: 'pol-dialog',
       backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: '',
-        text: '',
-        options: ['Option 1', 'Option 2']
-      },
+      data: { ...questionData, title: '', text: '', options: ['Option 1', 'Option 2'] },
       disableClose: true
     });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.canvasQuestions.push(result);
-      }
+    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+  }
+  // === Gemeinsame Dialog-Optionen (Create + Edit) ===
+  private openDialogSame<T, D = any>(component: any, data: D) {
+    return this.dialog.open<T>(component, {
+      width: '720px',
+      maxWidth: '92vw',
+      panelClass: 'pol-dialog',
+      backdropClass: 'pol-backdrop',
+      data,
+      disableClose: true
     });
   }
 
-  // Frage bearbeiten
+
+  // --- Bearbeiten / Entfernen ---
   editQuestion(index: number) {
-    const question = this.canvasQuestions[index];
+    const q = this.canvasQuestions[index];
 
-    if (question.type === 'yesno') {
-      const dialogRef = this.dialog.open(YesNoModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) this.canvasQuestions[index] = result;
-      });
-    }
-
-    if (question.type === 'multiple') {
-      const dialogRef = this.dialog.open(MultipleChoiceModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) this.canvasQuestions[index] = result;
-      });
-    }
-
-    if (question.type === 'date') {
-      const dialogRef = this.dialog.open(DateTimeModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.canvasQuestions[index] = result;
-        }
-      });
-    }
-    if (question.type === 'dragdrop') {
-      const dialogRef = this.dialog.open(DragDropModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.canvasQuestions[index] = result;
-        }
-      });
-    }
-
-    if (question.type === 'freitext') {
-      const dialogRef = this.dialog.open(FreitextModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.canvasQuestions[index] = result;
-        }
-      });
-    }
-    if (question.type === 'star') {
-      const dialogRef = this.dialog.open(StarRatingModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.canvasQuestions[index] = result;
-        }
-      });
-      return;
-    }
-    if (question.type === 'slider') {
-      const dialogRef = this.dialog.open(SkalaSliderModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.canvasQuestions[index] = result;
-        }
-      });
+    if (q.type === 'yesno') {
+      this.openDialogSame(YesNoModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
       return;
     }
 
-    if (question.type === 'radio') {
-      const dialogRef = this.dialog.open(RadioModalComponent, {
-        width: '800px',
-        data: { ...question },
-        disableClose: true
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) this.canvasQuestions[index] = result;
-      });
+    if (q.type === 'multiple') {
+      this.openDialogSame(MultipleChoiceModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
       return;
     }
 
-    // Weitere Typen hier ergänzen
+    if (q.type === 'date') {
+      this.openDialogSame(DateTimeModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
+      return;
+    }
+
+    if (q.type === 'dragdrop') {
+      this.openDialogSame(DragDropModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
+      return;
+    }
+
+    if (q.type === 'freitext') {
+      this.openDialogSame(FreitextModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
+      return;
+    }
+
+    if (q.type === 'star') {
+      this.openDialogSame(StarRatingModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
+      return;
+    }
+
+    if (q.type === 'slider') {
+      this.openDialogSame(SkalaSliderModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
+      return;
+    }
+
+    if (q.type === 'radio') {
+      this.openDialogSame(RadioModalComponent, { ...q })
+        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = r; });
+      return;
+    }
   }
 
-  // Frage entfernen
+
   removeQuestion(index: number) {
     this.canvasQuestions.splice(index, 1);
   }
-  //Datetime Regeln
-  private startOfDay(d: Date | null | undefined): Date | null {
-    if (!d) return null;
-    const x = new Date(d);
-    x.setHours(0, 0, 0, 0);
-    return x;
-  }
-  get startMin(): Date {
-    const t = new Date();
-    t.setHours(0, 0, 0, 0);
-    return t;
-  }
-  get endMin(): Date {
-    return this.startOfDay(this.startDate) ?? this.startMin;
-  }
-  get endBeforeStart(): boolean {
-    const s = this.startOfDay(this.startDate);
-    const e = this.startOfDay(this.endDate);
-    return !!(s && e && e < s);
-  }
-  onStartChange(): void {
-    if (this.endBeforeStart) this.endDate = this.startDate;
-  }
-
 }

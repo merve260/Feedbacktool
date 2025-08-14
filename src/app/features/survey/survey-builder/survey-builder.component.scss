@@ -16,6 +16,54 @@ $background-light: #fef6ff;
   flex-wrap: wrap;
 }
 
+/* --- OBERES INFO-PANEL (NEU) --- */
+.info-panel {
+  background: #fff;
+  border: 1px dashed #CBBEF5;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.info-panel h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.info-panel ul {
+  margin: 0;
+  padding-left: 30px;
+}
+
+.survey-title-field {
+  margin-bottom: 20px;
+}
+
+.panel-title {
+  margin: 0 0 8px;
+  color: #4e2d9a;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.hint-box {
+  background:  #f8f5ff;
+  border: 1px solid #E6DBFB;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+
+  p { margin: 0 0 6px; }
+  ul { margin: 0; padding-left: 18px; }
+  li { margin: 4px 0; }
+}
+
+.info-form .full { width: 100%; }
+.range-row { display: flex; }
+.range-field { flex: 1; }
+
+
 .question-palette,
 .survey-canvas {
   flex: 1;
@@ -173,4 +221,5 @@ $background-light: #fef6ff;
 .date-selection mat-form-field {
   margin-bottom: 4px;
 }
+
 

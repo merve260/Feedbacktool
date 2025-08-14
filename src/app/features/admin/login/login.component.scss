@@ -1,0 +1,119 @@
+:root {
+  --lila: #6A3BFF;
+  --lila-2: #b47ac7;
+  --ink: #0b0b10;
+  --soft: #faf7ff;
+  --lila-strong: #4A1DFF;
+}
+
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  grid-template-rows: 1fr auto;
+  background: linear-gradient(180deg, #f5efff 0%, #efe5ff 46%, #ffffff 100%);
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+
+.hero h1 {
+  font-size: clamp(36px, 7.4vw, 80px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.hero h1 span {
+  display: block;
+  color: var(--lila);
+}
+
+.lead {
+  max-width: 840px;
+  color: #5c5f69;
+  font-size: clamp(16px, 2.1vw, 20px);
+}
+
+/* CTA butonları */
+.actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  border-radius: 999px !important;
+  padding: 12px 20px !important;
+  font-weight: 700 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.primary {
+  --mdc-filled-button-container-color: var(--lila) !important;
+  --mdc-filled-button-label-text-color: #fff !important;
+  box-shadow: 0 10px 24px rgba(130, 76, 255, .20);
+}
+
+.primary:hover {
+  box-shadow: 0 18px 40px rgba(130, 76, 255, .32);
+}
+
+.ghost {
+  --mdc-outlined-button-outline-color: var(--lila) !important;
+  --mdc-outlined-button-label-text-color: var(--lila) !important;
+  background: #fff;
+  border-color: rgba(130, 76, 255, .28) !important;
+}
+
+.ghost:hover {
+  background: rgba(130, 76, 255, .12);
+  box-shadow: 0 8px 22px rgba(130, 76, 255, .18);
+}
+
+/* Footer */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px dashed rgba(130, 76, 255, .25);
+  background: rgba(255, 255, 255, .7);
+  backdrop-filter: blur(2px);
+}
+
+.site-footer .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #5b5f69;
+}
+
+.site-footer nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.site-footer a {
+  color: #494b58;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}

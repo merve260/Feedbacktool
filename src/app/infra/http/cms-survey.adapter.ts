@@ -10,6 +10,10 @@ export class CmsSurveyAdapter implements SurveyBackend {
     private base: string // z.B: environment.apiBaseUrl
   ) {}
 
+  listQuestions(surveyId: string): Promise<Question[]> {
+        throw new Error('Method not implemented.');
+    }
+
   async createDraft(s: Partial<Survey>): Promise<string> {
     const r = await firstValueFrom(
       this.http.post<{ id: string }>(`${this.base}/surveys`, s)

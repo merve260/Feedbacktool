@@ -1,0 +1,40 @@
+<!-- Tam ekran landing -->
+<div class="landing">
+  <!-- Animasyonlu arka plan katmanları -->
+  <div class="bg bg-gradient"></div>
+  <div class="bg bg-stars"></div>
+
+  <!-- Orta içerik -->
+  <main class="hero">
+    <h1>
+      Umfragen in Minuten
+      <span>erstellen & teilen</span>
+    </h1>
+
+    <p class="lead">
+      Drag & Drop Builder · Datum-Range · Teilnehmer-Link · Auswertung
+    </p>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" class="btn primary" (click)="openAuth('login')">
+        <mat-icon>login</mat-icon> Login
+      </button>
+      <button mat-stroked-button class="btn ghost" (click)="openAuth('register')">
+        <mat-icon>person_add</mat-icon> Kostenlos registrieren
+      </button>
+    </div>
+  </main>
+
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© {{ currentYear }} Umfrage Tool</span>
+      <nav>
+        <a href="#" rel="nofollow">Impressum</a>
+        <a href="#" rel="nofollow">Datenschutz</a>
+        <a href="#" rel="nofollow">Kontakt</a>
+      </nav>
+    </div>
+  </footer>
+</div>

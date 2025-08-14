@@ -9,11 +9,11 @@ import localeDe from '@angular/common/locales/de';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 
-// Firebase / Firestore
+// Firebase
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
-import {provideHttpClient} from '@angular/common/http';
-
+import { provideAuth, getAuth } from '@angular/fire/auth';   // ⬅️ EKLE
+import { provideHttpClient } from '@angular/common/http';
 
 registerLocaleData(localeDe);
 
@@ -23,13 +23,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
 
-    // Locale
     { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
 
-    // Firebase + Firestore
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),                         // ⬅️ EKLE
   ],
 };
-
