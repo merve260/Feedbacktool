@@ -104,6 +104,9 @@
     </div>
   </div>
 </div>
+<button (click)="saveAll()" [disabled]="isSaving || infoForm.invalid || !canvasQuestions.length">
+  {{ isSaving ? 'Speichern…' : 'Umfrage speichern' }}
+</button>
 
 <!-- Publish-Bereich -->
 <app-survey-publish

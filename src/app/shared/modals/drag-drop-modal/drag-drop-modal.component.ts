@@ -37,7 +37,6 @@ import { MatInputModule } from '@angular/material/input';
     CdkDrag,
     MatFormFieldModule,
     MatInputModule,
-    ConfirmDialogComponent,
     CdkDragHandle
   ],
   templateUrl: './drag-drop-modal.component.html',

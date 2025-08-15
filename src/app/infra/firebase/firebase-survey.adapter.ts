@@ -1,20 +1,13 @@
 // src/app/infra/firebase/firebase-survey.adapter.ts
+import { Injectable } from '@angular/core';
 import {
-  Firestore,
-  collection,
-  doc,
-  addDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  query,
-  where,
-  serverTimestamp,
-  orderBy
+  Firestore, collection, doc, addDoc, getDoc, getDocs, updateDoc,
+  query, where, serverTimestamp, orderBy, Timestamp,
 } from '@angular/fire/firestore';
 import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question } from '../../core/models/survey.models';
 
+@Injectable({ providedIn: 'root' })
 export class FirebaseSurveyAdapter implements SurveyBackend {
   private surveysCol;
 
@@ -26,7 +19,10 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     const ref = await addDoc(this.surveysCol, {
       ownerId: s.ownerId!,
       title: s.title ?? 'Neue Umfrage',
+      description: s.description ?? null,
       status: 'draft',
+      startAt: null,
+      endAt: null,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -57,24 +53,24 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         ...d,
         startAt: d?.startAt?.toDate?.() ?? d?.startAt ?? null,
         endAt: d?.endAt?.toDate?.() ?? d?.endAt ?? null,
-      } as Survey;
-    });
+      } as Survey; });
   }
 
   async addQuestion(surveyId: string, q: Question): Promise<void> {
     const qCol = collection(this.db, `surveys/${surveyId}/questions`);
     await addDoc(qCol, {
       ...q,
+      order: (q as any)?.order ?? Date.now(),
       createdAt: serverTimestamp(),
     });
   }
 
-  async publish(surveyId: string, startAt: Date, endAt: Date): Promise<void> {
+  async publish(surveyId: string, start: Date, end: Date): Promise<void> {
     const ref = doc(this.db, 'surveys', surveyId);
     await updateDoc(ref, {
       status: 'published',
-      startAt,   // Date kabul edilir; okurken toDate? guard'ını zaten yaptık
-      endAt,
+      startAt: Timestamp.fromDate(start),
+      endAt: Timestamp.fromDate(end),
       updatedAt: serverTimestamp(),
     } as any);
   }
@@ -98,6 +94,4 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     const snaps = await getDocs(qy);
     return snaps.docs.map(d => ({ id: d.id, ...(d.data() as any) })) as Question[];
   }
-
-
 }

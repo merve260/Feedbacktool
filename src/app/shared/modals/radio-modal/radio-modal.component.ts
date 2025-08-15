@@ -21,8 +21,7 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatRadioModule,
-    ConfirmDialogComponent
+    MatRadioModule
   ]
 })
 export class RadioModalComponent {

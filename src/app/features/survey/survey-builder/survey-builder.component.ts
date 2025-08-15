@@ -31,6 +31,11 @@ import { StarRatingModalComponent } from '../../../shared/modals/star-rating-mod
 import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
 import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
 import { SurveyPublishComponent } from '../survey-publish/survey-publish.component';
+import { FirebaseSurveyService } from '../../../core/services/firebase-survey.service';
+import { Survey, Question } from '../../../core/models/survey.models';
+import {AuthService} from '../../../core/auth/auth.service';
+import {take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
 
 @Component({
   selector: 'app-survey-builder',
@@ -48,14 +53,9 @@ import { SurveyPublishComponent } from '../survey-publish/survey-publish.compone
     MatIconModule,
     MatDialogModule,
     MatSliderModule,
-    YesNoModalComponent,
-    MultipleChoiceModalComponent,
-    DateTimeModalComponent,
-    DragDropModalComponent,
-    FreitextModalComponent,
-    RadioModalComponent,
     SurveyPublishComponent
   ],
+
   templateUrl: './survey-builder.component.html',
   styleUrls: ['./survey-builder.component.scss']
 })
@@ -83,7 +83,10 @@ export class SurveyBuilderComponent {
     endDate: FormControl<Date | null>;
   }>;
 
-  constructor(private dialog: MatDialog, private fb: FormBuilder) {
+  constructor( private dialog: MatDialog,
+               private fb: FormBuilder,
+               private fbSurvey: FirebaseSurveyService,
+               private auth: AuthService) {
     this.infoForm = this.fb.group(
       {
         // Titel ist Pflichtfeld
@@ -95,6 +98,61 @@ export class SurveyBuilderComponent {
       { validators: this.dateRangeValidator }   // Enddatum >= Startdatum
     );
   }
+  isSaving = false;
+
+  async saveAll() {
+    if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
+      this.infoForm.markAllAsTouched();
+      alert('Bitte Titel, Zeitraum und mindestens eine Frage angeben.');
+      return;
+    }
+
+    this.isSaving = true;
+    try {
+      const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
+      if (!u) { alert('Bitte einloggen.'); return; }
+
+      const title = (this.titleCtrl.value || '').trim();
+      const start = this.startCtrl.value!;
+      const end   = this.endCtrl.value!;
+
+      const survey: Omit<Survey, 'id'> = {
+        ownerId: u.uid,
+        title,
+        description: undefined,
+        startAt: start,
+        endAt: end,
+        status: 'draft',
+      };
+
+      // Modal verisini Question modeline map et
+      const toQuestion = (q: any): Omit<Question, 'id'> => {
+        const base = { type: q.type, title: q.title, text: q.text } as Omit<Question,'id'>;
+        if (q.type === 'yesno' || q.type === 'multiple' || q.type === 'radio') {
+          return { ...base, options: q.options ?? [] };
+        }
+        if (q.type === 'slider') {
+          return { ...base, min: q.min ?? 0, max: q.max ?? 10, step: q.step ?? 1 };
+        }
+        return base; // star/date/dragdrop/freitext için şimdilik yeterli
+      };
+
+      // (İstersen sırayı da kaydetmek için: map((q,i)=>({...toQuestion(q), order: i+1})))
+      const questions: Omit<Question, 'id'>[] = this.canvasQuestions.map(toQuestion);
+
+      // Tek çağrıda anket + sorular
+      const surveyId = await this.fbSurvey.createSurveyWithQuestions(survey, questions);
+
+      alert('Umfrage gespeichert. (ID: ' + surveyId + ')');
+      console.log('Gespeichert:', surveyId);
+    } catch (e: any) {
+      console.error('SAVE ERROR -> code:', e?.code, 'message:', e?.message, 'raw:', e);
+      alert('Fehler: ' + (e?.code || e?.message || e));
+    } finally {
+      this.isSaving = false;
+    }
+  }
+
 
   // --- Komfort-Getter für Template ---
   get titleCtrl() { return this.infoForm.controls.title; }

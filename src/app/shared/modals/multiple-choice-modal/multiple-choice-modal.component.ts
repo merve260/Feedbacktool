@@ -20,7 +20,6 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatButtonModule,
     MatIconModule,
     MatCheckbox,
-    ConfirmDialogComponent
   ],
   templateUrl: './multiple-choice-modal.component.html',
   styleUrls: ['./multiple-choice-modal.component.scss']

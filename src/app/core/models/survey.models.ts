@@ -20,3 +20,10 @@ export interface Question {
   max?: number;
   step?: number;
 }
+export interface Answer {
+  id: string;
+  questionId: string;
+  respondentId: string;
+  value: string | number | string[];
+  answeredAt: Date;
+}
