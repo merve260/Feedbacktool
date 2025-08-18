@@ -32,6 +32,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { AuthService } from '../../../core/auth/auth.service';
+import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-layout',
@@ -39,11 +40,9 @@ import { AuthService } from '../../../core/auth/auth.service';
   imports: [
     // Router
     RouterOutlet, RouterLink, RouterLinkActive,
-    // Common/Utilities
     CommonModule, AsyncPipe, NgIf,
-    // Material
     MatSidenavModule, MatToolbarModule, MatIconModule, MatListModule,
-    MatButtonModule, MatMenuModule, MatDividerModule,
+    MatButtonModule, MatMenuModule, MatDividerModule, MatTooltip,
   ],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
@@ -54,6 +53,13 @@ export class AdminLayoutComponent {
 
   private router = inject(Router);
   private route  = inject(ActivatedRoute);
+  collapsed = JSON.parse(localStorage.getItem('adminSideCollapsed') || 'false');
+
+  toggleSide() {
+    this.collapsed = !this.collapsed;
+    localStorage.setItem('adminSideCollapsed', JSON.stringify(this.collapsed));
+  }
+
 
   // Seitentitel: lies data.title des tiefsten aktiven Child-Routes
   pageTitle$: Observable<string> = this.router.events.pipe(

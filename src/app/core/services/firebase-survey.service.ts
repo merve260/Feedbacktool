@@ -10,8 +10,9 @@ import {
   getDocs,
   query,
   orderBy,
+  updateDoc,
   CollectionReference,
-  DocumentReference,
+  DocumentReference, serverTimestamp,
 } from '@angular/fire/firestore';
 import { Timestamp, FirestoreDataConverter, writeBatch } from 'firebase/firestore';
 import { Survey, Question } from '../models/survey.models';
@@ -135,6 +136,10 @@ export class FirebaseSurveyService {
   ): Promise<string> {
     const surveyRef = doc(this.surveysCol());      // yeni ref
     await setDoc(surveyRef, survey as Survey);     // anketi yaz
+    await updateDoc(doc(this.firestore, this.rootColName, surveyRef.id), {
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    } as any);
 
     // Soruları yaz (converter + undefined filtreleme garanti)
     for (const q of questions ?? []) {
@@ -146,7 +151,11 @@ export class FirebaseSurveyService {
 
   // Umfrage mit fixer ID setzen / überschreiben
   async setSurveyWithId(id: string, s: Omit<Survey, 'id'>): Promise<void> {
-    await setDoc(this.surveyDoc(id), s as Survey);
+    await setDoc(this.surveyDoc(id), s as Survey, { merge: true });
+
+    await updateDoc(doc(this.firestore, this.rootColName, id), {
+      updatedAt: serverTimestamp(),
+    } as any);
   }
 
   // Einzelne Umfrage laden
@@ -183,7 +192,7 @@ export class FirebaseSurveyService {
     const batch = writeBatch(this.firestore as any);
 
     // 1) Umfrage (merge)
-    batch.set(this.surveyDoc(surveyId), survey as Survey);
+    batch.set(this.surveyDoc(surveyId), survey as Survey, {merge: true});
 
     // 2) Mevcut ID’ler
     const existingSnap = await getDocs(this.questionsCol(surveyId));
@@ -209,6 +218,10 @@ export class FirebaseSurveyService {
         batch.delete(this.questionDoc(surveyId, oldId));
       }
     }
+
+    batch.update(doc(this.firestore, this.rootColName, surveyId) as any, {
+      updatedAt: serverTimestamp(),
+    } as any);
 
     await batch.commit();
     return finalIds;

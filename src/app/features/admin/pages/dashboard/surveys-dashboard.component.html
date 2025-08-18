@@ -1,4 +1,18 @@
 <div class="toolbar">
+  <!-- Suchen -->
+  <div class="search">
+    <mat-icon>search</mat-icon>
+    <input
+      type="search"
+      placeholder="Suchen nach Titel…"
+      [(ngModel)]="search"
+      (input)="applyView()"
+      aria-label="Suche nach Titel" />
+    <button *ngIf="search" class="clear" (click)="clearSearch()" aria-label="Suche löschen">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
   <button class="btn btn-primary" (click)="create()">+ Erstellen</button>
 </div>
 
@@ -14,6 +28,16 @@
     <div>Titel</div>
     <div>Zeitraum</div>
     <div>Status</div>
+
+    <div class="th-sort"
+         role="button" tabindex="0"
+         (click)="toggleCreatedSort()"
+         (keydown.enter)="toggleCreatedSort()"
+         [attr.aria-sort]="sortDir==='desc' ? 'descending' : 'ascending'">
+      Erstellt am
+      <mat-icon class="caret" [class.asc]="sortDir==='asc'">arrow_drop_down</mat-icon>
+    </div>
+
     <div class="actions">Aktionen</div>
   </div>
 
@@ -25,15 +49,38 @@
       <span *ngIf="s.endAt as b">{{ b | date:'dd.MM.yyyy' }}</span>
     </div>
     <div><span class="{{ statusClass(s.status) }}">{{ s.status }}</span></div>
-
+    <div class="created">
+      <span *ngIf="s.createdAt as c">{{ c | date:'dd.MM.yyyy HH:mm' }}</span>
+      <span *ngIf="!s.createdAt">–</span>
+    </div>
 
     <div class="actions">
-      <button class="btn" (click)="edit(s)">Bearbeiten</button>
-      <button class="btn" *ngIf="s.status!=='published'" (click)="publish(s)">Veröffentlichen</button>
-      <button class="btn" *ngIf="s.status==='published'" (click)="unpublish(s)">Zurückziehen</button>
-      <button class="btn" (click)="close(s)">Schließen</button>
-      <button class="btn" (click)="duplicate(s)">Kopieren</button>
-      <button class="btn btn-danger" (click)="remove(s)">Löschen</button>
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Aktionen">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="edit(s)">
+          <mat-icon>edit</mat-icon>
+          <span>Bearbeiten</span>
+        </button>
+        <button mat-menu-item *ngIf="s.status!=='published'" (click)="publish(s)">
+          <mat-icon>publish</mat-icon>
+          <span>Veröffentlichen</span>
+        </button>
+        <button mat-menu-item *ngIf="s.status==='published'" (click)="unpublish(s)">
+          <mat-icon>undo</mat-icon>
+          <span>Zurückziehen</span>
+        </button>
+        <button mat-menu-item (click)="close(s)">
+          <mat-icon>lock</mat-icon>
+          <span>Schließen</span>
+        </button>
+        <button mat-menu-item (click)="remove(s)" class="warn">
+          <mat-icon>delete</mat-icon>
+          <span>Löschen</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 </div>

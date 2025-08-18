@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms'; // ⬅️ arama için
 
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -11,89 +12,101 @@ import { FirebaseSurveyService } from '../../../../core/services/firebase-survey
 import { Firestore, collection, query, where, orderBy, getDocs, doc, deleteDoc } from '@angular/fire/firestore';
 import { Survey, Question } from '../../../../core/models/survey.models';
 
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
 @Component({
   selector: 'app-surveys-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, MatMenuModule, MatIconModule, MatButtonModule],
   templateUrl: './surveys-dashboard.component.html',
   styleUrls: ['./surveys-dashboard.component.scss'],
 })
 export class SurveysDashboardComponent {
-  // Dienste injizieren
   private afs    = inject(Firestore);
-  public  auth   = inject(AuthService);               // template’te de kullanılacaksa public bırak
+  public  auth   = inject(AuthService);
   private fbSvc  = inject(FirebaseSurveyService);
   private router = inject(Router);
 
-  // UI-State
   loading = true;
-  items: Survey[] = [];
 
-  // ---------------------------------------
-  // Daten laden (nur Umfragen des angemeldeten Users)
-  // ---------------------------------------
+  /** tüm kayıtlar (ham veri) */
+  private allItems: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
+  /** görüntülenen (filtre + sort sonrası) */
+  items: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
+
+  /** arama metni */
+  search = '';
+
+  /** sıralama yönü: yeni→eski = 'desc', eski→yeni = 'asc' */
+  sortDir: 'desc' | 'asc' = 'desc';
+
   async ngOnInit(): Promise<void> {
     try {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) { this.loading = false; return; }
 
       const colRef = collection(this.afs, 'umfragen');
-
-      // Yeni şemaya uygun sıralama: startAt desc
-      const qy = query(
-        colRef,
-        where('ownerId', '==', u.uid),
-        orderBy('startAt', 'desc') as any
-      );
+      const qy = query(colRef, where('ownerId', '==', u.uid), orderBy('startAt', 'desc') as any);
 
       let snap;
       try {
         snap = await getDocs(qy);
-      } catch (err: any) {
-        // Muhtemel index hatası (failed-precondition): fallback → sıralamasız oku
-        console.warn('Index eksik, sıralamasız fallback çalışıyor:', err?.message || err);
-        const fallback = query(colRef, where('ownerId', '==', u.uid));
-        snap = await getDocs(fallback);
+      } catch {
+        snap = await getDocs(query(colRef, where('ownerId', '==', u.uid)));
       }
 
-      // Hem İngilizce hem Almanca alanları destekle
-      this.items = snap.docs.map(d => {
+      const toDate = (x: any): Date | undefined => x?.toDate?.() ? x.toDate() : (x ?? undefined);
+
+      this.allItems = snap.docs.map(d => {
         const data: any = d.data();
-        const title    = data.title ?? data.titel ?? '';
-        const desc     = data.description ?? data.beschreibung ?? undefined;
-        const startAny = data.startAt ?? data.beginn ?? null;
-        const endAny   = data.endAt   ?? data.ende   ?? null;
-
-        const startAt: Date | undefined =
-          startAny?.toDate?.() ? startAny.toDate() : (startAny ?? undefined);
-        const endAt: Date | undefined =
-          endAny?.toDate?.() ? endAny.toDate() : (endAny ?? undefined);
-
         return {
           id: d.id,
           ownerId: data.ownerId,
-          title,
-          description: desc,
-          startAt,
-          endAt,
-          status: data.status,
-        } as Survey;
+          title: data.title ?? data.titel ?? '',
+          description: data.description ?? data.beschreibung ?? undefined,
+          startAt: toDate(data.startAt ?? data.beginn ?? null),
+          endAt:   toDate(data.endAt   ?? data.ende   ?? null),
+          status:  data.status,
+          createdAt: toDate(data.createdAt ?? data.erstelltAt ?? null),
+          updatedAt: toDate(data.updatedAt ?? data.aktualisiertAt ?? null),
+        } as Survey & { createdAt?: Date; updatedAt?: Date };
       });
 
-      // Eğer fallback ile geldiysek, ekranda yine de yeni olan üstte görünsün:
-      this.items.sort((a, b) => {
-        const ax = a.startAt ? a.startAt.getTime() : 0;
-        const bx = b.startAt ? b.startAt.getTime() : 0;
-        return bx - ax;
-      });
-
+      this.applyView(); // ilk görünüm: filtre (boş) + sort
     } finally {
       this.loading = false;
     }
   }
 
+  /** Filtre + sıralamayı uygula */
+  applyView() {
+    const q = this.search.trim().toLowerCase();
+    let list = [...this.allItems];
 
-  // Status-Chip Klassen (einfaches Mapping)
+    if (q) list = list.filter(x => (x.title || '').toLowerCase().includes(q));
+
+    const factor = this.sortDir === 'desc' ? -1 : 1; // desc: yeni üstte
+    list.sort((a, b) => {
+      const aVal = a.createdAt?.getTime?.() ?? a.startAt?.getTime?.() ?? 0;
+      const bVal = b.createdAt?.getTime?.() ?? b.startAt?.getTime?.() ?? 0;
+      return (aVal - bVal) * factor;
+    });
+
+    this.items = list;
+  }
+
+  toggleCreatedSort() {
+    this.sortDir = this.sortDir === 'desc' ? 'asc' : 'desc';
+    this.applyView();
+  }
+
+  clearSearch() {
+    this.search = '';
+    this.applyView();
+  }
+
   statusClass(s: Survey['status']) {
     return {
       draft:     'chip chip--draft',
@@ -102,56 +115,44 @@ export class SurveysDashboardComponent {
     }[s];
   }
 
-  // Hilfsfunktion: Survey ohne id (für setSurveyWithId)
   private stripId(s: Survey): Omit<Survey, 'id'> {
     const { id, ...rest } = s;
     return rest;
   }
 
-  // ---------------------------------------
-  // Aktionen: veröffentlichen / zurückziehen / schließen
-  // ---------------------------------------
   async publish(s: Survey) {
     await this.fbSvc.setSurveyWithId(s.id, { ...this.stripId(s), status: 'published' });
     s.status = 'published';
   }
-
   async unpublish(s: Survey) {
     await this.fbSvc.setSurveyWithId(s.id, { ...this.stripId(s), status: 'draft' });
     s.status = 'draft';
   }
-
   async close(s: Survey) {
     await this.fbSvc.setSurveyWithId(s.id, { ...this.stripId(s), status: 'closed' });
     s.status = 'closed';
   }
 
-  // Kopieren: Umfrage + Fragen duplizieren (Status = Entwurf)
   async duplicate(s: Survey) {
     const qs = await this.fbSvc.getQuestions(s.id);
-
     const payload: Omit<Question, 'id'>[] = qs.map(q => {
       const { id, ...rest } = q as any;
       return rest as Omit<Question, 'id'>;
     });
-
     await this.fbSvc.createSurveyWithQuestions(
       { ...this.stripId(s), title: `${s.title} (Kopie)`, status: 'draft' },
       payload
     );
-
-    // Liste neu laden
-    await this.ngOnInit();
+    await this.ngOnInit(); // listeyi tazele
   }
 
-  // Löschen (mit einfacher Bestätigung)
   async remove(s: Survey) {
     if (!confirm(`„${s.title}“ wirklich löschen?`)) return;
     await deleteDoc(doc(this.afs, 'umfragen', s.id));
-    this.items = this.items.filter(x => x.id !== s.id);
+    this.allItems = this.allItems.filter(x => x.id !== s.id);
+    this.applyView();
   }
 
-  // Navigationen
   create()      { this.router.navigateByUrl('/admin/builder'); }
-  edit(_s: Survey) { this.router.navigateByUrl('/admin/builder'); } // (optional: /admin/builder?id=ID)
+  edit(_s: Survey) { this.router.navigateByUrl('/admin/builder'); }
 }
