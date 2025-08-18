@@ -37,32 +37,61 @@ export class SurveysDashboardComponent {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) { this.loading = false; return; }
 
-      const col = collection(this.afs, 'umfragen');
-      const qy  = query(
-        col,
+      const colRef = collection(this.afs, 'umfragen');
+
+      // Yeni şemaya uygun sıralama: startAt desc
+      const qy = query(
+        colRef,
         where('ownerId', '==', u.uid),
-        // Hinweis: Für ownerId+beginn kann Firestore ggf. einen Index verlangen
-        orderBy('beginn', 'desc')
+        orderBy('startAt', 'desc') as any
       );
 
-      const snap = await getDocs(qy);
+      let snap;
+      try {
+        snap = await getDocs(qy);
+      } catch (err: any) {
+        // Muhtemel index hatası (failed-precondition): fallback → sıralamasız oku
+        console.warn('Index eksik, sıralamasız fallback çalışıyor:', err?.message || err);
+        const fallback = query(colRef, where('ownerId', '==', u.uid));
+        snap = await getDocs(fallback);
+      }
 
+      // Hem İngilizce hem Almanca alanları destekle
       this.items = snap.docs.map(d => {
         const data: any = d.data();
+        const title    = data.title ?? data.titel ?? '';
+        const desc     = data.description ?? data.beschreibung ?? undefined;
+        const startAny = data.startAt ?? data.beginn ?? null;
+        const endAny   = data.endAt   ?? data.ende   ?? null;
+
+        const startAt: Date | undefined =
+          startAny?.toDate?.() ? startAny.toDate() : (startAny ?? undefined);
+        const endAt: Date | undefined =
+          endAny?.toDate?.() ? endAny.toDate() : (endAny ?? undefined);
+
         return {
           id: d.id,
           ownerId: data.ownerId,
-          title: data.titel,
-          description: data.beschreibung ?? undefined,
-          startAt: data.beginn?.toDate?.() ?? undefined,
-          endAt:   data.ende?.toDate?.()   ?? undefined,
-          status:  data.status,
+          title,
+          description: desc,
+          startAt,
+          endAt,
+          status: data.status,
         } as Survey;
       });
+
+      // Eğer fallback ile geldiysek, ekranda yine de yeni olan üstte görünsün:
+      this.items.sort((a, b) => {
+        const ax = a.startAt ? a.startAt.getTime() : 0;
+        const bx = b.startAt ? b.startAt.getTime() : 0;
+        return bx - ax;
+      });
+
     } finally {
       this.loading = false;
     }
   }
+
 
   // Status-Chip Klassen (einfaches Mapping)
   statusClass(s: Survey['status']) {
