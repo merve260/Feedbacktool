@@ -1,0 +1,7 @@
+.card { background:#fff; border:1px solid #ece8ff; border-radius:14px; padding:20px; max-width:600px; }
+h2 { margin-top:0; color:#2e236d; }
+.row { display:flex; gap:16px; padding:10px 0; border-bottom:1px solid #f2efff; }
+.row:last-child { border-bottom:none; }
+.label { min-width:140px; color:#6d63a8; }
+.actions { margin-top:16px; }
+.btn { padding:8px 12px; border-radius:10px; border:1px solid #ffd7de; background:#fff; color:#b1142c; cursor:pointer; }

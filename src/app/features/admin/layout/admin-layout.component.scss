@@ -1,0 +1,70 @@
+/* Grundlayout */
+.shell {
+  height: 100vh;
+  background: #fafafa;
+}
+
+.side {
+  width: 260px;
+  border-right: 1px solid rgba(0,0,0,0.06);
+  padding: 8px 0;
+}
+
+.side-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 8px 16px;
+  color: #673ab7; /* primary-like */
+  font-weight: 600;
+
+  .brand {
+    letter-spacing: .2px;
+  }
+}
+
+/* Aktiver Link hervorheben */
+a.active {
+  background: rgba(103, 58, 183, 0.08);
+}
+
+/* Topbar */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0 12px;
+}
+
+.page-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.flex-spacer {
+  flex: 1 1 auto;
+}
+
+/* Avatar-Button */
+.avatar-btn {
+  margin-left: 12px;
+
+  img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: block;
+  }
+}
+
+/* Inhaltsfläche */
+.content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: #fff;
+}
+
+.route-slot {
+  padding: 20px 24px 32px 24px;
+}

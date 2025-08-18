@@ -1,0 +1,39 @@
+<div class="toolbar">
+  <button class="btn btn-primary" (click)="create()">+ Erstellen</button>
+</div>
+
+<div *ngIf="loading" class="loading">Lade…</div>
+
+<div *ngIf="!loading && items.length === 0" class="empty">
+  <p>Es gibt noch keine Umfrage.</p>
+  <button class="btn" (click)="create()">Jetzt Erstellen!</button>
+</div>
+
+<div *ngIf="!loading && items.length > 0" class="list">
+  <div class="row head">
+    <div>Titel</div>
+    <div>Zeitraum</div>
+    <div>Status</div>
+    <div class="actions">Aktionen</div>
+  </div>
+
+  <div class="row" *ngFor="let s of items">
+    <div class="title">{{ s.title }}</div>
+    <div class="range">
+      <span *ngIf="s.startAt as a">{{ a | date:'dd.MM.yyyy' }}</span>
+      –
+      <span *ngIf="s.endAt as b">{{ b | date:'dd.MM.yyyy' }}</span>
+    </div>
+    <div><span class="{{ statusClass(s.status) }}">{{ s.status }}</span></div>
+
+
+    <div class="actions">
+      <button class="btn" (click)="edit(s)">Bearbeiten</button>
+      <button class="btn" *ngIf="s.status!=='published'" (click)="publish(s)">Veröffentlichen</button>
+      <button class="btn" *ngIf="s.status==='published'" (click)="unpublish(s)">Zurückziehen</button>
+      <button class="btn" (click)="close(s)">Schließen</button>
+      <button class="btn" (click)="duplicate(s)">Kopieren</button>
+      <button class="btn btn-danger" (click)="remove(s)">Löschen</button>
+    </div>
+  </div>
+</div>

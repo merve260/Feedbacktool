@@ -1,37 +1,48 @@
-// src/app/infra/http/cms-survey.adapter.ts
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question } from '../../core/models/survey.models';
 
+/**
+ * CMS-Adapter (HTTP):
+ * Tüm imzalar SurveyBackend ile birebir uyumlu.
+ */
 export class CmsSurveyAdapter implements SurveyBackend {
   constructor(
     private http: HttpClient,
-    private base: string // z.B: environment.apiBaseUrl
+    private base: string // z.B. environment.apiBaseUrl
   ) {}
-
-  listQuestions(surveyId: string): Promise<Question[]> {
-        throw new Error('Method not implemented.');
-    }
 
   async createDraft(s: Partial<Survey>): Promise<string> {
     const r = await firstValueFrom(
       this.http.post<{ id: string }>(`${this.base}/surveys`, s)
     );
-    return r.id;
+    return r?.id ?? crypto.randomUUID();
   }
 
-  getById(id: string): Promise<Survey> {
-    return firstValueFrom(this.http.get<Survey>(`${this.base}/surveys/${id}`));
+  async getById(id: string): Promise<Survey | null> {
+    try {
+      return await firstValueFrom(
+        this.http.get<Survey>(`${this.base}/surveys/${id}`)
+      );
+    } catch (e: any) {
+      // 404 → null döndür (diğer hataları ileri fırlatmak istersen yakalama)
+      return null;
+    }
   }
 
   listByOwner(ownerId: string): Promise<Survey[]> {
     const params = new HttpParams().set('ownerId', ownerId);
-    return firstValueFrom(this.http.get<Survey[]>(`${this.base}/surveys`, { params }));
+    return firstValueFrom(
+      this.http.get<Survey[]>(`${this.base}/surveys`, { params })
+    );
   }
 
-  addQuestion(id: string, q: Question): Promise<void> {
-    return firstValueFrom(this.http.post<void>(`${this.base}/surveys/${id}/questions`, q));
+  async addQuestion(id: string, q: Question): Promise<string> {
+    const r = await firstValueFrom(
+      this.http.post<{ id: string }>(`${this.base}/surveys/${id}/questions`, q)
+    );
+    return r?.id ?? crypto.randomUUID();
   }
 
   publish(id: string, s: Date, e: Date): Promise<void> {
@@ -43,12 +54,18 @@ export class CmsSurveyAdapter implements SurveyBackend {
     );
   }
 
+  listQuestions(surveyId: string): Promise<Question[]> {
+    return firstValueFrom(
+      this.http.get<Question[]>(`${this.base}/surveys/${surveyId}/questions`)
+    );
+  }
+
   async submitResponse(
     surveyId: string,
     payload: { name?: string; answers: any[] }
-  ): Promise<string> {
-
-    throw new Error('submitResponse is not implemented for CMS backend yet.');
+  ): Promise<void> {
+    await firstValueFrom(
+      this.http.post<void>(`${this.base}/surveys/${surveyId}/responses`, payload)
+    );
   }
-
 }

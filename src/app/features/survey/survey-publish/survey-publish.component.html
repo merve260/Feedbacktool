@@ -1,21 +1,35 @@
+<!-- src/app/features/survey/survey-publish/survey-publish.component.html -->
 <div class="publish-actions">
+  <!-- Entwurf -->
+  <button
+    mat-stroked-button
+    color="primary"
+    (click)="onDraft()"
+    [disabled]="!isReady() || busy">
+    Entwurf speichern
+  </button>
+
+  <!-- Veröffentlichen -->
   <button
     mat-raised-button
     color="primary"
-    [disabled]="!isReady() || publishing"
-    (click)="publishSurvey()"
-  >
+    [disabled]="!isReady() || busy"
+    (click)="publishSurvey()">
     {{ publishing ? 'Veröffentlichen...' : 'Umfrage veröffentlichen' }}
   </button>
+
+  <!-- Hinweise -->
   <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
   <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
   <div class="note" *ngIf="canvasQuestions.length === 0"></div>
 
+  <!-- Fehleranzeige -->
   <div *ngIf="errorMsg" class="error-message" style="margin-top:8px;">
     <mat-icon>error_outline</mat-icon>
     {{ errorMsg }}
   </div>
 
+  <!-- Link nach erfolgreichem Publish -->
   <div *ngIf="linkVisible" class="link-section" id="linkSection">
     <strong>Umfragelink:</strong>
     <a [href]="getSurveyLink()" target="_blank">{{ getSurveyLink() }}</a>
@@ -23,8 +37,7 @@
       mat-icon-button
       (click)="copyLinkToClipboard()"
       matTooltip="Link kopieren"
-      matTooltipPosition="right"
-    >
+      matTooltipPosition="right">
       <mat-icon>content_copy</mat-icon>
     </button>
   </div>
@@ -35,8 +48,7 @@
     *ngIf="linkVisible"
     mat-stroked-button
     color="accent"
-    (click)="goToViewer()"
-  >
+    (click)="goToViewer()">
     Umfrage anzeigen
   </button>
 </div>

@@ -69,21 +69,28 @@ export class SurveyViewerComponent implements OnInit {
     this.answers = [];
 
     try {
-      // Anket başlığı + meta
+      // 1) Umfrage laden → kann null sein!
       const survey = await this.surveyService.getById(id);
-      // Sorular (order’a göre)
+      if (!survey) {
+        this.errorMsg = 'Diese Umfrage existiert nicht oder ist nicht mehr verfügbar.';
+        this.loading = false;
+        return;
+      }
+
+      // 2) Fragen laden (geordnet)
       const questions = await this.surveyService.listQuestions(id);
 
+      // 3) View-Model befüllen (hier ist survey garantiert vorhanden)
       this.surveyData = {
         title: survey.title ?? 'Umfrage',
         questions: questions ?? []
       };
 
-      // Cevap dizisini hazırla (slider’lar için min ya da 1 ile başla)
-      this.answers = (this.surveyData.questions || []).map((q: any) => {
-        if (q?.type === 'slider') return q?.min ?? 1;
-        return null;
-      });
+      // 4) Antwort-Array initialisieren (Slider z. B. mit min oder 1)
+      this.answers = this.surveyData.questions.map((q: any) =>
+        q?.type === 'slider' ? (q?.min ?? 1) : null
+      );
+
     } catch (e: any) {
       console.error(e);
       this.errorMsg = e?.message || 'Umfrage konnte nicht geladen werden.';

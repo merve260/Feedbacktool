@@ -19,6 +19,12 @@ export interface Question {
   min?: number;
   max?: number;
   step?: number;
+  placeholderText?: string;
+  maxStars?: number;
+  items?: string[];
+  startPlaceholder?: string;
+  endPlaceholder?:string;
+  thumbLabel?: boolean;
 }
 export interface Answer {
   id: string;

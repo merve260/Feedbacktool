@@ -1,0 +1,96 @@
+<!--
+  Admin-Shell Layout
+  - Linke Navigation (Sidenav) mit Bereichen
+  - Obere Toolbar mit Seitentitel, „Erstellen“-Button und User-Menü
+  - Router-Outlet rendert die jeweilige Unterseite
+-->
+
+<mat-sidenav-container class="shell">
+  <!-- Linke Seitenleiste -->
+  <mat-sidenav mode="side" opened class="side" aria-label="Admin Navigation">
+    <div class="side-header">
+      <mat-icon>insert_chart</mat-icon>
+      <span class="brand">Umfrage-Tool</span>
+    </div>
+
+    <mat-nav-list>
+      <!-- Dashboard / Liste der Umfragen -->
+      <a mat-list-item
+         routerLink="/admin/umfragen"
+         routerLinkActive="active"
+         aria-label="Meine Umfragen">
+        <mat-icon matListIcon>assignment</mat-icon>
+        <span>Meine Umfragen</span>
+      </a>
+
+      <!-- Ergebnisse & Analytics -->
+      <a mat-list-item
+         routerLink="/admin/ergebnisse"
+         routerLinkActive="active"
+         aria-label="Umfrage Ergebnisse und Analytics">
+        <mat-icon matListIcon>insights</mat-icon>
+        <span>Umfrage Ergebnisse &amp; Analytics</span>
+      </a>
+
+      <mat-divider></mat-divider>
+
+      <!-- Profil -->
+      <a mat-list-item
+         routerLink="/admin/profil"
+         routerLinkActive="active"
+         aria-label="Profil bearbeiten">
+        <mat-icon matListIcon>person</mat-icon>
+        <span>Profil bearbeiten</span>
+      </a>
+
+      <!-- Logout -->
+      <a mat-list-item (click)="logout()" aria-label="Ausloggen">
+        <mat-icon matListIcon>logout</mat-icon>
+        <span>Ausloggen</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Rechte Inhaltsfläche -->
+  <mat-sidenav-content class="content">
+    <!-- Obere Leiste mit dynamischem Seitentitel und Aktionen -->
+    <mat-toolbar color="primary" class="topbar">
+      <!-- Titel aus den Routen-Data (pageTitle$ wird in TS erzeugt) -->
+      <div class="page-title">{{ pageTitle$ | async }}</div>
+
+      <span class="flex-spacer"></span>
+
+
+      <!-- Benutzer-Avatar und Menü -->
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="userMenu"
+        class="avatar-btn"
+        aria-label="Benutzer-Menü">
+        <!-- Wenn der Nutzer ein Profilbild hat, zeige es -->
+        <img
+          *ngIf="(auth.user$ | async)?.photoURL as photo"
+          [src]="photo"
+          alt="Avatar" />
+        <!-- Sonst Standard-Icon -->
+        <mat-icon *ngIf="!(auth.user$ | async)?.photoURL">account_circle</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/admin/profil">
+          <mat-icon>person</mat-icon>
+          <span>Profil bearbeiten</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Ausloggen</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <!-- Inhalt der Unterseiten -->
+    <div class="route-slot">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

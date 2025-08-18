@@ -1,0 +1,9 @@
+<div class="card" *ngIf="user$ | async as u">
+  <h2>Profil</h2>
+  <div class="row"><span class="label">E-Mail</span><span>{{ u.email }}</span></div>
+  <div class="row"><span class="label">Name</span><span>{{ u.displayName || '—' }}</span></div>
+
+  <div class="actions">
+    <button class="btn btn-danger" (click)="logout()">Ausloggen</button>
+  </div>
+</div>
