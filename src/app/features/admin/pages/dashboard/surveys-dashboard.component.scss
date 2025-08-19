@@ -160,20 +160,16 @@ button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
 .search .clear:hover { background:#f6f4ff; }
 
 
-@media (max-width: 1360px) {
+@media (max-width: 1024px) {
   .list { max-width: 960px; }
   .row {
-    display: grid;
     grid-template-columns:
-    minmax(280px, 1fr)   /* Titel */
-    fit-content(200px)   /* Zeitraum */
-    fit-content(100px)   /* Status */
-    fit-content(200px)   /* Erstellt am */
-    44px;                /* Aktionen */
-    gap: 10px;
-    align-items: center;
-    padding: 10px 14px;
-    border-top: 1px solid #f2efff;
+      minmax(160px, 1fr)   /* Titel küçülür */
+      minmax(100px, 1fr)   /* Zeitraum */
+      minmax(80px, 1fr)    /* Status */
+      minmax(120px, 1fr)   /* Erstellt am */
+      36px;                /* Aktionen */
+    gap: 8px;
   }
   button[mat-icon-button] { width:30px; height:30px; }
   .chip {
@@ -191,5 +187,32 @@ button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
 .warn{
   color: #c30d0d;
 }
+@media (max-width: 768px) {
+  .row.head {
+    display: none !important;
+  }
+
+  .row:not(.head) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "range"
+      "status"
+      "created"
+      "actions";
+    gap: 6px;
+    padding: 12px;
+    border: 1px solid #ece8ff;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  .title   { grid-area: title; font-weight: 600; font-size: 1rem; }
+  .range   { grid-area: range; font-size: 0.9rem; color: #555; }
+  .chip    { grid-area: status; }
+  .created { grid-area: created; font-size: 0.85rem; color: #777; }
+  .actions { grid-area: actions; justify-content: flex-start; }
+}
+
 
 
