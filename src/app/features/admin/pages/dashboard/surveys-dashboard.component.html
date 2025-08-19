@@ -63,15 +63,15 @@
           <mat-icon>edit</mat-icon>
           <span>Bearbeiten</span>
         </button>
-        <button mat-menu-item *ngIf="s.status!=='published'" (click)="publish(s)">
+        <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">
           <mat-icon>publish</mat-icon>
           <span>Veröffentlichen</span>
         </button>
-        <button mat-menu-item *ngIf="s.status==='published'" (click)="unpublish(s)">
+        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='closed'" (click)="unpublish(s)">
           <mat-icon>undo</mat-icon>
           <span>Zurückziehen</span>
         </button>
-        <button mat-menu-item (click)="close(s)">
+        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='draft' " (click)="close(s)">
           <mat-icon>lock</mat-icon>
           <span>Schließen</span>
         </button>
