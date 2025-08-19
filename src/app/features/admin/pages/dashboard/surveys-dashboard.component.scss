@@ -1,12 +1,4 @@
-/* =========================================================
-   Surveys-Dashboard – KOMPakt görünüm (sütunlar dar)
-   Amaç:
-   - Tablo toplam genişliğini sınırla (taşma olmasın)
-   - Sütun aralarını ve paddings’i küçült
-   - „Titel“ esnek, diğer sütunlar dar kalsın
-   ========================================================= */
 
-/* ===== Toolbar & Buttons ===== */
 .toolbar {
   display: flex;
   flex-direction: column;   /* arama ÜSTTE, buton ALTA */
@@ -47,7 +39,6 @@
 .btn-primary { background:#6b4cff; color:#fff; border-color:#6b4cff; }
 .btn-danger  { color:#b1142c; border-color:#ffd7de; }
 
-/* ===== Liste (TABLO GENİŞLİĞİNİ KISITLA) ===== */
 .loading, .empty { padding: 40px; text-align: center; color: #6d63a8; }
 
 .list {
@@ -70,31 +61,26 @@
   text-overflow: ellipsis;
 }
 
-/* ===== Spalten-Layout (DAR) =====
-   5 sütun: Titel | Zeitraum | Status | Erstellt am | Aktionen
-   - Titel kalan alanı alsın (1fr)
-   - Diğerleri dar: fit-content ile ÜST SINIR koy
-*/
+
 .row {
   display: grid;
   grid-template-columns:
-    minmax(240px, 0.5fr)   /* Titel */
-    fit-content(160px)   /* Zeitraum  */
-    fit-content(84px)    /* Status  */
-    fit-content(170px)   /* Erstellt am  */
-    38px;
-  gap: 80px;
+    minmax(240px, 1fr)
+    minmax(120px, 160px)
+    minmax(70px, 90px)
+    minmax(140px, 170px)
+    40px;
+  gap: 120px;
   align-items: center;
   padding: 11px 10px;
-  border-top: 1px solid #f2efff;
-}
+  border-top: 1px solid #f2efff; }
 
 
 @supports not (width: fit-content(100%)) {
   .row {
     grid-template-columns:
       minmax(240px, 1fr)
-      minmax(120px, 160px)
+      minmax(160px, 220px)
       minmax(64px, 84px)
       minmax(140px, 170px)
       38px;
@@ -111,7 +97,7 @@
   top: 0;
   z-index: 1;
   padding: 9px 10px;
-  gap: 6px;
+  gap: 120px;
 }
 
 
@@ -149,7 +135,7 @@ button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
   background:rgba(177,20,44,0.08) !important;
 }
 
-/* ===== Sıralama & Arama ===== */
+
 .th-sort { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
 .caret { transition: transform .15s ease; }
 .caret.asc { transform: rotate(180deg); }
