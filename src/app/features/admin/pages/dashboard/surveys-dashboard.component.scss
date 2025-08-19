@@ -18,6 +18,10 @@
 .toolbar .search {
   width: 100%;
   max-width: 360px;
+  border-color: #500b7c;
+}
+.toolbar .search:hover {
+  background-color: #f8f3f8;
 }
 
 .toolbar .btn {
