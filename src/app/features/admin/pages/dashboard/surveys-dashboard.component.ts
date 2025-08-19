@@ -15,6 +15,8 @@ import { Survey, Question } from '../../../../core/models/survey.models';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
 
 @Component({
   selector: 'app-surveys-dashboard',
@@ -28,6 +30,7 @@ export class SurveysDashboardComponent {
   public  auth   = inject(AuthService);
   private fbSvc  = inject(FirebaseSurveyService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   loading = true;
 
@@ -74,7 +77,7 @@ export class SurveysDashboardComponent {
         } as Survey & { createdAt?: Date; updatedAt?: Date };
       });
 
-      this.applyView(); // ilk görünüm: filtre (boş) + sort
+      this.applyView(); // ilk görünüm
     } finally {
       this.loading = false;
     }
@@ -147,12 +150,24 @@ export class SurveysDashboardComponent {
   }
 
   async remove(s: Survey) {
-    if (!confirm(`„${s.title}“ wirklich löschen?`)) return;
-    await deleteDoc(doc(this.afs, 'umfragen', s.id));
-    this.allItems = this.allItems.filter(x => x.id !== s.id);
-    this.applyView();
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      disableClose: true,
+      data: {
+        message: `"${s.title}" wirklich löschen?`,
+        confirmText: 'Löschen',
+        cancelText: 'Abbrechen'
+      }
+    });
+
+    ref.afterClosed().subscribe(async result => {
+      if (result) {
+        await deleteDoc(doc(this.afs, 'umfragen', s.id));
+        this.allItems = this.allItems.filter(x => x.id !== s.id);
+        this.applyView();
+      }
+    });
   }
 
-  create()      { this.router.navigateByUrl('/admin/builder'); }
+  create()         { this.router.navigateByUrl('/admin/builder'); }
   edit(_s: Survey) { this.router.navigateByUrl('/admin/builder'); }
 }

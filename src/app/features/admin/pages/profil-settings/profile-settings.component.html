@@ -1,9 +1,26 @@
 <div class="card" *ngIf="user$ | async as u">
   <h2>Profil</h2>
-  <div class="row"><span class="label">E-Mail</span><span>{{ u.email }}</span></div>
-  <div class="row"><span class="label">Name</span><span>{{ u.displayName || '—' }}</span></div>
+
+  <form [formGroup]="form" class="profile-form">
+    <div class="row">
+      <span class="label">E-Mail</span>
+      <span>{{ u.email }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Name</span>
+      <input formControlName="displayName" placeholder="Name eingeben" />
+    </div>
+  </form>
 
   <div class="actions">
-    <button class="btn btn-danger" (click)="logout()">Ausloggen</button>
+    <button class="btn btn-primary"
+            [disabled]="!form.dirty"
+            (click)="saveProfile()">
+      Speichern
+    </button>
+    <button class="btn btn-danger" (click)="logout()">
+      Ausloggen
+    </button>
   </div>
 </div>

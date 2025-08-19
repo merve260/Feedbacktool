@@ -6,6 +6,7 @@ import { SurveyPublishComponent } from './features/survey/survey-publish/survey-
 import { SurveyViewerComponent } from './features/survey/survey-viewer/survey-viewer.component';
 
 import { AuthGuard } from './core/auth/auth.guard';
+import { UnsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 // Admin layout + pages
 import { AdminLayoutComponent } from './features/admin/layout/admin-layout.component';
@@ -15,26 +16,32 @@ import { ProfileSettingsComponent } from './features/admin/pages/profil-settings
 
 export const routes: Routes = [
 
+  // Public routes
   { path: 'login', component: LoginComponent },
 
-
+  // Survey builder & publish
   { path: 'admin/builder', canActivate: [AuthGuard], component: SurveyBuilderComponent },
   { path: 'admin/publish/:id', canActivate: [AuthGuard], component: SurveyPublishComponent },
 
-
+  // Admin routes
   {
     path: 'admin',
     canActivate: [AuthGuard],
     component: AdminLayoutComponent,
     children: [
-      { path: '', redirectTo: 'umfragen', pathMatch: 'full' }, // ← default dashboard
+      { path: '', redirectTo: 'umfragen', pathMatch: 'full' },
       { path: 'umfragen',   component: SurveysDashboardComponent, data: { title: 'Meine Umfragen' } },
       { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'Umfrage Ergebnisse & Analytics' } },
-      { path: 'profil',     component: ProfileSettingsComponent,  data: { title: 'Profil bearbeiten' } },
+      {
+        path: 'profil',
+        component: ProfileSettingsComponent,
+        canDeactivate: [UnsavedChangesGuard],
+        data: { title: 'Profil bearbeiten' }
+      },
     ],
   },
 
-
+  // Survey viewer (public link)
   { path: 'survey/:id', component: SurveyViewerComponent },
 
   // Homepage → dashboard
