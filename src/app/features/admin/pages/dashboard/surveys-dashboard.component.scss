@@ -1,12 +1,34 @@
+/* =========================================================
+   Surveys-Dashboard – KOMPakt görünüm (sütunlar dar)
+   Amaç:
+   - Tablo toplam genişliğini sınırla (taşma olmasın)
+   - Sütun aralarını ve paddings’i küçült
+   - „Titel“ esnek, diğer sütunlar dar kalsın
+   ========================================================= */
+
 /* ===== Toolbar & Buttons ===== */
 .toolbar {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  flex-direction: column;   /* arama ÜSTTE, buton ALTA */
+  align-items: flex-start;  /* sola hizala */
+  gap: 10px;                /* araları aç */
+  margin-bottom: 16px;
 }
 
+.toolbar .search {
+  width: 100%;
+  max-width: 360px;
+}
+
+.toolbar .btn {
+  align-self: flex-start;
+  width: 110px;
+  height: 40px;
+  font-size: 0.99rem;
+}
+.toolbar .btn:hover {
+  background-color: #5e388e;
+}
 .btn {
   padding: 8px 12px;
   border-radius: 10px;
@@ -15,64 +37,104 @@
   color: #2e236d;
   cursor: pointer;
 }
-.btn:hover { background: #f6f4ff; }          /* eski hover rengi */
+.btn:hover { background: #f6f4ff; }
 
-/* Varyantlar */
+/* Varianten */
 .btn-primary { background:#6b4cff; color:#fff; border-color:#6b4cff; }
 .btn-danger  { color:#b1142c; border-color:#ffd7de; }
 
-/* ===== Liste ===== */
+/* ===== Liste (TABLO GENİŞLİĞİNİ KISITLA) ===== */
 .loading, .empty { padding: 40px; text-align: center; color: #6d63a8; }
 
 .list {
   background: #fff;
   border: 1px solid #ece8ff;
   border-radius: 14px;
-  overflow: hidden;
+  overflow: auto;
+  max-width: 1250px;
+  margin: 0;
+  font-size: 1.20rem;
+  box-sizing: border-box;
+  align-content: normal;
 }
 
-/* 5 sütun: Titel | Zeitraum | Status | Erstellt am | Aktionen */
+/* Metin taşmasın, başlık esnek kalsın */
+.title, .range, .created {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Spalten-Layout (DAR) =====
+   5 sütun: Titel | Zeitraum | Status | Erstellt am | Aktionen
+   - Titel kalan alanı alsın (1fr)
+   - Diğerleri dar: fit-content ile ÜST SINIR koy
+*/
 .row {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 140px 1fr 56px;
-  gap: 12px;
+  grid-template-columns:
+    minmax(240px, 1fr)   /* Titel (esnek, min 240px) */
+    fit-content(160px)   /* Zeitraum (max ~160px) */
+    fit-content(84px)    /* Status (chip kadar) */
+    fit-content(170px)   /* Erstellt am (tarih kadar) */
+    38px;                /* Aktionen (ikon) */
+  gap: 6px;              /* sütunlar arası boşluk ↓ */
   align-items: center;
-  padding: 12px 14px;
+  padding: 8px 10px;     /* satır iç boşluk ↓ */
   border-top: 1px solid #f2efff;
 }
 
+/* fit-content desteklenmiyorsa: emniyetli dar aralıklar */
+@supports not (width: fit-content(100%)) {
+  .row {
+    grid-template-columns:
+      minmax(240px, 1fr)
+      minmax(120px, 160px)
+      minmax(64px, 84px)
+      minmax(140px, 170px)
+      38px;
+  }
+}
+
+/* Başlık satırı da kompakt */
 .row.head {
   background: #f7f5ff;
   font-weight: 700;
   color: #2e236d;
   border-top: none;
+  position: sticky; top: 0; z-index: 1;
+  padding: 9px 10px;
+  gap: 6px;
 }
 
 .title { font-weight: 600; color: #2e236d; }
+.actions { display: flex; gap: 6px; justify-content: flex-end; }
 
-.actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-
-.chip { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+/* Küçük chip – status sütunu dar kalsın */
+.chip {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.1;
+}
 .chip--draft  { background:#fff6d8; color:#8a6b00; }
 .chip--pub    { background:#e8fff1; color:#0c7b37; }
 .chip--closed { background:#ffe8e8; color:#9a1b1b; }
 
 .created { color:#6d63a8; }
 
-/* doğru attribute adı */
-button[mat-icon-button] { width:36px; height:36px; border-radius:999px; }
+/* Küçük ikon buton */
+button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
 
-/* ===== Menü: panel beyaz, 'Löschen' kırmızı ===== */
+/* ===== Menü görünümü ===== */
 :host ::ng-deep .mat-mdc-menu-panel,
 :host ::ng-deep .mat-mdc-menu-content {
   background-color:#ffffff !important;
   border-radius:12px;
 }
-
 :host ::ng-deep .mat-mdc-menu-item.warn .mdc-list-item__primary-text,
-:host ::ng-deep .mat-mdc-menu-item.warn .mat-icon {
-  color:#b1142c !important;
-}
+:host ::ng-deep .mat-mdc-menu-item.warn .mat-icon { color:#b1142c !important; }
 :host ::ng-deep .mat-mdc-menu-item.warn:hover,
 :host ::ng-deep .mat-mdc-menu-item.warn.cdk-program-focused,
 :host ::ng-deep .mat-mdc-menu-item.warn.cdk-focused {
@@ -80,17 +142,15 @@ button[mat-icon-button] { width:36px; height:36px; border-radius:999px; }
 }
 
 /* ===== Sıralama & Arama ===== */
-.th-sort {
-  display:flex; align-items:center; gap:6px;
-  cursor:pointer; user-select:none;
-}
+.th-sort { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
 .caret { transition: transform .15s ease; }
 .caret.asc { transform: rotate(180deg); }
 
 .search {
-  display:flex; align-items:center; gap:6px;
+  display:flex; margin: 10px; gap:6px;
   border:1px solid #ece8ff; background:#fff; border-radius:10px;
-  padding:6px 10px; min-width:240px;
+  padding:6px 10px; min-width:220px; max-width:320px; width:90%;
+
 }
 .search input {
   border:none; outline:none; width:200px; background:transparent;
@@ -102,7 +162,30 @@ button[mat-icon-button] { width:36px; height:36px; border-radius:999px; }
 .search input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance: none; appearance: none; display: none;
 }
-.search .clear {
-  background:transparent; border:none; border-radius:8px; padding:2px; cursor:pointer;
-}
+.search .clear { background:transparent; border:none; border-radius:8px; padding:2px; cursor:pointer; }
 .search .clear:hover { background:#f6f4ff; }
+
+
+@media (max-width: 1360px) {
+  .list { max-width: 960px; }
+  .row {
+    display: grid;
+    grid-template-columns:
+    minmax(280px, 1fr)   /* Titel */
+    fit-content(200px)   /* Zeitraum */
+    fit-content(100px)   /* Status */
+    fit-content(200px)   /* Erstellt am */
+    44px;                /* Aktionen */
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    border-top: 1px solid #f2efff;
+  }
+  button[mat-icon-button] { width:30px; height:30px; }
+  .chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+  } }

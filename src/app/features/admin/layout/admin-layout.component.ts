@@ -1,21 +1,14 @@
 // AdminLayoutComponent
 // --------------------
-// Diese Shell umschließt alle Admin-Unterseiten.
-// - Linke Sidenav mit Navigation (Meine Umfragen, Ergebnisse, Profil, Logout)
-// - Obere Toolbar mit dynamischem Seitentitel und "Erstellen"-Button
-// - <router-outlet> rendert die jeweilige Unterseite
-//
-// Hinweis: Der Seitentitel wird aus den Routen-Daten (data.title) des jeweils
-//          tiefsten aktiven Child-Routes gelesen.
+// Shell für alle Admin-Seiten (ohne Collapse-Logik).
+// - Linke Sidenav (Navigation)
+// - Obere Toolbar (Titel + User-Menü)
+// - Router-Outlet für den Seiteninhalt
 
 import { Component, inject } from '@angular/core';
 import {
-  Router,
-  ActivatedRoute,
-  NavigationEnd,
-  RouterOutlet,
-  RouterLink,
-  RouterLinkActive,
+  Router, ActivatedRoute, NavigationEnd,
+  RouterOutlet, RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { filter, map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -32,7 +25,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { AuthService } from '../../../core/auth/auth.service';
-import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-admin-layout',
@@ -40,28 +32,23 @@ import {MatTooltip} from '@angular/material/tooltip';
   imports: [
     // Router
     RouterOutlet, RouterLink, RouterLinkActive,
+    // Common
     CommonModule, AsyncPipe, NgIf,
+    // Material
     MatSidenavModule, MatToolbarModule, MatIconModule, MatListModule,
-    MatButtonModule, MatMenuModule, MatDividerModule, MatTooltip,
+    MatButtonModule, MatMenuModule, MatDividerModule,
   ],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent {
-  // AuthService öffentlich machen, damit das Template auf user$ zugreifen kann
+  // AuthService öffentlich, damit das Template auf user$ zugreifen kann
   public auth = inject(AuthService);
 
   private router = inject(Router);
   private route  = inject(ActivatedRoute);
-  collapsed = JSON.parse(localStorage.getItem('adminSideCollapsed') || 'false');
 
-  toggleSide() {
-    this.collapsed = !this.collapsed;
-    localStorage.setItem('adminSideCollapsed', JSON.stringify(this.collapsed));
-  }
-
-
-  // Seitentitel: lies data.title des tiefsten aktiven Child-Routes
+  // Seitentitel aus der tiefsten aktiven Child-Route lesen
   pageTitle$: Observable<string> = this.router.events.pipe(
     filter(e => e instanceof NavigationEnd),
     map(() => {
@@ -69,13 +56,12 @@ export class AdminLayoutComponent {
       while (r.firstChild) r = r.firstChild;
       return r.snapshot.data?.['title'] ?? 'Meine Umfragen';
     }),
-    // Beim ersten Laden bereits einen Wert liefern
     startWith(this.route.snapshot.firstChild?.data?.['title'] ?? 'Meine Umfragen')
   );
 
-  // Logout und zurück zur Login-Seite navigieren
+  // Logout und zur Login-Seite
   async logout(): Promise<void> {
     await this.auth.logout();
-    await this.router.navigateByUrl('/login'); // Falls dein Login unter /admin liegt, entsprechend anpassen
+    await this.router.navigateByUrl('/login');
   }
 }

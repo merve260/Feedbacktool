@@ -1,54 +1,48 @@
 <!--
-  Admin-Shell Layout
-  - Linke Navigation (Sidenav) mit Bereichen
-  - Obere Toolbar mit Seitentitel, „Erstellen“-Button und User-Menü
-  - Router-Outlet rendert die jeweilige Unterseite
+  Admin-Shell Layout (ohne Collapse)
+  - Linke Sidenav mit Navigation
+  - Obere Toolbar mit Seitentitel und User-Menü
+  - Rechts der Inhaltsbereich (Router-Outlet)
 -->
 <mat-sidenav-container class="shell">
-  <mat-sidenav mode="side" opened class="side" [class.collapsed]="collapsed" aria-label="Admin Navigation">
-
+  <!-- Linke Sidebar -->
+  <mat-sidenav mode="side" opened class="side" aria-label="Admin Navigation">
     <div class="side-shell">
-      <!-- logo + daralt/genişlet -->
+      <!-- Kopfbereich / Marke -->
       <div class="side-header">
         <div class="brand">
           <mat-icon>insert_chart</mat-icon>
           <span class="brand-text">Umfrage-Tool</span>
         </div>
-
-        <button mat-icon-button class="collapse-btn"
-                (click)="toggleSide()"
-                [matTooltip]="collapsed ? 'Erweitern' : 'Einklappen'">
-          <mat-icon>{{ collapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
-        </button>
       </div>
 
-      <!-- üst menü -->
+      <!-- Hauptnavigation -->
       <nav class="nav">
-        <a mat-list-item routerLink="/admin/umfragen" routerLinkActive="active"
-           [matTooltip]="collapsed ? 'Meine Umfragen' : ''">
+        <a mat-list-item routerLink="/admin/umfragen" routerLinkActive="active">
           <mat-icon matListIcon>assignment</mat-icon>
           <span class="label">Meine Umfragen</span>
         </a>
 
-        <a mat-list-item routerLink="/admin/ergebnisse" routerLinkActive="active"
-           [matTooltip]="collapsed ? 'Umfrage Ergebnisse & Analytics' : ''">
+        <a mat-list-item routerLink="/admin/ergebnisse" routerLinkActive="active">
+        <span class="label">
           <mat-icon matListIcon>insights</mat-icon>
-          <span class="label">Umfrage Ergebnisse &amp; Analytics</span>
+           Umfrage Ergebnisse &<br>Analytics
+        </span>
         </a>
+
       </nav>
 
-      <!-- boşluk: alttakileri dibe iter -->
+      <!-- Platzhalter schiebt das untere Menü nach ganz unten -->
       <div class="spacer"></div>
 
-      <!-- ALT MENÜ (hep en altta) -->
+      <!-- Unteres Menü (immer am Fuß, linksbündig) -->
       <nav class="bottom">
-        <a mat-list-item routerLink="/admin/profil" routerLinkActive="active"
-           [matTooltip]="collapsed ? 'Profil bearbeiten' : ''">
+        <a mat-list-item routerLink="/admin/profil" routerLinkActive="active">
           <mat-icon matListIcon>person</mat-icon>
           <span class="label">Profil bearbeiten</span>
         </a>
 
-        <a mat-list-item (click)="logout()" [matTooltip]="collapsed ? 'Ausloggen' : ''">
+        <a mat-list-item (click)="logout()">
           <mat-icon matListIcon>logout</mat-icon>
           <span class="label">Ausloggen</span>
         </a>
@@ -58,26 +52,19 @@
 
   <!-- Rechte Inhaltsfläche -->
   <mat-sidenav-content class="content">
-    <!-- Obere Leiste mit dynamischem Seitentitel und Aktionen -->
     <mat-toolbar color="primary" class="topbar">
-      <!-- Titel aus den Routen-Data (pageTitle$ wird in TS erzeugt) -->
+      <!-- Seitentitel aus den Routen-Data -->
       <div class="page-title">{{ pageTitle$ | async }}</div>
 
       <span class="flex-spacer"></span>
 
-
-      <!-- Benutzer-Avatar und Menü -->
+      <!-- Benutzer-Avatar + Menü -->
       <button
         mat-icon-button
         [matMenuTriggerFor]="userMenu"
         class="avatar-btn"
         aria-label="Benutzer-Menü">
-        <!-- Wenn der Nutzer ein Profilbild hat, zeige es -->
-        <img
-          *ngIf="(auth.user$ | async)?.photoURL as photo"
-          [src]="photo"
-          alt="Avatar" />
-        <!-- Sonst Standard-Icon -->
+        <img *ngIf="(auth.user$ | async)?.photoURL as photo" [src]="photo" alt="Avatar" />
         <mat-icon *ngIf="!(auth.user$ | async)?.photoURL">account_circle</mat-icon>
       </button>
 
@@ -93,7 +80,7 @@
       </mat-menu>
     </mat-toolbar>
 
-    <!-- Inhalt der Unterseiten -->
+    <!-- Router-Outlet rendert die Unterseiten -->
     <div class="route-slot">
       <router-outlet></router-outlet>
     </div>

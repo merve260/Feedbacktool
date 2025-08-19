@@ -1,48 +1,128 @@
-/* ===== Shell & Content ===== */
-.shell { height: 100vh; background:#fafafa; }
-.content { min-height:100%; background:#fff; display:flex; flex-direction:column; }
+/* =========================================================
+   Admin-Layout (ohne Collapse) – Plazz-ähnliche Optik
+   - Saubere Sidebar mit "Button"-artigen Einträgen
+   - Untere Optionen (Profil/Ausloggen) fest am Fuß, linksbündig
+   - Obere Toolbar sticky
+   ========================================================= */
 
-.topbar { position:sticky; top:0; z-index:10; padding:0 12px; }
-.page-title { font-size:1.1rem; font-weight:600; }
-.flex-spacer { flex:1 1 auto; }
-.avatar-btn img { width:28px; height:28px; border-radius:50%; display:block; }
+/* ---------- Design-Tokens ---------- */
+$primary:     #6b4cff;
+$ink-900:     #2e236d;
+$ink-700:     #6d63a8;
+$line:        rgba(0,0,0,.06);
+$soft:        #f6f4ff;
+$soft-strong: #ede9fe;
+$bg:          #fafafa;
+$white:       #fff;
+$side-w:      260px;
+
+/* ===== Shell & Content ===== */
+.shell { height: 100vh; background: $bg; }
+
+.content {
+  min-height: 100%;
+  background: $white;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar { position: sticky; top: 0; z-index: 10; padding: 0 12px; }
+.page-title { font-size: 1.1rem; font-weight: 600; color: $white; }
+.flex-spacer { flex: 1 1 auto; }
+
+/* Avatar-Bild im Menüknopf */
+.avatar-btn img { width: 28px; height: 28px; border-radius: 50%; display: block; }
+
+/* Inhaltsabstände */
 .route-slot { padding: 20px 24px 32px 24px; }
 
 /* ===== Sidenav ===== */
 .side {
-  width: 260px;
-  border-right: 1px solid rgba(0,0,0,0.06);
+  width: $side-w;
+  border-right: 1px solid $line;
   padding: 8px 0;
-  display:flex;                   /* içeride flex kolon kuracağız */
+  display: flex;                /* Flex-Kolonne im Inneren */
+  background: #fbfbff;
 }
 
+/* Flex-Kolonne auf volle Höhe */
 .side-shell {
-  display:flex; flex-direction:column;
-  height:100%; width:100%;
+  display: flex; flex-direction: column;
+  height: 100%; width: 100%;
 }
 
+/* Kopf (Logo/Marke) */
 .side-header {
-  display:flex; align-items:center; gap:10px;
-  padding:12px 16px 8px 16px;
-  color:#673ab7; font-weight:600;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px 8px 16px;
+  color: $primary; font-weight: 600;
 }
-.side-header .brand { letter-spacing:.2px; }
+.side-header .brand { display: flex; align-items: center; gap: 8px; }
+.side-header .brand-text { letter-spacing: .2px; white-space: nowrap; }
 
-/* üst menü, alt menü ve itici boşluk */
-.nav    { display:flex; flex-direction:column; gap:2px; padding: 0 8px; }
-.bottom { display:flex; flex-direction:column; gap:2px; padding: 0 8px; }
-.spacer { flex: 1 1 auto; }          /* alt menüyü dibe iter */
+/* Navigationsbereiche */
+.nav    { display: flex; flex-direction: column; gap: 30px; padding: 20px 8px; font-size: 18px}
+.bottom { display: flex; flex-direction: column; gap: 2px; padding: 20px 8px; }
+.spacer { flex: 1 1 auto; }   /* drückt .bottom an den Rand */
 
-/* aktif link vurgusu ve hover */
-.side a[mat-list-item],
-.side a[mat-list-item].active,
-.side a[mat-list-item]:hover,
-.side a[mat-list-item]:focus {
+
+/* ===== Einträge: wie Buttons, nicht wie Links ===== */
+.side a[mat-list-item] {
+  text-decoration: none;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  color: $ink-900;
+  font-weight: 500;
+}
+
+/* Icon + Label harmonisch anordnen */
+.side a[mat-list-item] .mdc-list-item__content,
+.side a[mat-list-item] .mdc-list-item__primary-text {
+  display: flex; align-items: center; gap: 12px;
+}
+
+/* Material-Icon im Listeneintrag */
+.side .mat-icon[matListIcon] { font-size: 22px; line-height: 1; opacity: .95; margin-left: 2px; }
+
+/* Hover/Active-Zustände */
+.side a[mat-list-item]:hover  { background: $soft; }
+.side a[mat-list-item].active { background: $soft-strong; }
+
+/* Lange Labels mit Ellipsis kürzen */
+.label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Untere Optionen linksbündig */
+.bottom a[mat-list-item] { justify-content: flex-start; }
+
+/* ===== Feinheiten für Menü-Panel ===== */
+:host ::ng-deep .mat-mdc-menu-panel,
+:host ::ng-deep .mat-mdc-menu-content {
+  background-color: $white !important;
   border-radius: 12px;
 }
-.side a[mat-list-item].active { background: rgba(103,58,183,.08); }
-.side .mat-mdc-list-item:hover { background:#f6f4ff; }
 
-/* çökme (collapsed) için yazı gizle – basit sürüm */
-.side.collapsed .brand-text,
-.side.collapsed .label { display:none; }
+/* ===== Sidenav-Container – Layout-Sicherheit ===== */
+/* Höhe und Layer sicherstellen; Overflow unverändert lassen */
+:host ::ng-deep .mat-sidenav-container,
+:host ::ng-deep .mat-drawer-container {
+  height: 100vh;
+  background: transparent;
+}
+
+:host ::ng-deep .mat-sidenav-content {
+  display: block;
+  width: 100%;
+  position: relative;
+  z-index: 1;           /* Inhalt oben */
+  background: $white;
+}
+
+/* Sidebar selbst unter dem Inhalt-Layer (aber ist links, daher ok) */
+.side { z-index: 0; }
+.page-title{
+  color: $ink-900;
+  font-size: 23px;
+}
