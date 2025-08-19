@@ -60,9 +60,10 @@
   font-size: 1.20rem;
   box-sizing: border-box;
   align-content: normal;
+
 }
 
-/* Metin taşmasın, başlık esnek kalsın */
+
 .title, .range, .created {
   white-space: nowrap;
   overflow: hidden;
@@ -77,18 +78,18 @@
 .row {
   display: grid;
   grid-template-columns:
-    minmax(240px, 1fr)   /* Titel (esnek, min 240px) */
-    fit-content(160px)   /* Zeitraum (max ~160px) */
-    fit-content(84px)    /* Status (chip kadar) */
-    fit-content(170px)   /* Erstellt am (tarih kadar) */
-    38px;                /* Aktionen (ikon) */
-  gap: 6px;              /* sütunlar arası boşluk ↓ */
+    minmax(240px, 0.5fr)   /* Titel */
+    fit-content(160px)   /* Zeitraum  */
+    fit-content(84px)    /* Status  */
+    fit-content(170px)   /* Erstellt am  */
+    38px;
+  gap: 80px;
   align-items: center;
-  padding: 8px 10px;     /* satır iç boşluk ↓ */
+  padding: 11px 10px;
   border-top: 1px solid #f2efff;
 }
 
-/* fit-content desteklenmiyorsa: emniyetli dar aralıklar */
+
 @supports not (width: fit-content(100%)) {
   .row {
     grid-template-columns:
@@ -100,21 +101,24 @@
   }
 }
 
-/* Başlık satırı da kompakt */
+
 .row.head {
   background: #f7f5ff;
   font-weight: 700;
   color: #2e236d;
   border-top: none;
-  position: sticky; top: 0; z-index: 1;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: 9px 10px;
   gap: 6px;
 }
 
-.title { font-weight: 600; color: #2e236d; }
-.actions { display: flex; gap: 6px; justify-content: flex-end; }
 
-/* Küçük chip – status sütunu dar kalsın */
+.title { font-weight: 600; color: #2e236d; }
+.actions { display: flex; gap: 6px; justify-content: flex-end;  }
+
+
 .chip {
   padding: 3px 8px;
   border-radius: 999px;
@@ -128,7 +132,7 @@
 
 .created { color:#6d63a8; }
 
-/* Küçük ikon buton */
+
 button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
 
 /* ===== Menü görünümü ===== */
@@ -157,7 +161,7 @@ button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
 
 }
 .search input {
-  border:none; outline:none; width:200px; background:transparent;
+  border:none; outline:none; width:300px; background:transparent;
   font:inherit; color:#2e236d;
 }
 .search input[type="search"]::-webkit-search-cancel-button,
@@ -193,3 +197,13 @@ button[mat-icon-button] { width:32px; height:32px; border-radius:999px; }
     font-weight: 600;
     line-height: 1.2;
   } }
+::ng-deep .mat-mdc-menu-panel {
+  background-color: #ffffff !important;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.warn{
+  color: #c30d0d;
+}
+
+
