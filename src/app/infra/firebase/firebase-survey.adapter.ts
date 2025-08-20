@@ -13,6 +13,10 @@ import {
   orderBy,
   serverTimestamp,
   Timestamp,
+  deleteDoc,
+  addDoc,
+  CollectionReference,
+  DocumentReference
 } from '@angular/fire/firestore';
 import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question } from '../../core/models/survey.models';
@@ -31,17 +35,22 @@ function omitUndefined<T extends object>(obj: T): Partial<T> {
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseSurveyAdapter implements SurveyBackend {
-  constructor(private db: Firestore) {}
 
-  // Lazy referans yardımcıları (constructor'da collection tutmuyoruz)
+  // default koleksiyon adları
+  private readonly rootColName = 'umfragen';
+  private readonly subColName  = 'fragen';
+
+  constructor(private firestore: Firestore) {}
+
+  // Lazy referans yardımcıları
   private surveysCol() {
-    return collection(this.db, 'umfragen');
+    return collection(this.firestore, this.rootColName);
   }
   private questionsCol(surveyId: string) {
-    return collection(this.db, `umfragen/${surveyId}/fragen`);
+    return collection(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}`);
   }
   private responsesCol(surveyId: string) {
-    return collection(this.db, `umfragen/${surveyId}/responses`);
+    return collection(this.firestore, `${this.rootColName}/${surveyId}/responses`);
   }
 
   async createDraft(s: Partial<Survey>): Promise<string> {
@@ -63,7 +72,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async getById(id: string): Promise<Survey | null> {
-    const ref = doc(this.db, 'umfragen', id);
+    const ref = doc(this.firestore, this.rootColName, id);
     const snap = await getDoc(ref);
     if (!snap.exists()) return null;
 
@@ -97,7 +106,6 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async addQuestion(surveyId: string, q: Question): Promise<string> {
-    // Diziler boşsa yazmıyoruz; undefined'lar tamamen atılıyor
     const options =
       Array.isArray(q.options) && q.options.length ? q.options : undefined;
     const items =
@@ -106,8 +114,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         : undefined;
 
     const payload = omitUndefined({
-      // id asla yazma
-      type: (q as any).type ?? (q as any)['typ'] ?? q['type'],
+      type: (q as any).type ?? q['type'],
       title: q.title,
       text: q.text,
       options,
@@ -130,7 +137,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async publish(surveyId: string, start: Date, end: Date): Promise<void> {
-    const ref = doc(this.db, 'umfragen', surveyId);
+    const ref = doc(this.firestore, this.rootColName, surveyId);
     await updateDoc(ref, {
       status: 'published',
       startAt: Timestamp.fromDate(start),
@@ -150,6 +157,30 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
       submittedAt: serverTimestamp(),
     } as any);
   }
+
+  async updateSurveyWithQuestions(
+    surveyId: string,
+    s: Omit<Survey, 'id'>,
+    questions: Array<Omit<Question, 'id'> & { id?: string }>
+  ): Promise<void> {
+    // 1. Survey dokümanını güncelle
+    const surveyRef = doc(this.firestore, this.rootColName, surveyId);
+    await setDoc(surveyRef, s, { merge: true });
+
+    // 2. Eski soruları sil
+    const qCol = this.questionsCol(surveyId);
+    const existing = await getDocs(qCol);
+    for (const d of existing.docs) {
+      await deleteDoc(d.ref);
+    }
+
+    // 3. Yeni soruları ekle
+    for (const q of questions) {
+      const { id, ...rest } = q;
+      await addDoc(qCol, rest);  // id'siz kaydediyoruz
+    }
+  }
+
 
   async listQuestions(surveyId: string): Promise<Question[]> {
     const qy = query(this.questionsCol(surveyId), orderBy('order', 'asc'));

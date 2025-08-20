@@ -3,6 +3,7 @@
   <h2 class="panel-title">Umfrage-Info</h2>
 
   <!-- Statischer Hinweis (kein Input) -->
+  <div class="builder-actions" *ngIf="showActions">
   <div class="hint-box">
     <p><strong>Hinweise zur Veröffentlichung:</strong></p>
     <ul>
@@ -10,6 +11,7 @@
       <li>Nach dem Veröffentlichen erhalten Sie im Admin-Bereich einen Teilnehmer-Link. Diesen Link können Sie mit den Teilnehmern teilen.</li>
       <li>Sie können Ihre Umfrage später im Admin-Bereich erneut öffnen und bearbeiten (Titel, Zeitraum, Fragen).</li>
     </ul>
+  </div>
   </div>
 
   <!-- Formular: Titel + Date-Range -->
@@ -112,5 +114,6 @@
   [endDate]="endDate"
   [canvasQuestions]="canvasQuestions"
   (draftRequested)="goToDashboard()"
-  (publishRequested)="goToDashboard()">
+  (publishRequested)="goToDashboard()"
+  [showActions]="showActions"
 ></app-survey-publish>

@@ -1,3 +1,5 @@
+// src/app/core/services/survey.service.ts
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Firestore } from '@angular/fire/firestore';
@@ -21,9 +23,11 @@ export class SurveyService {
         ? new FirebaseSurveyAdapter(this.firestore)
         : new CmsSurveyAdapter(this.http, environment.apiBaseUrl);
   }
+
   listQuestions(surveyId: string) {
     return this.backend.listQuestions(surveyId);
   }
+
   submitResponse(surveyId: string, payload: { name?: string; answers: any[] }) {
     return this.backend.submitResponse(surveyId, payload);
   }
@@ -33,4 +37,14 @@ export class SurveyService {
   listByOwner(ownerId: string)                 { return this.backend.listByOwner(ownerId); }
   addQuestion(surveyId: string, q: Question)   { return this.backend.addQuestion(surveyId, q); }
   publish(surveyId: string, s: Date, e: Date)  { return this.backend.publish(surveyId, s, e); }
+
+
+  updateSurveyWithQuestions(
+    surveyId: string,
+    survey: Omit<Survey, 'id'>,
+    questions: Array<Omit<Question, 'id'> & { id?: string }>
+  ) {
+
+    return this.backend.updateSurveyWithQuestions(surveyId, survey, questions);
+  }
 }

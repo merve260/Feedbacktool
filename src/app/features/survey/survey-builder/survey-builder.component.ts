@@ -1,8 +1,8 @@
 // src/app/features/survey/survey-builder/survey-builder.component.ts
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Input,Output, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import {
   FormsModule,
@@ -61,7 +61,31 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './survey-builder.component.html',
   styleUrls: ['./survey-builder.component.scss']
 })
-export class SurveyBuilderComponent {
+export class SurveyBuilderComponent implements OnInit {
+
+  @Input() title: string = '';
+  @Input() startDate?: Date;
+  @Input() endDate?: Date;
+  @Input() questions: Question[] = [];
+  @Input() showActions: boolean = true;
+
+  @Output() titleChange = new EventEmitter<string>();
+  @Output() startDateChange = new EventEmitter<Date>();
+  @Output() endDateChange = new EventEmitter<Date>();
+  @Output() questionsChange = new EventEmitter<Question[]>();
+
+  // örnek: builder içinde title değiştiğinde emit et
+  onTitleChange(newTitle: string) {
+    this.title = newTitle;
+    this.titleChange.emit(this.title);
+  }
+
+  onQuestionsUpdate(newList: Question[]) {
+    this.questions = newList;
+    this.questionsChange.emit(this.questions);
+  }
+
+
   // --- Linke Palette: verfügbare Fragetypen ---
   questionTypes = [
     { type: 'yesno',    label: 'Ja / Nein' },
@@ -82,6 +106,7 @@ export class SurveyBuilderComponent {
     title: FormControl<string>;
     startDate: FormControl<Date | null>;
     endDate: FormControl<Date | null>;
+    description: FormControl<string | null>;
   }>;
 
   constructor(
@@ -90,21 +115,50 @@ export class SurveyBuilderComponent {
     private fbSurvey: FirebaseSurveyService,
     private auth: AuthService,
     private router: Router,
+    private route: ActivatedRoute
   ) {
     this.infoForm = this.fb.group(
       {
         title: this.fb.nonNullable.control<string>('', { validators: [Validators.required] }),
         startDate: this.fb.control<Date | null>(null, { validators: [Validators.required] }),
         endDate:   this.fb.control<Date | null>(null, { validators: [Validators.required] }),
+        description: this.fb.nonNullable.control<string | null>(null)
       },
       { validators: this.dateRangeValidator }
     );
   }
-
+  isEditMode = false;
   isSaving = false;
   currentSurveyId: string | null = null;
 
-  // --- Canvas'taki itemi Question modeline map'le ---
+  async ngOnInit() {
+    // ID aus der URL lesen (wenn vorhanden → Edit-Modus)
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (id) {
+      this.currentSurveyId = id;
+
+      // Umfrage + Fragen aus Firestore laden
+      const survey = await this.fbSurvey.getSurveyWithQuestions(id);
+
+      if (survey) {
+        // Formular mit vorhandenen Daten befüllen
+        this.infoForm.patchValue({
+          title:       survey.title,
+          description: survey.description ?? null,
+          startDate:   survey.startAt ?? null,
+          endDate:     survey.endAt   ?? null
+        });
+
+        // Gespeicherte Fragen in das Canvas laden
+        this.canvasQuestions = survey.questions ?? [];
+
+        // Flag setzen → wir sind im Bearbeiten-Modus
+        this.isEditMode = true;
+      }
+    }
+  }
+
   private toQuestion = (q: any): Omit<Question, 'id'> & { id?: string } => {
     const base: any = { id: q.id, type: q.type, title: q.title, text: q.text };
 
@@ -193,7 +247,7 @@ export class SurveyBuilderComponent {
 
       alert(status === 'published' ? 'Umfrage veröffentlicht.' : 'Entwurf gespeichert.');
 
-      // ✅ dashboard'a dönüş
+
       await this.router.navigateByUrl('/admin/umfragen');
 
     } catch (e: any) {
@@ -216,8 +270,9 @@ export class SurveyBuilderComponent {
   get endCtrl()   { return this.infoForm.controls.endDate; }
 
   get surveyTitle(): string    { return this.titleCtrl.value; }
-  get startDate(): Date | null { return this.startCtrl.value; }
-  get endDate(): Date | null   { return this.endCtrl.value; }
+  get startDateValue(): Date | null { return this.startCtrl.value; }
+  get endDateValue(): Date | null   { return this.endCtrl.value; }
+
 
   // --- Validator ---
   private dateRangeValidator = (group: AbstractControl): ValidationErrors | null => {

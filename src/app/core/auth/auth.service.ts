@@ -9,8 +9,12 @@ export class AuthService {
   user$ = user(this.auth);                         // Firebase User-Stream
   isAuthenticated$ = this.user$.pipe(map(u => !!u));
 
+  get userId(): string | null {
+    return this.auth.currentUser?.uid ?? null;
+  }
+
   login(email: string, password: string) {
-    // E-Mail/Passwort Login
+
     return signInWithEmailAndPassword(this.auth, email, password);
   }
 

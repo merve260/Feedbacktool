@@ -1,32 +1,36 @@
 <!-- src/app/features/survey/survey-publish/survey-publish.component.html -->
 <div class="publish-actions">
-  <!-- Entwurf -->
-  <button
-    mat-stroked-button
-    color="primary"
-    (click)="onDraft()"
-    [disabled]="!isReady() || busy">
-    Entwurf speichern
-  </button>
 
-  <!-- Veröffentlichen -->
-  <button
-    mat-raised-button
-    color="primary"
-    [disabled]="!isReady() || busy"
-    (click)="publishSurvey()">
-    {{ publishing ? 'Veröffentlichen...' : 'Umfrage veröffentlichen' }}
-  </button>
+  <!-- CREATE-MODUS -->
+  <div class="builder-actions" *ngIf="showActions">
+    <button
+      mat-stroked-button
+      color="primary"
+      (click)="onDraft()"
+      [disabled]="!isReady() || busy">
+      Entwurf speichern
+    </button>
 
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!isReady() || busy"
+      (click)="publishSurvey()">
+      {{ publishing ? 'Veröffentlichen...' : 'Umfrage veröffentlichen' }}
+    </button>
+  </div>
+
+  <div class="builder-actions" *ngIf="showActions">
   <!-- Hinweise -->
   <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
   <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
-  <div class="note" *ngIf="canvasQuestions.length === 0"></div>
+  <div class="note" *ngIf="canvasQuestions.length === 0">Mindestens eine Frage hinzufügen.</div>
 
   <!-- Fehleranzeige -->
-  <div *ngIf="errorMsg" class="error-message" style="margin-top:8px;">
+  <div *ngIf="errorMsg" class="error-message">
     <mat-icon>error_outline</mat-icon>
     {{ errorMsg }}
+  </div>
   </div>
 
   <!-- Link nach erfolgreichem Publish -->

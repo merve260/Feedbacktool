@@ -1,9 +1,3 @@
-// AdminLayoutComponent
-// --------------------
-// Shell für alle Admin-Seiten (ohne Collapse-Logik).
-// - Linke Sidenav (Navigation)
-// - Obere Toolbar (Titel + User-Menü)
-// - Router-Outlet für den Seiteninhalt
 
 import { Component, inject } from '@angular/core';
 import {

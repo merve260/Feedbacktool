@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // ⬅️ arama için
+import {Router, RouterLink} from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
@@ -17,11 +17,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
+import {MatTooltip} from '@angular/material/tooltip';
+
 
 @Component({
   selector: 'app-surveys-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatMenuModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatMenuModule, MatIconModule, MatButtonModule, RouterLink, MatTooltip],
   templateUrl: './surveys-dashboard.component.html',
   styleUrls: ['./surveys-dashboard.component.scss'],
 })
@@ -31,6 +33,9 @@ export class SurveysDashboardComponent {
   private fbSvc  = inject(FirebaseSurveyService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+
+
+
 
   loading = true;
 
@@ -60,7 +65,8 @@ export class SurveysDashboardComponent {
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid)));
       }
 
-      const toDate = (x: any): Date | undefined => x?.toDate?.() ? x.toDate() : (x ?? undefined);
+      const toDate = (x: any): Date | undefined =>
+        x?.toDate?.() ? x.toDate() : (x ?? undefined);
 
       this.allItems = snap.docs.map(d => {
         const data: any = d.data();
@@ -168,6 +174,13 @@ export class SurveysDashboardComponent {
     });
   }
 
-  create()         { this.router.navigateByUrl('/admin/builder'); }
-  edit(_s: Survey) { this.router.navigateByUrl('/admin/builder'); }
+  /** Neue Umfrage anlegen */
+  create() {
+    this.router.navigateByUrl('/admin/builder');
+  }
+
+  /** Vorhandene Umfrage bearbeiten */
+  edit(s: Survey) {
+    this.router.navigate(['/admin/builder', s.id]);
+  }
 }

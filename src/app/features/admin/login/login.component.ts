@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { take, switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+
 
 import { AuthDialogComponent } from '../../../shared/auth-dialog/auth-dialog.component';
 import { AuthService } from '../../../core/auth/auth.service';

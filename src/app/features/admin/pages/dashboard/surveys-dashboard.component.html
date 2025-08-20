@@ -59,10 +59,14 @@
       </button>
 
       <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="edit(s)">
+        <button
+          mat-menu-item
+          [routerLink]="['/admin/umfragen', s.id, 'edit']"
+          matTooltip="Umfrage bearbeiten">
           <mat-icon>edit</mat-icon>
           <span>Bearbeiten</span>
         </button>
+
         <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">
           <mat-icon>publish</mat-icon>
           <span>Veröffentlichen</span>

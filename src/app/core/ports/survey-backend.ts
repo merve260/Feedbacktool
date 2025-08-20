@@ -28,4 +28,12 @@ export interface SurveyBackend {
     surveyId: string,
     payload: { name?: string; answers: any[] }
   ): Promise<void>;
+
+  updateSurveyWithQuestions(
+    surveyId: string,
+    survey: Omit<Survey, 'id'>,
+    questions: Array<Omit<Question, 'id'> & { id?: string }>
+  ): Promise<void>;
+
+
 }

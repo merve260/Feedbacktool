@@ -1,0 +1,25 @@
+<div class="edit-page">
+  <div class="edit-header">
+  </div>
+
+  <div class="edit-body">
+    <app-survey-builder
+      [(title)]="title"
+      [(startDate)]="startDate"
+      [(endDate)]="endDate"
+      [(questions)]="questions"
+      [showActions]="false">
+    </app-survey-builder>
+  </div>
+
+  <div class="edit-actions">
+    <button mat-raised-button color="primary" (click)="saveAs('draft')">
+      Änderungen als Entwurf speichern
+    </button>
+    <button mat-raised-button color="accent" (click)="saveAs('published')">
+      Änderungen Veröffentlichen
+    </button>
+  </div>
+
+  <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+</div>

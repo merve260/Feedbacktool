@@ -68,4 +68,16 @@ export class CmsSurveyAdapter implements SurveyBackend {
       this.http.post<void>(`${this.base}/surveys/${surveyId}/responses`, payload)
     );
   }
-}
+
+  async updateSurveyWithQuestions(
+    surveyId: string,
+    survey: Omit<Survey, 'id'>,
+    questions: Array<Omit<Question, 'id'> & { id?: string }>
+  ): Promise<void> {
+    // TODO: Für CMS später implementieren
+    console.warn('[CmsSurveyAdapter] updateSurveyWithQuestions noch nicht implementiert');
+    return Promise.resolve();
+  }
+
+
+  }

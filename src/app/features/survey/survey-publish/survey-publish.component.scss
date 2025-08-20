@@ -1,9 +1,10 @@
 /* src/app/features/survey/survey-publish/survey-publish.component.scss */
-/* Schmale, horizontale Aktionsleiste */
+
+/* Container */
 .publish-actions {
   margin-top: 2rem;
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap; /* mobil uyumlu */
   align-items: center;
   gap: 12px;
   padding: 1rem;
@@ -34,7 +35,7 @@ button[mat-stroked-button] {
   &:hover { background-color: #f3eaff; }
 }
 
-/* WICHTIG: disabled-Styles für stroked, damit wirklich grau aussieht */
+/* Disabled-Stil für stroked */
 button[mat-stroked-button][disabled] {
   border-color: #ddd !important;
   color: #999 !important;
@@ -59,6 +60,7 @@ button[mat-stroked-button][disabled] {
   button:hover mat-icon { color: #000; }
 }
 
+/* Toast */
 .toast {
   margin-top: 0.5rem;
   color: #4CAF50;
@@ -71,7 +73,7 @@ button[mat-stroked-button][disabled] {
   100% { opacity: 0; }
 }
 
-/* Optionale Notizdarstellung */
+/* Hinweise & Fehler */
 .note { color:#995; font-size:.9rem; }
 .error-message {
   display:flex; align-items:center; gap:8px;

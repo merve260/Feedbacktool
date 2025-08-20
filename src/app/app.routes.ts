@@ -1,3 +1,4 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 import { LoginComponent } from './features/admin/login/login.component';
@@ -13,17 +14,20 @@ import { AdminLayoutComponent } from './features/admin/layout/admin-layout.compo
 import { SurveysDashboardComponent } from './features/admin/pages/dashboard/surveys-dashboard.component';
 import { ResultsAnalyticsComponent } from './features/admin/pages/analytics/results-analytics.component';
 import { ProfileSettingsComponent } from './features/admin/pages/profil-settings/profile-settings.component';
+import { SurveyEditComponent } from './features/survey/survey-edit/survey-edit.component';
 
 export const routes: Routes = [
 
-  // Public routes
+  // --- Öffentliche Routen ---
   { path: 'login', component: LoginComponent },
 
-  // Survey builder & publish
-  { path: 'admin/builder', canActivate: [AuthGuard], component: SurveyBuilderComponent },
+  // --- Survey Builder & Publish ---
+  { path: 'admin/builder/:id', canActivate: [AuthGuard], component: SurveyBuilderComponent },
+  { path: 'admin/builder',     canActivate: [AuthGuard], component: SurveyBuilderComponent },
+
   { path: 'admin/publish/:id', canActivate: [AuthGuard], component: SurveyPublishComponent },
 
-  // Admin routes
+  // --- Admin-Routen mit Layout ---
   {
     path: 'admin',
     canActivate: [AuthGuard],
@@ -31,6 +35,10 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'umfragen', pathMatch: 'full' },
       { path: 'umfragen',   component: SurveysDashboardComponent, data: { title: 'Meine Umfragen' } },
+
+      // ✨ Edit-Route buraya eklendi
+      { path: 'umfragen/:id/edit', component: SurveyEditComponent, data: { title: 'Umfrage bearbeiten' } },
+
       { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'Umfrage Ergebnisse & Analytics' } },
       {
         path: 'profil',
@@ -41,12 +49,12 @@ export const routes: Routes = [
     ],
   },
 
-  // Survey viewer (public link)
+  // --- Survey Viewer (öffentlicher Link für Teilnehmer) ---
   { path: 'survey/:id', component: SurveyViewerComponent },
 
-  // Homepage → dashboard
+  // --- Startseite → Dashboard ---
   { path: '', pathMatch: 'full', redirectTo: 'admin/umfragen' },
 
-  // Fallback
+  // --- Fallback (unbekannte Route) ---
   { path: '**', redirectTo: 'admin/umfragen' },
 ];
