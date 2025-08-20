@@ -203,7 +203,7 @@ export class FirebaseSurveyService {
     for (const q of questions) {
       const qRef = q.id
         ? this.questionDoc(surveyId, q.id)
-        : doc(this.questionsCol(surveyId)); // neue Frage
+        : doc(this.questionsCol(surveyId));
 
       batch.set(qRef, q as Question);
       keptIds.add(qRef.id);

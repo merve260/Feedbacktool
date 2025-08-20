@@ -50,20 +50,26 @@ export class SurveyEditComponent implements OnInit {
 
   async saveAs(status: 'draft' | 'published') {
     if (!this.title || !this.startDate || !this.endDate || this.questions.length === 0) return;
-
+    console.log('Speichern vorbereitet:', {
+      surveyId: this.surveyId,
+      title: this.title,
+      startDate: this.startDate,
+      endDate: this.endDate,
+      questions: this.questions
+    });
     this.busy = true;
     try {
       await this.surveyService.updateSurveyWithQuestions(
         this.surveyId,
         {
-          ownerId: this.auth.currentUser?.uid ?? 'UNKNOWN',
+          ownerId: this.auth.currentUser?.uid ?? '',
           title: this.title,
           description: undefined,
           startAt: this.startDate,
           endAt: this.endDate,
           status
         },
-        this.questions
+        this.questions  // id'leri olan array → update, idsiz → create
       );
       this.router.navigate(['/admin/umfragen']);
     } catch (err) {
@@ -72,6 +78,9 @@ export class SurveyEditComponent implements OnInit {
     } finally {
       this.busy = false;
     }
+
+
   }
+
 
 }
