@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { take } from 'rxjs/operators';
@@ -10,20 +10,26 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { FirebaseSurveyService } from '../../../../core/services/firebase-survey.service';
 
 import { Firestore, collection, query, where, orderBy, getDocs, doc, deleteDoc } from '@angular/fire/firestore';
-import { Survey, Question } from '../../../../core/models/survey.models';
+import { Survey } from '../../../../core/models/survey.models';
 
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
-import {MatTooltip} from '@angular/material/tooltip';
-
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-surveys-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatMenuModule, MatIconModule, MatButtonModule, RouterLink, MatTooltip],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltip
+  ],
   templateUrl: './surveys-dashboard.component.html',
   styleUrls: ['./surveys-dashboard.component.scss'],
 })
@@ -34,13 +40,11 @@ export class SurveysDashboardComponent {
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-
-
-
   loading = true;
 
   /** tüm kayıtlar (ham veri) */
   private allItems: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
+
   /** görüntülenen (filtre + sort sonrası) */
   items: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
 
@@ -53,7 +57,10 @@ export class SurveysDashboardComponent {
   async ngOnInit(): Promise<void> {
     try {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
-      if (!u) { this.loading = false; return; }
+      if (!u) {
+        this.loading = false;
+        return;
+      }
 
       const colRef = collection(this.afs, 'umfragen');
       const qy = query(colRef, where('ownerId', '==', u.uid), orderBy('startAt', 'desc') as any);
@@ -62,6 +69,7 @@ export class SurveysDashboardComponent {
       try {
         snap = await getDocs(qy);
       } catch {
+        // Eğer orderBy çalışmazsa sadece where ile çek
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid)));
       }
 
@@ -73,17 +81,17 @@ export class SurveysDashboardComponent {
         return {
           id: d.id,
           ownerId: data.ownerId,
-          title: data.title ?? data.titel ?? '',
-          description: data.description ?? data.beschreibung ?? undefined,
-          startAt: toDate(data.startAt ?? data.beginn ?? null),
-          endAt:   toDate(data.endAt   ?? data.ende   ?? null),
+          title: data.title ?? '',
+          description: data.description ?? undefined,
+          startAt: toDate(data.startAt ?? null),
+          endAt:   toDate(data.endAt   ?? null),
           status:  data.status,
-          createdAt: toDate(data.createdAt ?? data.erstelltAt ?? null),
-          updatedAt: toDate(data.updatedAt ?? data.aktualisiertAt ?? null),
+          createdAt: toDate(data.createdAt ?? null),
+          updatedAt: toDate(data.updatedAt ?? null),
         } as Survey & { createdAt?: Date; updatedAt?: Date };
       });
 
-      this.applyView(); // ilk görünüm
+      this.applyView(); // ilk görünüm uygula
     } finally {
       this.loading = false;
     }
@@ -133,26 +141,15 @@ export class SurveysDashboardComponent {
     await this.fbSvc.setSurveyWithId(s.id, { ...this.stripId(s), status: 'published' });
     s.status = 'published';
   }
+
   async unpublish(s: Survey) {
     await this.fbSvc.setSurveyWithId(s.id, { ...this.stripId(s), status: 'draft' });
     s.status = 'draft';
   }
+
   async close(s: Survey) {
     await this.fbSvc.setSurveyWithId(s.id, { ...this.stripId(s), status: 'closed' });
     s.status = 'closed';
-  }
-
-  async duplicate(s: Survey) {
-    const qs = await this.fbSvc.getQuestions(s.id);
-    const payload: Omit<Question, 'id'>[] = qs.map(q => {
-      const { id, ...rest } = q as any;
-      return rest as Omit<Question, 'id'>;
-    });
-    await this.fbSvc.createSurveyWithQuestions(
-      { ...this.stripId(s), title: `${s.title} (Kopie)`, status: 'draft' },
-      payload
-    );
-    await this.ngOnInit(); // listeyi tazele
   }
 
   async remove(s: Survey) {
@@ -181,6 +178,6 @@ export class SurveysDashboardComponent {
 
   /** Vorhandene Umfrage bearbeiten */
   edit(s: Survey) {
-    this.router.navigate(['/admin/builder', s.id]);
+    this.router.navigate(['/admin/umfragen', s.id, 'edit']); // ✅ artık edit component’e gönder
   }
 }

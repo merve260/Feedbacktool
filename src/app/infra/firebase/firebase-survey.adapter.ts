@@ -60,10 +60,11 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     await setDoc(ref, {
       ownerId: s.ownerId,
       title: s.title ?? 'Neue Umfrage',
-      description: s.description ?? null,
       status: 'draft',
-      startAt: s.startAt ? Timestamp.fromDate(s.startAt as Date) : null,
-      endAt:   s.endAt   ? Timestamp.fromDate(s.endAt as Date)   : null,
+      description: s.description,
+      startAt: s.startAt ? Timestamp.fromDate(s.startAt as Date) : undefined,
+      endAt:   s.endAt   ? Timestamp.fromDate(s.endAt as Date)   : undefined,
+
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     } as any);
@@ -83,8 +84,9 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
       title: d.title,
       description: d.description ?? undefined,
       status: d.status,
-      startAt: d?.startAt?.toDate?.() ?? d?.startAt ?? null,
-      endAt: d?.endAt?.toDate?.() ?? d?.endAt ?? null,
+      startAt: d?.startAt?.toDate?.(),
+      endAt:   d?.endAt?.toDate?.(),
+
     } as Survey;
   }
 
@@ -99,8 +101,9 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         title: d.title,
         description: d.description ?? undefined,
         status: d.status,
-        startAt: d?.startAt?.toDate?.() ?? d?.startAt ?? null,
-        endAt: d?.endAt?.toDate?.() ?? d?.endAt ?? null,
+        startAt: d?.startAt?.toDate?.(),
+        endAt:   d?.endAt?.toDate?.(),
+
       } as Survey;
     });
   }
@@ -114,7 +117,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         : undefined;
 
     const payload = omitUndefined({
-      type: (q as any).type ?? q['type'],
+      type: q.type,
       title: q.title,
       text: q.text,
       options,
@@ -163,24 +166,46 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     s: Omit<Survey, 'id'>,
     questions: Array<Omit<Question, 'id'> & { id?: string }>
   ): Promise<void> {
-    // 1. Survey dokümanını güncelle
-    const surveyRef = doc(this.firestore, this.rootColName, surveyId);
-    await setDoc(surveyRef, s, { merge: true });
-
-    // 2. Eski soruları sil
+    console.log('Update fertig');
     const qCol = this.questionsCol(surveyId);
+
+    // 1. Survey update
+    const surveyRef = doc(this.firestore, this.rootColName, surveyId);
+    await setDoc(surveyRef, omitUndefined({
+      ...s,
+      updatedAt: serverTimestamp(),
+    }), { merge: true });
+
+    // 2. Eski soruları oku
     const existing = await getDocs(qCol);
-    for (const d of existing.docs) {
-      await deleteDoc(d.ref);
+    const existingIds = new Set(existing.docs.map(d => d.id));
+
+    const keptIds = new Set<string>();
+
+    // 3. Yeni soruları ekle/güncelle
+    for (const q of questions) {
+      if (q.id) {
+        // update
+        const { id, ...rest } = q;
+        const qRef = doc(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}/${id}`);
+        await setDoc(qRef, omitUndefined(rest), { merge: true });
+        keptIds.add(id);
+      } else {
+        // create
+        const { id, ...rest } = q;
+        const qRef = doc(qCol);
+        await setDoc(qRef, omitUndefined(rest));
+        keptIds.add(qRef.id);
+      }
     }
 
-    // 3. Yeni soruları ekle
-    for (const q of questions) {
-      const { id, ...rest } = q;
-      await addDoc(qCol, rest);  // id'siz kaydediyoruz
+    // 4. Artık olmayan soruları sil
+    for (const oldId of existingIds) {
+      if (!keptIds.has(oldId)) {
+        await deleteDoc(doc(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}/${oldId}`));
+      }
     }
   }
-
 
   async listQuestions(surveyId: string): Promise<Question[]> {
     const qy = query(this.questionsCol(surveyId), orderBy('order', 'asc'));

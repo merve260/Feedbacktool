@@ -20,9 +20,10 @@ import { Auth } from '@angular/fire/auth';
 })
 export class SurveyEditComponent implements OnInit {
   surveyId!: string;
-  title: string = '';
-  startDate?: Date;
-  endDate?: Date;
+  title = '';
+  description = '';
+  startAt?: Date;
+  endAt?: Date;
   questions: Question[] = [];
 
   busy = false;
@@ -39,48 +40,39 @@ export class SurveyEditComponent implements OnInit {
     this.surveyId = this.route.snapshot.paramMap.get('id')!;
     try {
       const survey = await this.surveyService.getSurveyWithQuestions(this.surveyId);
-      this.title = survey.title;
-      this.startDate = survey.startAt ? new Date(survey.startAt) : undefined;
-      this.endDate = survey.endAt ? new Date(survey.endAt) : undefined;
+
+      // direkt normalleştirilmiş alanları kullan
+      this.title = survey.title ?? '';
+      this.description = survey.description ?? '';
+      this.startAt = survey.startAt ? new Date(survey.startAt) : undefined;
+      this.endAt = survey.endAt ? new Date(survey.endAt) : undefined;
       this.questions = survey.questions ?? [];
     } catch (err) {
       this.errorMsg = 'Fehler beim Laden.';
     }
   }
 
-  async saveAs(status: 'draft' | 'published') {
-    if (!this.title || !this.startDate || !this.endDate || this.questions.length === 0) return;
-    console.log('Speichern vorbereitet:', {
-      surveyId: this.surveyId,
-      title: this.title,
-      startDate: this.startDate,
-      endDate: this.endDate,
-      questions: this.questions
-    });
-    this.busy = true;
+  /** Ganze Umfrage speichern mit Statuswechsel */
+  async updateSurvey(status: 'draft' | 'published') {
+    if (!this.surveyId) return;
+
     try {
       await this.surveyService.updateSurveyWithQuestions(
         this.surveyId,
         {
           ownerId: this.auth.currentUser?.uid ?? '',
           title: this.title,
-          description: undefined,
-          startAt: this.startDate,
-          endAt: this.endDate,
+          description: this.description,
+          startAt: this.startAt,
+          endAt: this.endAt,
           status
         },
-        this.questions  // id'leri olan array → update, idsiz → create
+        this.questions
       );
       this.router.navigate(['/admin/umfragen']);
     } catch (err) {
-      console.error(err);
+      console.error('Speichern fehlgeschlagen:', err);
       this.errorMsg = 'Speichern fehlgeschlagen.';
-    } finally {
-      this.busy = false;
     }
-
-
   }
-
-
 }

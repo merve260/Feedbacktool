@@ -36,6 +36,7 @@ export class SurveyService {
   getById(id: string)                          { return this.backend.getById(id); }
   listByOwner(ownerId: string)                 { return this.backend.listByOwner(ownerId); }
   addQuestion(surveyId: string, q: Question)   { return this.backend.addQuestion(surveyId, q); }
+
   publish(surveyId: string, s: Date, e: Date)  { return this.backend.publish(surveyId, s, e); }
 
 

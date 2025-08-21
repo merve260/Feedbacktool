@@ -98,7 +98,7 @@
           <button mat-icon-button (click)="editQuestion(i)" aria-label="Bearbeiten">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="removeQuestion(i)" aria-label="Löschen">
+          <button  *ngIf="currentSurveyId" mat-icon-button color="warn" (click)="onDeleteSurvey(currentSurveyId)" aria-label="Löschen">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -110,8 +110,8 @@
 <!-- Publish-Bereich -->
 <app-survey-publish
   [surveyTitle]="surveyTitle"
-  [startDate]="startDate"
-  [endDate]="endDate"
+  [startDate]="startDateValue"
+  [endDate]="endDateValue"
   [canvasQuestions]="canvasQuestions"
   (draftRequested)="goToDashboard()"
   (publishRequested)="goToDashboard()"

@@ -4,7 +4,7 @@ export interface Survey {
   id: string;
   ownerId: string;
   title: string;
-  description?: string;
+  description?: string | null;
   startAt?: Date;
   endAt?: Date;
   status: SurveyStatus;

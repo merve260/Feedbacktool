@@ -63,26 +63,23 @@ import { firstValueFrom } from 'rxjs';
 })
 export class SurveyBuilderComponent implements OnInit {
 
+  @Input() surveyId?: string;
   @Input() title: string = '';
+  @Input() description: string = '';
   @Input() startDate?: Date;
   @Input() endDate?: Date;
   @Input() questions: Question[] = [];
-  @Input() showActions: boolean = true;
+  @Input() showActions = true;
 
+  @Output() questionsChange = new EventEmitter<Question[]>();
   @Output() titleChange = new EventEmitter<string>();
   @Output() startDateChange = new EventEmitter<Date>();
   @Output() endDateChange = new EventEmitter<Date>();
-  @Output() questionsChange = new EventEmitter<Question[]>();
 
   // örnek: builder içinde title değiştiğinde emit et
   onTitleChange(newTitle: string) {
     this.title = newTitle;
     this.titleChange.emit(this.title);
-  }
-
-  onQuestionsUpdate(newList: Question[]) {
-    this.questions = newList;
-    this.questionsChange.emit(this.questions);
   }
 
 
@@ -486,9 +483,16 @@ export class SurveyBuilderComponent implements OnInit {
     }
   }
 
-  removeQuestion(index: number) {
-    this.canvasQuestions.splice(index, 1);
+  async onDeleteSurvey(id: string): Promise<void> {
+    try {
+      await this.fbSurvey.deleteSurvey(id);
+      // nach dem Löschen zurück zum Dashboard
+      this.goToDashboard();
+    } catch (err) {
+      console.error('Fehler beim Löschen:', err);
+    }
   }
+
   goToDashboard(): void {
     this.router.navigateByUrl('/admin/umfragen');
   }

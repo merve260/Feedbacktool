@@ -1,23 +1,28 @@
 <div class="edit-page">
-  <div class="edit-header">
-  </div>
 
   <div class="edit-body">
     <app-survey-builder
-      [(title)]="title"
-      [(startDate)]="startDate"
-      [(endDate)]="endDate"
-      [(questions)]="questions"
-      [showActions]="false">
+      [showActions]="false"
+      [surveyId]="surveyId"
+      [title]="title"
+      [description]="description"
+      [startDate]="startAt"
+      [endDate]="endAt"
+      [questions]="questions"
+      (questionsChange)="questions = $event"
+      (titleChange)="title = $event"
+      (startDateChange)="startAt = $event"
+      (endDateChange)="endAt = $event">
     </app-survey-builder>
+
   </div>
 
   <div class="edit-actions">
-    <button mat-raised-button color="primary" (click)="saveAs('draft')">
+    <button mat-raised-button color="primary" (click)="updateSurvey('draft')">
       Änderungen als Entwurf speichern
     </button>
-    <button mat-raised-button color="accent" (click)="saveAs('published')">
-      Änderungen Veröffentlichen
+    <button mat-raised-button color="accent" (click)="updateSurvey('published')">
+      Änderungen veröffentlichen
     </button>
   </div>
 

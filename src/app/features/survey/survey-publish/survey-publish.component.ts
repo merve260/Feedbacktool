@@ -26,6 +26,12 @@ export class SurveyPublishComponent {
   @Input() showActions: boolean = true;
   @Input() canvasQuestions: any[] = [];
   @Input() surveyTitle: string = '';
+  @Input() surveySubTitle: string = '';
+  @Input() surveySubDescription: string = '';
+  @Input() surveyQuestions: Question[] = [];
+  @Input() surveySubQuestions: Question[] = [];
+  @Input() surveyQuestionCount: number = 0;
+  @Input() surveySubQuestionCount: number = 0;
 
   // ------ Outputs ------
   @Output() draftRequested = new EventEmitter<string>();
@@ -105,17 +111,17 @@ export class SurveyPublishComponent {
     return {
       type: q.type,
       title: q.title || q.label || `Frage ${index + 1}`,
-      text: q.text ?? undefined,
+      text: q.text ?? null,
       options: opts && opts.length ? opts : undefined,
-      min: q.min ?? undefined,
-      max: q.max ?? undefined,
-      step: q.step ?? undefined,
-      placeholderText: q.placeholderText ?? undefined,
-      maxStars: q.maxStars ?? undefined,
+      min: q.min ?? null,
+      max: q.max ?? null,
+      step: q.step ?? null,
+      placeholderText: q.placeholderText ?? null,
+      maxStars: q.maxStars ?? null,
       items: items && items.length ? items : undefined,
-      startPlaceholder: q.startPlaceholder ?? undefined,
-      endPlaceholder: q.endPlaceholder ?? undefined,
-      thumbLabel: q.thumbLabel ?? undefined,
+      startPlaceholder: q.startPlaceholder ?? null,
+      endPlaceholder: q.endPlaceholder ?? null,
+      thumbLabel: q.thumbLabel ?? null,
     } as Question;
   }
 
@@ -135,6 +141,7 @@ export class SurveyPublishComponent {
       const id = await this.surveyService.createDraft({
         ownerId: u.uid,
         title: this.surveyTitle.trim(),
+        description: this.surveySubDescription || null,
         startAt: this.startDate!,
         endAt: this.endDate!
       });
@@ -173,6 +180,7 @@ export class SurveyPublishComponent {
       const id = await this.surveyService.createDraft({
         ownerId: u.uid,
         title: this.surveyTitle.trim(),
+        description: this.surveySubDescription || null,  // 🔑 description fix
         startAt: this.startDate!,
         endAt: this.endDate!
       });
