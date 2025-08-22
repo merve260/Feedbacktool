@@ -99,6 +99,8 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         items: d.items ?? undefined,
         startPlaceholder: d.startPlaceholder ?? undefined,
         endPlaceholder: d.endPlaceholder ?? undefined,
+        startAt: d.startAt ? (d.startAt as Timestamp).toDate() : undefined,
+        endAt:   d.endAt   ? (d.endAt as Timestamp).toDate()   : undefined,
         order: d.order ?? undefined,
         createdAt: d.createdAt?.toDate?.(),
         updatedAt: d.updatedAt?.toDate?.(),
@@ -226,7 +228,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async getSurveyWithQuestions(id: string): Promise<{ survey: Survey; questions: Question[] } | null> {
-    const surveySnap = await getDoc(doc(this.firestore, 'umfragen', id));
+    const surveySnap = await getDoc(this.surveyDoc(id));
     if (!surveySnap.exists()) return null;
 
     const survey = surveySnap.data() as Survey;
