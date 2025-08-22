@@ -8,6 +8,8 @@ export interface Survey {
   startAt?: Date;
   endAt?: Date;
   status: SurveyStatus;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Question {
@@ -23,13 +25,14 @@ export interface Question {
   maxStars?: number;
   items?: string[];
   startPlaceholder?: string;
-  endPlaceholder?:string;
+  endPlaceholder?: string;
   thumbLabel?: boolean;
 }
+
 export interface Answer {
   id: string;
   questionId: string;
   respondentId: string;
-  value: string | number | string[];
+  value: string | number | boolean | string[];
   answeredAt: Date;
 }

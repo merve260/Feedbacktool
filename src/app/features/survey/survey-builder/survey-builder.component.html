@@ -2,37 +2,48 @@
 <section class="info-panel">
   <h2 class="panel-title">Umfrage-Info</h2>
 
-  <!-- Statischer Hinweis (kein Input) -->
+  <!-- Hinweis -->
   <div class="builder-actions" *ngIf="showActions">
-  <div class="hint-box">
-    <p><strong>Hinweise zur Veröffentlichung:</strong></p>
-    <ul>
-      <li>Zum Veröffentlichen benötigen Sie mindestens eine Frage, einen Titel und einen Zeitraum (Start–Ende).</li>
-      <li>Nach dem Veröffentlichen erhalten Sie im Admin-Bereich einen Teilnehmer-Link. Diesen Link können Sie mit den Teilnehmern teilen.</li>
-      <li>Sie können Ihre Umfrage später im Admin-Bereich erneut öffnen und bearbeiten (Titel, Zeitraum, Fragen).</li>
-    </ul>
-  </div>
+    <div class="hint-box">
+      <p><strong>Hinweise zur Veröffentlichung:</strong></p>
+      <ul>
+        <li>Zum Veröffentlichen benötigen Sie mindestens eine Frage, einen Titel und einen Zeitraum (Start–Ende).</li>
+        <li>Nach dem Veröffentlichen erhalten Sie im Admin-Bereich einen Teilnehmer-Link.</li>
+        <li>Sie können Ihre Umfrage später erneut öffnen und bearbeiten.</li>
+      </ul>
+    </div>
   </div>
 
-  <!-- Formular: Titel + Date-Range -->
+  <!-- Formular -->
   <form [formGroup]="infoForm" class="info-form">
     <!-- Titel -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Umfragetitel</mat-label>
-      <input matInput placeholder="z. B. Mitarbeiterfeedback" formControlName="title" required />
-      <mat-error *ngIf="titleCtrl.hasError('required') && (titleCtrl.touched || titleCtrl.dirty)">
+      <input
+        matInput
+        formControlName="title"
+        (input)="titleChange.emit(titleCtrl.value)" />
+
+      <mat-error *ngIf="titleCtrl.hasError('required')">
         Titel ist erforderlich.
       </mat-error>
     </mat-form-field>
 
-    <!-- Zeitraum als Date-Range -->
+    <!-- Zeitraum -->
     <div class="range-row">
       <mat-form-field appearance="outline" class="range-field full">
         <mat-label>Zeitraum</mat-label>
-        <!-- Richtige Eigenschaft für Filter: [dateFilter] -->
         <mat-date-range-input [rangePicker]="picker" [dateFilter]="dateFilter" [formGroup]="infoForm">
-          <input matStartDate placeholder="Start" formControlName="startDate">
-          <input matEndDate placeholder="Ende"  formControlName="endDate">
+          <input
+            matStartDate
+            placeholder="Start"
+            formControlName="startDate"
+            (dateChange)="startDateChange.emit($event.value)" />
+          <input
+            matEndDate
+            placeholder="Ende"
+            formControlName="endDate"
+            (dateChange)="endDateChange.emit($event.value)" />
         </mat-date-range-input>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
@@ -40,54 +51,44 @@
         <mat-error *ngIf="infoForm.hasError('dateInvalid')">
           Enddatum muss nach dem Startdatum liegen.
         </mat-error>
-        <mat-error *ngIf="startCtrl.hasError('required') && (startCtrl.touched || startCtrl.dirty)">
-          Startdatum ist erforderlich.
-        </mat-error>
-        <mat-error *ngIf="endCtrl.hasError('required') && (endCtrl.touched || endCtrl.dirty)">
-          Enddatum ist erforderlich.
-        </mat-error>
       </mat-form-field>
     </div>
   </form>
 </section>
 
-<!-- ZWEI SPALTEN: linke Palette / rechte Canvas -->
+<!-- ZWEI SPALTEN -->
 <div class="builder-container">
-  <!-- Linke Seite: Fragetypen -->
+  <!-- Linke Palette -->
   <div class="question-palette">
     <h3>Fragetypen</h3>
-
     <div
       cdkDropList
       #paletteList="cdkDropList"
       [cdkDropListData]="questionTypes"
       [cdkDropListConnectedTo]="[canvasList]"
       class="palette"
-      cdkDropListSortingDisabled
-    >
+      cdkDropListSortingDisabled>
       <div
         *ngFor="let question of questionTypes"
         cdkDrag
         [cdkDragData]="question"
-        class="question-item"
-      >
+        class="question-item">
         {{ question.label }}
       </div>
     </div>
   </div>
 
-  <!-- Rechte Seite: Canvas -->
+  <!-- Rechte Canvas -->
   <div class="survey-canvas">
     <h3>Umfrage Canvas</h3>
-
     <div
       cdkDropList
       #canvasList="cdkDropList"
       [cdkDropListData]="canvasQuestions"
       [cdkDropListConnectedTo]="[paletteList]"
       class="canvas"
-      (cdkDropListDropped)="drop($event)"
-    >
+      (cdkDropListDropped)="onDrop($event)">
+
       <div class="empty-state" *ngIf="!canvasQuestions?.length">
         <span>Mindestens eine Frage hinzufügen, um zu veröffentlichen.</span>
       </div>
@@ -95,10 +96,10 @@
       <div *ngFor="let question of canvasQuestions; let i = index" cdkDrag class="canvas-item">
         <span>{{ question.title }}</span>
         <div class="icon-group">
-          <button mat-icon-button (click)="editQuestion(i)" aria-label="Bearbeiten">
+          <button mat-icon-button (click)="onEdit(i)" aria-label="Bearbeiten">
             <mat-icon>edit</mat-icon>
           </button>
-          <button  *ngIf="currentSurveyId" mat-icon-button color="warn" (click)="onDeleteSurvey(currentSurveyId)" aria-label="Löschen">
+          <button *ngIf="currentSurveyId" mat-icon-button color="warn" (click)="onDelete(i)" aria-label="Löschen">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -107,13 +108,14 @@
   </div>
 </div>
 
-<!-- Publish-Bereich -->
+<!-- Publish -->
 <app-survey-publish
-  [surveyTitle]="surveyTitle"
+  [surveyTitle]="title"
   [startDate]="startDateValue"
   [endDate]="endDateValue"
   [canvasQuestions]="canvasQuestions"
+  (questionsChange)="canvasQuestions = $event"
   (draftRequested)="goToDashboard()"
   (publishRequested)="goToDashboard()"
-  [showActions]="showActions"
-></app-survey-publish>
+  [showActions]="showActions">
+</app-survey-publish>

@@ -109,6 +109,8 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async addQuestion(surveyId: string, q: Question): Promise<string> {
+    const qRef = doc(this.questionsCol(surveyId));
+
     const options =
       Array.isArray(q.options) && q.options.length ? q.options : undefined;
     const items =
@@ -117,6 +119,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         : undefined;
 
     const payload = omitUndefined({
+      id: qRef.id,
       type: q.type,
       title: q.title,
       text: q.text,
@@ -134,7 +137,6 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
       createdAt: serverTimestamp(),
     });
 
-    const qRef = doc(this.questionsCol(surveyId));
     await setDoc(qRef, payload as any);
     return qRef.id;
   }
@@ -166,7 +168,6 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     s: Omit<Survey, 'id'>,
     questions: Array<Omit<Question, 'id'> & { id?: string }>
   ): Promise<void> {
-    console.log('Update fertig');
     const qCol = this.questionsCol(surveyId);
 
     // 1. Survey update
@@ -186,16 +187,17 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     for (const q of questions) {
       if (q.id) {
         // update
-        const { id, ...rest } = q;
+        const { id, ...rest } = q as any;
         const qRef = doc(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}/${id}`);
         await setDoc(qRef, omitUndefined(rest), { merge: true });
         keptIds.add(id);
       } else {
         // create
-        const { id, ...rest } = q;
         const qRef = doc(qCol);
-        await setDoc(qRef, omitUndefined(rest));
+        const { id, ...rest } = q as any;
+        await setDoc(qRef, omitUndefined({ ...rest, id: qRef.id, createdAt: serverTimestamp() }));
         keptIds.add(qRef.id);
+
       }
     }
 
@@ -210,6 +212,10 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   async listQuestions(surveyId: string): Promise<Question[]> {
     const qy = query(this.questionsCol(surveyId), orderBy('order', 'asc'));
     const snaps = await getDocs(qy);
-    return snaps.docs.map((d) => ({ id: d.id, ...(d.data() as any) })) as Question[];
+    return snaps.docs.map((d) => ({
+      ...(d.data() as any),
+      id: d.id,
+    })) as Question[];
+
   }
 }

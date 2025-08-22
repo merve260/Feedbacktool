@@ -4,17 +4,12 @@
     <app-survey-builder
       [showActions]="false"
       [surveyId]="surveyId"
-      [title]="title"
-      [description]="description"
-      [startDate]="startAt"
-      [endDate]="endAt"
-      [questions]="questions"
-      (questionsChange)="questions = $event"
-      (titleChange)="title = $event"
-      (startDateChange)="startAt = $event"
-      (endDateChange)="endAt = $event">
+      [(title)]="title"
+      [(description)]="description"
+      [(startDate)]="startAt"
+      [(endDate)]="endAt"
+      [(questions)]="questions">
     </app-survey-builder>
-
   </div>
 
   <div class="edit-actions">

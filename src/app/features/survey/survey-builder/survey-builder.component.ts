@@ -1,5 +1,6 @@
 // src/app/features/survey/survey-builder/survey-builder.component.ts
-import {Component, EventEmitter, Input,Output, OnInit} from '@angular/core';
+
+import {Component, EventEmitter, Input, Output, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -63,27 +64,31 @@ import { firstValueFrom } from 'rxjs';
 })
 export class SurveyBuilderComponent implements OnInit {
 
+  // ----------------------------------------------------------
+  // Eingangs- und Ausgangsparameter (für 2-Wege-Bindung geeignet)
+  // ----------------------------------------------------------
   @Input() surveyId?: string;
-  @Input() title: string = '';
-  @Input() description: string = '';
-  @Input() startDate?: Date;
-  @Input() endDate?: Date;
-  @Input() questions: Question[] = [];
-  @Input() showActions = true;
 
-  @Output() questionsChange = new EventEmitter<Question[]>();
+  @Input() title: string = '';
   @Output() titleChange = new EventEmitter<string>();
+
+  @Input() description: string = '';
+  @Output() descriptionChange = new EventEmitter<string>();
+
+  @Input() startDate?: Date;
   @Output() startDateChange = new EventEmitter<Date>();
+
+  @Input() endDate?: Date;
   @Output() endDateChange = new EventEmitter<Date>();
 
-  // örnek: builder içinde title değiştiğinde emit et
-  onTitleChange(newTitle: string) {
-    this.title = newTitle;
-    this.titleChange.emit(this.title);
-  }
+  @Input() questions: Question[] = [];
+  @Output() questionsChange = new EventEmitter<Question[]>();
 
+  @Input() showActions = true;
 
-  // --- Linke Palette: verfügbare Fragetypen ---
+  // ----------------------------------------------------------
+  // Verfügbare Fragetypen in der linken Palette
+  // ----------------------------------------------------------
   questionTypes = [
     { type: 'yesno',    label: 'Ja / Nein' },
     { type: 'multiple', label: 'Mehrfachauswahl' },
@@ -95,16 +100,20 @@ export class SurveyBuilderComponent implements OnInit {
     { type: 'radio',    label: 'Radiobutton Auswahl' }
   ];
 
-  // --- Rechte Seite (Canvas): aktuell hinzugefügte Fragen ---
+  // Fragen, die rechts im Canvas angezeigt werden
   canvasQuestions: any[] = [];
 
-  // --- Oberes Info-Formular: Titel + Zeitraum ---
+  // Oberes Formular: Titel + Zeitraum
   infoForm: FormGroup<{
     title: FormControl<string>;
     startDate: FormControl<Date | null>;
     endDate: FormControl<Date | null>;
     description: FormControl<string | null>;
   }>;
+
+  isEditMode = false;           // Bearbeiten-Modus
+  isSaving = false;             // Speichern-Status
+  currentSurveyId: string | null = null;  // aktuelle Umfrage-ID
 
   constructor(
     private dialog: MatDialog,
@@ -114,48 +123,53 @@ export class SurveyBuilderComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.infoForm = this.fb.group(
-      {
-        title: this.fb.nonNullable.control<string>('', { validators: [Validators.required] }),
-        startDate: this.fb.control<Date | null>(null, { validators: [Validators.required] }),
-        endDate:   this.fb.control<Date | null>(null, { validators: [Validators.required] }),
-        description: this.fb.nonNullable.control<string | null>(null)
-      },
-      { validators: this.dateRangeValidator }
-    );
+    // Formular-Initialisierung mit Validatoren
+    this.infoForm = new FormGroup({
+      title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      startDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
+      endDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
+      description: new FormControl<string | null>(null)
+    }, { validators: this.dateRangeValidator });
+
   }
-  isEditMode = false;
-  isSaving = false;
-  currentSurveyId: string | null = null;
 
+  // ----------------------------------------------------------
+  // Lifecycle: Beim Start prüfen, ob eine bestehende Umfrage geladen werden soll
+  // ----------------------------------------------------------
   async ngOnInit() {
-    // ID aus der URL lesen (wenn vorhanden → Edit-Modus)
+    // Prüfen, ob eine ID in der URL steht (Edit-Modus)
     const id = this.route.snapshot.paramMap.get('id');
-
     if (id) {
       this.currentSurveyId = id;
-
-      // Umfrage + Fragen aus Firestore laden
       const survey = await this.fbSurvey.getSurveyWithQuestions(id);
 
       if (survey) {
-        // Formular mit vorhandenen Daten befüllen
+        // Formular mit vorhandenen Werten füllen
         this.infoForm.patchValue({
           title:       survey.title,
-          description: survey.description ?? null,
-          startDate:   survey.startAt ?? null,
-          endDate:     survey.endAt   ?? null
+          description: survey.description ?? '',
+          startDate:   survey.startAt ? new Date(survey.startAt) : null,
+          endDate:     survey.endAt   ? new Date(survey.endAt)   : null
         });
 
-        // Gespeicherte Fragen in das Canvas laden
+        // Fragen ins Canvas laden
         this.canvasQuestions = survey.questions ?? [];
-
-        // Flag setzen → wir sind im Bearbeiten-Modus
         this.isEditMode = true;
+
+        // Binding-Events nach außen emitten
+        this.titleChange.emit(survey.title);
+        this.descriptionChange.emit(survey.description ?? '');
+        this.startDateChange.emit(survey.startAt ? new Date(survey.startAt) : undefined);
+        this.endDateChange.emit(survey.endAt ? new Date(survey.endAt) : undefined);
+        this.questionsChange.emit(survey.questions ?? []);
       }
     }
   }
 
+
+  // ----------------------------------------------------------
+  // Hilfsfunktion: Fragedaten normalisieren für Firestore
+  // ----------------------------------------------------------
   private toQuestion = (q: any): Omit<Question, 'id'> & { id?: string } => {
     const base: any = { id: q.id, type: q.type, title: q.title, text: q.text };
 
@@ -187,15 +201,15 @@ export class SurveyBuilderComponent implements OnInit {
     }
 
     if (q.type === 'date') {
-      base.startPlaceholder = q.startPlaceholder ?? q.startPH ?? q.startPlaceHolder ?? q.bereichStartPlatzhalter ?? '';
-      base.endPlaceholder   = q.endPlaceholder   ?? q.endPH   ?? q.endPlaceHolder   ?? q.bereichEndePlatzhalter  ?? '';
+      base.startPlaceholder = q.startPlaceholder ?? '';
+      base.endPlaceholder   = q.endPlaceholder   ?? '';
       base.startLabel = q.startLabel ?? 'Start';
       base.endLabel   = q.endLabel   ?? 'Ende';
       return base;
     }
 
     if (q.type === 'dragdrop') {
-      const items = q.items ?? q.elemente ?? q.elements ?? [];
+      const items = q.items ?? [];
       base.items = Array.isArray(items) ? items : (items ? [items] : []);
       return base;
     }
@@ -203,9 +217,9 @@ export class SurveyBuilderComponent implements OnInit {
     return base;
   };
 
-  // ======================================================
-  //  KAYDET — tek metod: status 'draft' veya 'published'
-  // ======================================================
+  // ----------------------------------------------------------
+  // SPEICHERN – einheitliche Methode für Draft / Publish
+  // ----------------------------------------------------------
   async saveAs(status: SurveyStatus) {
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
@@ -225,26 +239,24 @@ export class SurveyBuilderComponent implements OnInit {
       const survey: Omit<Survey, 'id'> = {
         ownerId: u.uid,
         title,
-        description: undefined,
+        description: this.infoForm.controls.description.value ?? undefined,
         startAt: start,
         endAt: end,
-        status, // ⬅︎ butonun niyetine göre
+        status,
       };
 
       const qPayload = this.canvasQuestions.map(this.toQuestion);
 
       if (!this.currentSurveyId) {
-        // ilk kayıt
+        // Neue Umfrage erstellen
         const id = await this.fbSurvey.createSurveyWithQuestions(survey, qPayload);
         this.currentSurveyId = id;
       } else {
-        // güncelleme
+        // Bestehende Umfrage aktualisieren
         await this.fbSurvey.updateSurveyWithQuestions(this.currentSurveyId, survey, qPayload);
       }
 
       alert(status === 'published' ? 'Umfrage veröffentlicht.' : 'Entwurf gespeichert.');
-
-
       await this.router.navigateByUrl('/admin/umfragen');
 
     } catch (e: any) {
@@ -255,13 +267,12 @@ export class SurveyBuilderComponent implements OnInit {
     }
   }
 
-  // Kısayol: Taslak kaydet
   saveDraft() { return this.saveAs('draft'); }
-
-  // (İstersen bırakalım: eski saveAll hâlâ mevcut ama kullanılmıyor)
   async saveAll() { return this.saveAs('draft'); }
 
-  // --- Getter'lar (template uyumluluğu için) ---
+  // ----------------------------------------------------------
+  // Getter für Template
+  // ----------------------------------------------------------
   get titleCtrl() { return this.infoForm.controls.title; }
   get startCtrl() { return this.infoForm.controls.startDate; }
   get endCtrl()   { return this.infoForm.controls.endDate; }
@@ -270,18 +281,17 @@ export class SurveyBuilderComponent implements OnInit {
   get startDateValue(): Date | null { return this.startCtrl.value; }
   get endDateValue(): Date | null   { return this.endCtrl.value; }
 
-
-  // --- Validator ---
+  // ----------------------------------------------------------
+  // Validatoren
+  // ----------------------------------------------------------
   private dateRangeValidator = (group: AbstractControl): ValidationErrors | null => {
     const s: Date | null = group.get('startDate')?.value ?? null;
     const e: Date | null = group.get('endDate')?.value ?? null;
     if (!s || !e) return null;
-    const s0 = new Date(s); s0.setHours(0,0,0,0);
-    const e0 = new Date(e); e0.setHours(0,0,0,0);
-    return e0 >= s0 ? null : { dateInvalid: true };
+    return e >= s ? null : { dateInvalid: true };
   };
 
-  // --- Sadece bugünden sonrası seçilebilsin ---
+  // Nur heutiges Datum und Zukunft erlauben
   dateFilter = (d: Date | null): boolean => {
     if (!d) return false;
     const today = new Date(); today.setHours(0,0,0,0);
@@ -289,15 +299,17 @@ export class SurveyBuilderComponent implements OnInit {
     return x >= today;
   };
 
-  // --- Drag & Drop ---
+  // ----------------------------------------------------------
+  // Drag & Drop Logik
+  // ----------------------------------------------------------
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(this.canvasQuestions, event.previousIndex, event.currentIndex);
+      this.questionsChange.emit(this.canvasQuestions);
       return;
     }
 
     const draggedItem = event.item.data;
-
     if (draggedItem.type === 'yesno')    { this.openYesNoModal(draggedItem);    return; }
     if (draggedItem.type === 'multiple') { this.openMultipleChoiceModal(draggedItem); return; }
     if (draggedItem.type === 'date')     { this.openDateTimeModal(draggedItem); return; }
@@ -309,188 +321,96 @@ export class SurveyBuilderComponent implements OnInit {
 
     const copiedItem = { ...draggedItem, title: draggedItem.label, editing: false };
     this.canvasQuestions.splice(event.currentIndex, 0, copiedItem);
+    this.questionsChange.emit(this.canvasQuestions);
   }
 
-  // --- Dialog açıcılar (olduğu gibi) ---
+  // ----------------------------------------------------------
+  // Modale zum Erstellen neuer Fragen
+  // ----------------------------------------------------------
   openYesNoModal(questionData: any) {
-    const ref = this.dialog.open(YesNoModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: { ...questionData, title: '', text: '', options: ['Ja', 'Nein'] },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(YesNoModalComponent, { data: { ...questionData, options: ['Ja','Nein'] }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openMultipleChoiceModal(questionData: any) {
-    const ref = this.dialog.open(MultipleChoiceModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: { ...questionData, title: '', text: '', options: ['', ''] },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(MultipleChoiceModalComponent, { data: { ...questionData, options: ['', ''] }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openDateTimeModal(questionData: any) {
-    const ref = this.dialog.open(DateTimeModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: questionData?.title ?? '',
-        text:  questionData?.text  ?? '',
-        required: questionData?.required ?? false,
-        startPlaceholder: questionData?.startPlaceholder ?? '',
-        endPlaceholder:   questionData?.endPlaceholder   ?? '',
-      },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => {
-      if (r) this.canvasQuestions.push({ ...questionData, ...r });
-    });
+    const ref = this.dialog.open(DateTimeModalComponent, { data: { ...questionData }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push({ ...questionData, ...r }); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openDragDropModal(questionData: any) {
-    const ref = this.dialog.open(DragDropModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: { ...questionData, title: '', text: '', items: ['Element 1', 'Element 2'] },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(DragDropModalComponent, { data: { ...questionData, items: ['Element 1','Element 2'] }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openFreitextModal(questionData: any) {
-    const ref = this.dialog.open(FreitextModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: { ...questionData, title: '', text: '', placeholderText: '' },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(FreitextModalComponent, { data: { ...questionData, placeholderText: '' }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openStarRatingModal(questionData: any) {
-    const ref = this.dialog.open(StarRatingModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: { ...questionData, title: '', text: '', maxStars: 5 },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(StarRatingModalComponent, { data: { ...questionData, maxStars: 5 }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openSliderModal(questionData: any) {
-    const ref = this.dialog.open(SkalaSliderModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: {
-        ...questionData,
-        title: questionData?.title || '',
-        text:  questionData?.text  || '',
-        min:   questionData?.min  ?? 0,
-        max:   questionData?.max  ?? 10,
-        step:  questionData?.step ?? 1,
-        thumbLabel: questionData?.thumbLabel ?? true,
-        value: questionData?.value ?? questionData?.min ?? 0
-      },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(SkalaSliderModalComponent, { data: { ...questionData }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
   openRadioModal(questionData: any) {
-    const ref = this.dialog.open(RadioModalComponent, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data: { ...questionData, title: '', text: '', options: ['Option 1', 'Option 2'] },
-      disableClose: true
-    });
-    ref.afterClosed().subscribe(r => { if (r) this.canvasQuestions.push(r); });
+    const ref = this.dialog.open(RadioModalComponent, { data: { ...questionData, options: ['Option 1','Option 2'] }, disableClose: true });
+    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
   }
 
-  // --- Var olan soruyu düzenle ---
+  // ----------------------------------------------------------
+  // Existierende Frage bearbeiten
+  // ----------------------------------------------------------
   private openDialogSame<T, D = any>(component: any, data: D) {
-    return this.dialog.open<T>(component, {
-      width: '720px',
-      maxWidth: '92vw',
-      panelClass: 'pol-dialog',
-      backdropClass: 'pol-backdrop',
-      data,
-      disableClose: true
-    });
+    return this.dialog.open<T>(component, { data, disableClose: true });
   }
 
   editQuestion(index: number) {
     const q = this.canvasQuestions[index];
+    const component = q.type === 'yesno' ? YesNoModalComponent :
+      q.type === 'multiple' ? MultipleChoiceModalComponent :
+        q.type === 'date' ? DateTimeModalComponent :
+          q.type === 'dragdrop' ? DragDropModalComponent :
+            q.type === 'freitext' ? FreitextModalComponent :
+              q.type === 'star' ? StarRatingModalComponent :
+                q.type === 'slider' ? SkalaSliderModalComponent :
+                  RadioModalComponent;
 
-    if (q.type === 'yesno') {
-      this.openDialogSame(YesNoModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'multiple') {
-      this.openDialogSame(MultipleChoiceModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'date') {
-      this.openDialogSame(DateTimeModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'dragdrop') {
-      this.openDialogSame(DragDropModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'freitext') {
-      this.openDialogSame(FreitextModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'star') {
-      this.openDialogSame(StarRatingModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'slider') {
-      this.openDialogSame(SkalaSliderModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
-    if (q.type === 'radio') {
-      this.openDialogSame(RadioModalComponent, { ...q })
-        .afterClosed().subscribe(r => { if (r) this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }});
-      return;
-    }
+    this.openDialogSame(component, { ...q })
+      .afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }; this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
+  // ----------------------------------------------------------
+  // Löschen
+  // ----------------------------------------------------------
   async onDeleteSurvey(id: string): Promise<void> {
     try {
       await this.fbSurvey.deleteSurvey(id);
-      // nach dem Löschen zurück zum Dashboard
       this.goToDashboard();
     } catch (err) {
       console.error('Fehler beim Löschen:', err);
     }
+  }
+  onDrop(event: CdkDragDrop<any[]>) {
+    this.drop(event);
+  }
+  onEdit(index: number) {
+    this.editQuestion(index);
+  }
+  onDelete(index: number) {
+    this.canvasQuestions.splice(index, 1);
+    this.questionsChange.emit(this.canvasQuestions);
   }
 
   goToDashboard(): void {

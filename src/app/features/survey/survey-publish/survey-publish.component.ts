@@ -24,7 +24,6 @@ export class SurveyPublishComponent {
   @Input() startDate: Date | null | undefined = null;
   @Input() endDate: Date | null | undefined = null;
   @Input() showActions: boolean = true;
-  @Input() canvasQuestions: any[] = [];
   @Input() surveyTitle: string = '';
   @Input() surveySubTitle: string = '';
   @Input() surveySubDescription: string = '';
@@ -32,10 +31,12 @@ export class SurveyPublishComponent {
   @Input() surveySubQuestions: Question[] = [];
   @Input() surveyQuestionCount: number = 0;
   @Input() surveySubQuestionCount: number = 0;
+  @Input() canvasQuestions: Question[] = [];
 
   // ------ Outputs ------
   @Output() draftRequested = new EventEmitter<string>();
   @Output() publishRequested = new EventEmitter<string>();
+  @Output() questionsChange = new EventEmitter<Question[]>();
 
   // ------ States ------
   busy = false;

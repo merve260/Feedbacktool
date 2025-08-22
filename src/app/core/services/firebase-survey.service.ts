@@ -17,6 +17,7 @@ import {
 } from '@angular/fire/firestore';
 import { Timestamp, FirestoreDataConverter, writeBatch } from 'firebase/firestore';
 import { Survey, Question } from '../models/survey.models';
+import {FirebaseSurveyAdapter} from '../../infra/firebase/firebase-survey.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseSurveyService {
@@ -24,7 +25,7 @@ export class FirebaseSurveyService {
   private readonly rootColName = 'umfragen';   // Hauptsammlung
   private readonly subColName = 'fragen';     // Subcollection je Umfrage
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private adapter: FirebaseSurveyAdapter) {}
 
   // ======================================================
   // Converter: Domain-Objekte <-> Firestore
@@ -59,6 +60,7 @@ export class FirebaseSurveyService {
   private questionConverter: FirestoreDataConverter<Question> = {
     toFirestore(q: Question) {
       const data: any = {
+        id:q.id,
         type: q.type,
         title: q.title,
       };
@@ -82,7 +84,7 @@ export class FirebaseSurveyService {
     fromFirestore(snapshot) {
       const d: any = snapshot.data();
       const q: Question = {
-        id: snapshot.id,
+        id: d.id ?? snapshot.id,
         type: d.type,
         title: d.title,
         text: d.text ?? undefined,
@@ -140,7 +142,8 @@ export class FirebaseSurveyService {
 
     for (const q of questions ?? []) {
       const qRef = doc(this.questionsCol(surveyRef.id));
-      await setDoc(qRef, q as Question);
+      const fullData = { ...q, id: qRef.id };
+      await setDoc(qRef, fullData as Question);
     }
     return surveyRef.id;
   }
@@ -159,9 +162,11 @@ export class FirebaseSurveyService {
 
   async addQuestion(surveyId: string, q: Omit<Question, 'id'>): Promise<string> {
     const ref = doc(this.questionsCol(surveyId));
-    await setDoc(ref, q as Question);
+    const fullData = { ...q, id: ref.id };
+    await setDoc(ref, fullData as Question);
     return ref.id;
   }
+
 
   async setQuestionWithId(surveyId: string, qId: string, q: Omit<Question, 'id'>): Promise<void> {
     await setDoc(this.questionDoc(surveyId, qId), q as Question);
@@ -193,7 +198,9 @@ export class FirebaseSurveyService {
         ? this.questionDoc(surveyId, q.id)
         : doc(this.questionsCol(surveyId));
 
-      batch.set(qRef, q as Question);
+      const fullData ={...q, id: qRef.id};
+
+      batch.set(qRef, fullData as Question);
       keptIds.add(qRef.id);
       finalIds.push(qRef.id);
     }
@@ -220,10 +227,15 @@ export class FirebaseSurveyService {
     const survey = snap.data()!;
 
     const qSnap = await getDocs(query(this.questionsCol(id), orderBy('order', 'asc') as any));
-    const questions = qSnap.docs.map(d => d.data());
+    const questions = qSnap.docs.map(d => {
+      const data = d.data();
+      const q = { ...data, id: d.id } as Question;
+      return q;
+    });
 
     return {
       ...survey,
+      id: snap.id,
       questions,
     };
   }
@@ -242,4 +254,9 @@ export class FirebaseSurveyService {
     batch.delete(surveyRef);
     await batch.commit();
   }
+
+  async listQuestions(surveyId: string) {
+    return this.adapter.listQuestions(surveyId);
+  }
+
 }
