@@ -1,221 +1,281 @@
-// src/app/features/survey/survey-publish/firebase-survey.adapter.ts
+// src/app/infra/firebase/firebase-survey.adapter.ts
 import { Injectable } from '@angular/core';
 import {
-  Firestore,
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  query,
-  where,
-  orderBy,
-  serverTimestamp,
-  Timestamp,
-  deleteDoc,
-  addDoc,
-  CollectionReference,
-  DocumentReference
+  Firestore, collection, doc, setDoc, getDoc, getDocs,
+  query, where, orderBy, serverTimestamp,
+  Timestamp, CollectionReference, DocumentReference, writeBatch, updateDoc
 } from '@angular/fire/firestore';
 import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question } from '../../core/models/survey.models';
+import { FirestoreDataConverter,WithFieldValue } from 'firebase/firestore';
 
 
-// undefined alanları payload'dan çıkarır
+
 function omitUndefined<T extends object>(obj: T): Partial<T> {
   const out: Partial<T> = {};
   (Object.entries(obj) as [keyof T, any][])
-    .forEach(([k, v]) => {
-      if (v !== undefined) (out as any)[k] = v;
-    });
+    .forEach(([k, v]) => { if (v !== undefined) (out as any)[k] = v; });
   return out;
 }
-
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseSurveyAdapter implements SurveyBackend {
 
-  // default koleksiyon adları
   private readonly rootColName = 'umfragen';
   private readonly subColName  = 'fragen';
+  private readonly responsesSubCol = 'antworten';
 
   constructor(private firestore: Firestore) {}
 
-  // Lazy referans yardımcıları
-  private surveysCol() {
-    return collection(this.firestore, this.rootColName);
+  // ======================================================
+  // Converter: Domain-Objekte <-> Firestore
+  // ======================================================
+  private surveyConverter: FirestoreDataConverter<Survey> = {
+    toFirestore(s: Survey) {
+      return {
+        ownerId: s.ownerId,
+        title: s.title,
+        description: s.description ?? null,
+        startAt: s.startAt ? Timestamp.fromDate(s.startAt) : null,
+        endAt: s.endAt ? Timestamp.fromDate(s.endAt) : null,
+        status: s.status,
+        createdAt: s['createdAt'] ?? serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+    },
+    fromFirestore(snapshot) {
+      const d: any = snapshot.data();
+      return {
+        id: snapshot.id,
+        ownerId: d.ownerId,
+        title: d.title,
+        description: d.description ?? null,
+        startAt: d.startAt ? (d.startAt as Timestamp).toDate() : undefined,
+        endAt: d.endAt ? (d.endAt as Timestamp).toDate() : undefined,
+        status: d.status,
+        createdAt: d.createdAt?.toDate?.(),
+        updatedAt: d.updatedAt?.toDate?.(),
+      };
+    },
+  };
+
+  private questionConverter: FirestoreDataConverter<Question> = {
+    toFirestore(q: Question) {
+      const data: any = {
+        id: q.id,
+        type: q.type,
+        title: q.title,
+        text: q.text ?? null,
+        options: q.options ?? null,
+        min: q.min ?? null,
+        max: q.max ?? null,
+        step: q.step ?? null,
+        thumbLabel: q.thumbLabel ?? null,
+        placeholderText: q.placeholderText ?? null,
+        maxStars: q.maxStars ?? null,
+        items: q.items ?? null,
+        startPlaceholder: q.startPlaceholder ?? null,
+        endPlaceholder: q.endPlaceholder ?? null,
+        order: (q as any).order ?? null,
+        createdAt: q['createdAt'] ?? serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+      return omitUndefined(data);
+    },
+    fromFirestore(snapshot) {
+      const d: any = snapshot.data();
+      return {
+        id: d.id ?? snapshot.id,
+        type: d.type,
+        title: d.title,
+        text: d.text ?? undefined,
+        options: d.options ?? undefined,
+        min: d.min ?? undefined,
+        max: d.max ?? undefined,
+        step: d.step ?? undefined,
+        thumbLabel: d.thumbLabel ?? undefined,
+        placeholderText: d.placeholderText ?? undefined,
+        maxStars: d.maxStars ?? undefined,
+        items: d.items ?? undefined,
+        startPlaceholder: d.startPlaceholder ?? undefined,
+        endPlaceholder: d.endPlaceholder ?? undefined,
+        order: d.order ?? undefined,
+        createdAt: d.createdAt?.toDate?.(),
+        updatedAt: d.updatedAt?.toDate?.(),
+      };
+    },
+  };
+
+  // ======================================================
+  // Hilfsfunktionen für Referenzen
+  // ======================================================
+  private surveysCol(): CollectionReference<Survey> {
+    return collection(this.firestore, this.rootColName).withConverter(this.surveyConverter);
   }
-  private questionsCol(surveyId: string) {
-    return collection(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}`);
+  private surveyDoc(id: string): DocumentReference<Survey> {
+    return doc(this.firestore, this.rootColName, id).withConverter(this.surveyConverter);
   }
-  private responsesCol(surveyId: string) {
-    return collection(this.firestore, `${this.rootColName}/${surveyId}/responses`);
+  private questionsCol(surveyId: string): CollectionReference<Question> {
+    return collection(this.firestore, this.rootColName, surveyId, this.subColName)
+      .withConverter(this.questionConverter);
   }
+  private questionDoc(surveyId: string, qId: string): DocumentReference<Question> {
+    return doc(this.firestore, this.rootColName, surveyId, this.subColName, qId)
+      .withConverter(this.questionConverter);
+  }
+
+  // ======================================================
+  // Implementierung von SurveyBackend
+  // ======================================================
 
   async createDraft(s: Partial<Survey>): Promise<string> {
-    if (!s.ownerId) throw new Error('ownerId required');
-
     const ref = doc(this.surveysCol());
     await setDoc(ref, {
       ownerId: s.ownerId,
       title: s.title ?? 'Neue Umfrage',
       status: 'draft',
-      description: s.description,
+      description: s.description ?? null,
       startAt: s.startAt ? Timestamp.fromDate(s.startAt as Date) : undefined,
       endAt:   s.endAt   ? Timestamp.fromDate(s.endAt as Date)   : undefined,
-
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     } as any);
-
     return ref.id;
   }
 
   async getById(id: string): Promise<Survey | null> {
-    const ref = doc(this.firestore, this.rootColName, id);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return null;
-
-    const d = snap.data() as any;
-    return {
-      id: snap.id,
-      ownerId: d.ownerId,
-      title: d.title,
-      description: d.description ?? undefined,
-      status: d.status,
-      startAt: d?.startAt?.toDate?.(),
-      endAt:   d?.endAt?.toDate?.(),
-
-    } as Survey;
+    const snap = await getDoc(this.surveyDoc(id));
+    return snap.exists() ? snap.data()! : null;
   }
+
+
 
   async listByOwner(ownerId: string): Promise<Survey[]> {
     const qy = query(this.surveysCol(), where('ownerId', '==', ownerId));
     const snaps = await getDocs(qy);
-    return snaps.docs.map((s) => {
-      const d = s.data() as any;
-      return {
-        id: s.id,
-        ownerId: d.ownerId,
-        title: d.title,
-        description: d.description ?? undefined,
-        status: d.status,
-        startAt: d?.startAt?.toDate?.(),
-        endAt:   d?.endAt?.toDate?.(),
-
-      } as Survey;
-    });
+    return snaps.docs.map(s => s.data());
   }
 
   async addQuestion(surveyId: string, q: Question): Promise<string> {
     const qRef = doc(this.questionsCol(surveyId));
-
-    const options =
-      Array.isArray(q.options) && q.options.length ? q.options : undefined;
-    const items =
-      Array.isArray((q as any).items) && (q as any).items.length
-        ? (q as any).items
-        : undefined;
-
-    const payload = omitUndefined({
+    await setDoc(qRef, omitUndefined({
+      ...q,
       id: qRef.id,
-      type: q.type,
-      title: q.title,
-      text: q.text,
-      options,
-      min: q.min,
-      max: q.max,
-      step: q.step,
-      placeholderText: (q as any).placeholderText,
-      maxStars: (q as any).maxStars,
-      items,
-      startPlaceholder: (q as any).startPlaceholder,
-      endPlaceholder: (q as any).endPlaceholder,
-      thumbLabel: (q as any).thumbLabel,
-      order: (q as any)?.order ?? Date.now(),
       createdAt: serverTimestamp(),
-    });
+    }) as WithFieldValue<Question>);
 
-    await setDoc(qRef, payload as any);
     return qRef.id;
   }
 
-  async publish(surveyId: string, start: Date, end: Date): Promise<void> {
-    const ref = doc(this.firestore, this.rootColName, surveyId);
-    await updateDoc(ref, {
+  async publish(surveyId: string, startAt: Date, endAt: Date): Promise<void> {
+    await setDoc(this.surveyDoc(surveyId), {
       status: 'published',
-      startAt: Timestamp.fromDate(start),
-      endAt:   Timestamp.fromDate(end),
+      startAt: Timestamp.fromDate(startAt),
+      endAt: Timestamp.fromDate(endAt),
       updatedAt: serverTimestamp(),
-    } as any);
+    } as any, { merge: true });
+  }
+
+  async listQuestions(surveyId: string): Promise<Question[]> {
+    const snaps = await getDocs(query(this.questionsCol(surveyId), orderBy('order', 'asc')));
+    return snaps.docs.map(d => d.data());
   }
 
   async submitResponse(
     surveyId: string,
     payload: { name?: string; answers: any[] }
   ): Promise<void> {
-    const rRef = doc(this.responsesCol(surveyId));
-    await setDoc(rRef, {
-      name: payload.name ?? null,
-      answers: payload.answers ?? [],
-      submittedAt: serverTimestamp(),
-    } as any);
+    const respRef = doc(collection(this.firestore, this.rootColName, surveyId, this.responsesSubCol));
+    await setDoc(respRef, {
+      ...payload,
+      createdAt: serverTimestamp(),
+    });
   }
 
   async updateSurveyWithQuestions(
     surveyId: string,
-    s: Omit<Survey, 'id'>,
+    survey: Omit<Survey, 'id'>,
     questions: Array<Omit<Question, 'id'> & { id?: string }>
   ): Promise<void> {
-    const qCol = this.questionsCol(surveyId);
+    const batch = writeBatch(this.firestore as any);
 
-    // 1. Survey update
-    const surveyRef = doc(this.firestore, this.rootColName, surveyId);
-    await setDoc(surveyRef, omitUndefined({
-      ...s,
-      updatedAt: serverTimestamp(),
-    }), { merge: true });
+    batch.set(this.surveyDoc(surveyId), survey as Survey, { merge: true });
 
-    // 2. Eski soruları oku
-    const existing = await getDocs(qCol);
-    const existingIds = new Set(existing.docs.map(d => d.id));
+    const existingSnap = await getDocs(this.questionsCol(surveyId));
+    const existingIds = new Set(existingSnap.docs.map(d => d.id));
 
     const keptIds = new Set<string>();
 
-    // 3. Yeni soruları ekle/güncelle
     for (const q of questions) {
-      if (q.id) {
-        // update
-        const { id, ...rest } = q as any;
-        const qRef = doc(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}/${id}`);
-        await setDoc(qRef, omitUndefined(rest), { merge: true });
-        keptIds.add(id);
-      } else {
-        // create
-        const qRef = doc(qCol);
-        const { id, ...rest } = q as any;
-        await setDoc(qRef, omitUndefined({ ...rest, id: qRef.id, createdAt: serverTimestamp() }));
-        keptIds.add(qRef.id);
-
-      }
+      const qRef = q.id
+        ? this.questionDoc(surveyId, q.id)
+        : doc(this.questionsCol(surveyId));
+      const fullData = { ...q, id: qRef.id };
+      batch.set(qRef, fullData as Question);
+      keptIds.add(qRef.id);
     }
 
-    // 4. Artık olmayan soruları sil
     for (const oldId of existingIds) {
       if (!keptIds.has(oldId)) {
-        await deleteDoc(doc(this.firestore, `${this.rootColName}/${surveyId}/${this.subColName}/${oldId}`));
+        batch.delete(this.questionDoc(surveyId, oldId));
       }
     }
+
+    batch.update(this.surveyDoc(surveyId), { updatedAt: serverTimestamp() } as any);
+    await batch.commit();
   }
 
-  async listQuestions(surveyId: string): Promise<Question[]> {
-    const qy = query(this.questionsCol(surveyId), orderBy('order', 'asc'));
-    const snaps = await getDocs(qy);
-    return snaps.docs.map((d) => ({
-      ...(d.data() as any),
-      id: d.id,
-    })) as Question[];
+  async getSurveyWithQuestions(id: string): Promise<{ survey: Survey; questions: Question[] } | null> {
+    const surveySnap = await getDoc(doc(this.firestore, 'umfragen', id));
+    if (!surveySnap.exists()) return null;
 
+    const survey = surveySnap.data() as Survey;
+
+    const qSnap = await getDocs(collection(this.firestore, 'umfragen', id, 'fragen'));
+    const questions = qSnap.docs.map(d => d.data() as Question);
+
+    return { survey: { ...survey, id }, questions };
   }
+
+  async createSurveyWithQuestions(
+    survey: Omit<Survey, 'id'>,
+    questions: Omit<Question, 'id'>[]
+  ): Promise<string> {
+    const surveyRef = doc(collection(this.firestore, 'umfragen'));
+    await setDoc(surveyRef, survey as Survey);
+
+    const batch = writeBatch(this.firestore);
+    for (const q of questions) {
+      const qRef = doc(collection(this.firestore, 'umfragen', surveyRef.id, 'fragen'));
+      batch.set(qRef, { ...q, id: qRef.id } as Question);
+    }
+    await batch.commit();
+
+    return surveyRef.id;
+  }
+
+
+  async deleteSurvey(id: string): Promise<void> {
+    const surveyRef = this.surveyDoc(id);
+    const qSnap = await getDocs(this.questionsCol(id));
+    const batch = writeBatch(this.firestore);
+
+    qSnap.forEach((qDoc) => {
+      batch.delete(qDoc.ref);
+    });
+
+    batch.delete(surveyRef);
+    await batch.commit();
+  }
+
+  async setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {
+    const docRef = doc(this.firestore, this.rootColName, id).withConverter(this.surveyConverter);
+    await setDoc(docRef, s as Survey, { merge: true });
+    await updateDoc(doc(this.firestore, this.rootColName, id), {
+      updatedAt: serverTimestamp(),
+    } as any);
+  }
+
+
+
 }

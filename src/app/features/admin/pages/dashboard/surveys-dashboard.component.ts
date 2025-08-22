@@ -2,16 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
-
 import { AuthService } from '../../../../core/auth/auth.service';
-import { FirebaseSurveyService } from '../../../../core/services/firebase-survey.service';
-
 import { Firestore, collection, query, where, orderBy, getDocs, doc, deleteDoc } from '@angular/fire/firestore';
 import { Survey } from '../../../../core/models/survey.models';
-
+import {FirebaseSurveyAdapter} from '../../../../infra/firebase/firebase-survey.adapter'
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,8 +31,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 })
 export class SurveysDashboardComponent {
   private afs    = inject(Firestore);
+  private fbSvc= inject(FirebaseSurveyAdapter);
   public  auth   = inject(AuthService);
-  private fbSvc  = inject(FirebaseSurveyService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
@@ -178,6 +174,6 @@ export class SurveysDashboardComponent {
 
   /** Vorhandene Umfrage bearbeiten */
   edit(s: Survey) {
-    this.router.navigate(['/admin/umfragen', s.id, 'edit']); // ✅ artık edit component’e gönder
+    this.router.navigate(['/admin/umfragen', s.id, 'edit']);
   }
 }

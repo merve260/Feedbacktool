@@ -1,51 +1,83 @@
 // src/app/core/services/survey.service.ts
-
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Firestore } from '@angular/fire/firestore';
-
-import { environment } from '../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { Survey, Question } from '../models/survey.models';
 import { SurveyBackend } from '../ports/survey-backend';
 import { FirebaseSurveyAdapter } from '../../infra/firebase/firebase-survey.adapter';
-import { CmsSurveyAdapter } from '../../infra/http/cms-survey.adapter';
-import { Survey, Question } from '../models/survey.models';
 
 @Injectable({ providedIn: 'root' })
 export class SurveyService {
-  private readonly backend: SurveyBackend;
 
-  private readonly firestore = inject(Firestore);
-  private readonly http = inject(HttpClient);
+  constructor(private backend: FirebaseSurveyAdapter) {}
 
-  constructor() {
-    this.backend =
-      environment.dataProvider === 'firebase'
-        ? new FirebaseSurveyAdapter(this.firestore)
-        : new CmsSurveyAdapter(this.http, environment.apiBaseUrl);
+  // -----------------------------
+  // Surveys
+  // -----------------------------
+
+  createDraft(s: Partial<Survey>): Promise<string> {
+    return this.backend.createDraft(s);
   }
 
-  listQuestions(surveyId: string) {
-    return this.backend.listQuestions(surveyId);
+  getById(id: string): Promise<Survey | null> {
+    return this.backend.getById(id);
   }
 
-  submitResponse(surveyId: string, payload: { name?: string; answers: any[] }) {
-    return this.backend.submitResponse(surveyId, payload);
+  listByOwner(ownerId: string): Promise<Survey[]> {
+    return this.backend.listByOwner(ownerId);
   }
 
-  createDraft(s: Partial<Survey>)              { return this.backend.createDraft(s); }
-  getById(id: string)                          { return this.backend.getById(id); }
-  listByOwner(ownerId: string)                 { return this.backend.listByOwner(ownerId); }
-  addQuestion(surveyId: string, q: Question)   { return this.backend.addQuestion(surveyId, q); }
-
-  publish(surveyId: string, s: Date, e: Date)  { return this.backend.publish(surveyId, s, e); }
-
+  publish(surveyId: string, startAt: Date, endAt: Date): Promise<void> {
+    return this.backend.publish(surveyId, startAt, endAt);
+  }
 
   updateSurveyWithQuestions(
     surveyId: string,
     survey: Omit<Survey, 'id'>,
     questions: Array<Omit<Question, 'id'> & { id?: string }>
-  ) {
-
+  ): Promise<void> {
     return this.backend.updateSurveyWithQuestions(surveyId, survey, questions);
+  }
+
+  getSurveyWithQuestions(id: string) {
+    return this.backend.getSurveyWithQuestions(id);
+  }
+
+  createSurveyWithQuestions(
+    survey: Omit<Survey, 'id'>,
+    questions: Omit<Question, 'id'>[]
+  ) {
+    return this.backend.createSurveyWithQuestions(survey, questions);
+  }
+
+
+  deleteSurvey(id: string): Promise<void> {
+    return this.backend.deleteSurvey(id);
+  }
+
+  // -----------------------------
+  // Questions
+  // -----------------------------
+
+  addQuestion(surveyId: string, q: Question): Promise<string> {
+    return this.backend.addQuestion(surveyId, q);
+  }
+
+  listQuestions(surveyId: string): Promise<Question[]> {
+    return this.backend.listQuestions(surveyId);
+  }
+
+  setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {
+    return this.backend.setSurveyWithId(id, s);
+  }
+
+
+  // -----------------------------
+  // Responses
+  // -----------------------------
+
+  submitResponse(
+    surveyId: string,
+    payload: { name?: string; answers: any[] }
+  ): Promise<void> {
+    return this.backend.submitResponse(surveyId, payload);
   }
 }

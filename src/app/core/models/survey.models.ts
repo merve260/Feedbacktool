@@ -27,6 +27,10 @@ export interface Question {
   startPlaceholder?: string;
   endPlaceholder?: string;
   thumbLabel?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  startLabel?: string;
+  endLabel?: string;
 }
 
 export interface Answer {

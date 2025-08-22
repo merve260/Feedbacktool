@@ -35,11 +35,11 @@ import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-m
 import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
 import { SurveyPublishComponent } from '../survey-publish/survey-publish.component';
 
-import { FirebaseSurveyService } from '../../../core/services/firebase-survey.service';
 import { Survey, Question, SurveyStatus } from '../../../core/models/survey.models';
 import { AuthService } from '../../../core/auth/auth.service';
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
+import {SurveyService} from '../../../core/services/survey.service';
 
 @Component({
   selector: 'app-survey-builder',
@@ -118,10 +118,10 @@ export class SurveyBuilderComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private fb: FormBuilder,
-    private fbSurvey: FirebaseSurveyService,
+    private surveyService: SurveyService,
     private auth: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     // Formular-Initialisierung mit Validatoren
     this.infoForm = new FormGroup({
@@ -141,10 +141,10 @@ export class SurveyBuilderComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.currentSurveyId = id;
-      const survey = await this.fbSurvey.getSurveyWithQuestions(id);
+      const result = await this.surveyService.getSurveyWithQuestions(id);
+      if (result) {
+        const { survey, questions } = result;
 
-      if (survey) {
-        // Formular mit vorhandenen Werten füllen
         this.infoForm.patchValue({
           title:       survey.title,
           description: survey.description ?? '',
@@ -152,17 +152,16 @@ export class SurveyBuilderComponent implements OnInit {
           endDate:     survey.endAt   ? new Date(survey.endAt)   : null
         });
 
-        // Fragen ins Canvas laden
-        this.canvasQuestions = survey.questions ?? [];
+        this.canvasQuestions = questions ?? [];
         this.isEditMode = true;
 
-        // Binding-Events nach außen emitten
         this.titleChange.emit(survey.title);
         this.descriptionChange.emit(survey.description ?? '');
         this.startDateChange.emit(survey.startAt ? new Date(survey.startAt) : undefined);
         this.endDateChange.emit(survey.endAt ? new Date(survey.endAt) : undefined);
-        this.questionsChange.emit(survey.questions ?? []);
+        this.questionsChange.emit(questions ?? []);
       }
+
     }
   }
 
@@ -249,11 +248,11 @@ export class SurveyBuilderComponent implements OnInit {
 
       if (!this.currentSurveyId) {
         // Neue Umfrage erstellen
-        const id = await this.fbSurvey.createSurveyWithQuestions(survey, qPayload);
+        const id = await this.surveyService.createSurveyWithQuestions(survey, qPayload);
         this.currentSurveyId = id;
       } else {
         // Bestehende Umfrage aktualisieren
-        await this.fbSurvey.updateSurveyWithQuestions(this.currentSurveyId, survey, qPayload);
+        await this.surveyService.updateSurveyWithQuestions(this.currentSurveyId, survey, qPayload);
       }
 
       alert(status === 'published' ? 'Umfrage veröffentlicht.' : 'Entwurf gespeichert.');
@@ -396,7 +395,7 @@ export class SurveyBuilderComponent implements OnInit {
   // ----------------------------------------------------------
   async onDeleteSurvey(id: string): Promise<void> {
     try {
-      await this.fbSurvey.deleteSurvey(id);
+      await this.surveyService.deleteSurvey(id);
       this.goToDashboard();
     } catch (err) {
       console.error('Fehler beim Löschen:', err);

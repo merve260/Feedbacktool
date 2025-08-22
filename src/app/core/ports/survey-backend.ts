@@ -34,6 +34,13 @@ export interface SurveyBackend {
     survey: Omit<Survey, 'id'>,
     questions: Array<Omit<Question, 'id'> & { id?: string }>
   ): Promise<void>;
+  getSurveyWithQuestions(id: string): Promise<{ survey: Survey; questions: Question[] } | null>;
+  createSurveyWithQuestions(
+    survey: Omit<Survey, 'id'>,
+    questions: Omit<Question, 'id'>[]
+  ): Promise<string>;
+
+  setSurveyWithId(id: string, s: Partial<Survey>): Promise<void>;
 
 
 }

@@ -41,12 +41,12 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
 
-    // 🌍 Global yerelleştirme
+
     { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
     { provide: MAT_DATE_FORMATS, useValue: DE_DATE_FORMATS },
 
-    // 📅 Date adapter
+    // Date adapter
     importProvidersFrom(MatNativeDateModule),
   ],
 };
