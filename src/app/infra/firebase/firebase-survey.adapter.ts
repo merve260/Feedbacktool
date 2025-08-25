@@ -1,16 +1,28 @@
 // src/app/infra/firebase/firebase-survey.adapter.ts
 import { Injectable } from '@angular/core';
 import {
-  Firestore, collection, doc, setDoc, getDoc, getDocs,
-  query, where, orderBy, serverTimestamp,
-  Timestamp, CollectionReference, DocumentReference, writeBatch, updateDoc
+  Firestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  serverTimestamp,
+  Timestamp,
+  CollectionReference,
+  DocumentReference,
+  writeBatch,
+  updateDoc,
 } from '@angular/fire/firestore';
 
 import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question, SurveyStatus } from '../../core/models/survey.models';
-import { FirestoreDataConverter, WithFieldValue, PartialWithFieldValue } from 'firebase/firestore';
+import { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore';
 
-/** Entfernt alle Felder mit `undefined` → Firestore akzeptiert das nicht */
+/** Entfernt alle `undefined` Felder → Firestore akzeptiert das nicht */
 function omitUndefined<T extends object>(obj: T): Partial<T> {
   const out: Partial<T> = {};
   (Object.entries(obj) as [keyof T, any][]).forEach(([k, v]) => {
@@ -19,57 +31,51 @@ function omitUndefined<T extends object>(obj: T): Partial<T> {
   return out;
 }
 
-/** string | Date → gültiges Date-Objekt */
-function normalizeDate(d: any): Date | null {
-  if (!d) return null;
-  if (d instanceof Date && !isNaN(d.getTime())) return d;
-
-  if (typeof d === 'string') {
-    const parts = d.split('.');
-    if (parts.length === 3) {
-      const [day, month, year] = parts.map(x => parseInt(x, 10));
-      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-        return new Date(year, month - 1, day);
-      }
-    }
-    const parsed = new Date(d);
-    return isNaN(parsed.getTime()) ? null : parsed;
+/** Alles in Date normalisieren (auch Firestore Timestamp oder String) */
+function toDateSafe(v: any): Date | undefined {
+  if (!v) return undefined;
+  if (v instanceof Date) return v;
+  if (v instanceof Timestamp) return v.toDate();
+  if (typeof v === 'string') {
+    const parsed = new Date(v);
+    return isNaN(parsed.getTime()) ? undefined : parsed;
   }
-  return null;
+  return undefined;
 }
 
-/** 🔥 Gemeinsame Funktion: bereitet Survey-Daten für Firestore vor */
+/** Survey-Daten für Firestore vorbereiten */
 function prepareSurveyData(
   s: Partial<Survey>,
   statusOverride?: SurveyStatus
-): PartialWithFieldValue<Survey> {
-  const sDate = normalizeDate(s.startAt);
-  const eDate = normalizeDate(s.endAt);
+): WithFieldValue<Survey> {
+  const sDate = toDateSafe(s.startAt);
+  const eDate = toDateSafe(s.endAt);
 
   return omitUndefined({
     ownerId: s.ownerId,
     title: s.title,
-    description: s.description ?? undefined,
-    status: (statusOverride ?? s.status ?? 'draft') as SurveyStatus, // <-- fix: cast zu SurveyStatus
-    startAt: sDate ? Timestamp.fromDate(sDate) : undefined,
-    endAt: eDate ? Timestamp.fromDate(eDate) : undefined,
+    description: s.description ?? null,
+    status: (statusOverride ?? s.status ?? 'draft') as SurveyStatus,
+
+    startAt: sDate ? Timestamp.fromDate(sDate) : null,
+    endAt:   eDate ? Timestamp.fromDate(eDate) : null,
+
     createdAt: (s as any).createdAt ?? serverTimestamp(),
     updatedAt: serverTimestamp(),
-  }) as PartialWithFieldValue<Survey>;
+  }) as WithFieldValue<Survey>;
 }
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseSurveyAdapter implements SurveyBackend {
-
   private readonly rootColName = 'umfragen';
   private readonly subColName = 'fragen';
   private readonly responsesSubCol = 'antworten';
 
   constructor(private firestore: Firestore) {}
 
-  // ======================================================
-  // Converter für Survey und Question
-  // ======================================================
+  // -----------------------------------------------------
+  // Converter
+  // -----------------------------------------------------
   private surveyConverter: FirestoreDataConverter<Survey> = {
     toFirestore(s: Survey) {
       return prepareSurveyData(s);
@@ -136,9 +142,9 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     },
   };
 
-  // ======================================================
+  // -----------------------------------------------------
   // Referenzen
-  // ======================================================
+  // -----------------------------------------------------
   private surveysCol(): CollectionReference<Survey> {
     return collection(this.firestore, this.rootColName).withConverter(this.surveyConverter);
   }
@@ -146,17 +152,19 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     return doc(this.firestore, this.rootColName, id).withConverter(this.surveyConverter);
   }
   private questionsCol(surveyId: string): CollectionReference<Question> {
-    return collection(this.firestore, this.rootColName, surveyId, this.subColName)
-      .withConverter(this.questionConverter);
+    return collection(this.firestore, this.rootColName, surveyId, this.subColName).withConverter(
+      this.questionConverter
+    );
   }
   private questionDoc(surveyId: string, qId: string): DocumentReference<Question> {
-    return doc(this.firestore, this.rootColName, surveyId, this.subColName, qId)
-      .withConverter(this.questionConverter);
+    return doc(this.firestore, this.rootColName, surveyId, this.subColName, qId).withConverter(
+      this.questionConverter
+    );
   }
 
-  // ======================================================
-  // Methoden
-  // ======================================================
+  // -----------------------------------------------------
+  // Methoden (Survey)
+  // -----------------------------------------------------
   async createDraft(s: Partial<Survey>): Promise<string> {
     const ref = doc(this.surveysCol());
     await setDoc(ref, prepareSurveyData(s, 'draft'));
@@ -174,32 +182,12 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     return snaps.docs.map(s => s.data());
   }
 
-  async addQuestion(surveyId: string, q: Question): Promise<string> {
-    const qRef = doc(this.questionsCol(surveyId));
-    await setDoc(qRef, omitUndefined({
-      ...q,
-      id: qRef.id,
-      createdAt: serverTimestamp(),
-    }) as WithFieldValue<Question>);
-    return qRef.id;
-  }
-
   async publish(surveyId: string, startAt: Date, endAt: Date): Promise<void> {
     await setDoc(
       this.surveyDoc(surveyId),
       prepareSurveyData({ startAt, endAt }, 'published'),
       { merge: true }
     );
-  }
-
-  async listQuestions(surveyId: string): Promise<Question[]> {
-    const snaps = await getDocs(query(this.questionsCol(surveyId), orderBy('order', 'asc')));
-    return snaps.docs.map(d => d.data());
-  }
-
-  async submitResponse(surveyId: string, payload: { name?: string; answers: any[] }): Promise<void> {
-    const respRef = doc(collection(this.firestore, this.rootColName, surveyId, this.responsesSubCol));
-    await setDoc(respRef, { ...payload, createdAt: serverTimestamp() });
   }
 
   async updateSurveyWithQuestions(
@@ -230,7 +218,9 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     await batch.commit();
   }
 
-  async getSurveyWithQuestions(id: string): Promise<{ survey: Survey; questions: Question[] } | null> {
+  async getSurveyWithQuestions(
+    id: string
+  ): Promise<{ survey: Survey; questions: Question[] } | null> {
     const surveySnap = await getDoc(this.surveyDoc(id));
     if (!surveySnap.exists()) return null;
 
@@ -241,7 +231,10 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     return { survey: { ...survey, id }, questions };
   }
 
-  async createSurveyWithQuestions(survey: Omit<Survey, 'id'>, questions: Omit<Question, 'id'>[]): Promise<string> {
+  async createSurveyWithQuestions(
+    survey: Omit<Survey, 'id'>,
+    questions: Omit<Question, 'id'>[]
+  ): Promise<string> {
     const surveyRef = doc(collection(this.firestore, this.rootColName));
     await setDoc(surveyRef, prepareSurveyData(survey));
 
@@ -269,5 +262,40 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   async setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {
     await setDoc(this.surveyDoc(id), prepareSurveyData(s), { merge: true });
     await updateDoc(this.surveyDoc(id), { updatedAt: serverTimestamp() } as any);
+  }
+
+  // -----------------------------------------------------
+  // Methoden (Questions)
+  // -----------------------------------------------------
+  async addQuestion(surveyId: string, q: Question): Promise<string> {
+    const qRef = doc(this.questionsCol(surveyId));
+    await setDoc(
+      qRef,
+      omitUndefined({
+        ...q,
+        id: qRef.id,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      }) as WithFieldValue<Question>
+    );
+    return qRef.id;
+  }
+
+  async listQuestions(surveyId: string): Promise<Question[]> {
+    const snaps = await getDocs(query(this.questionsCol(surveyId), orderBy('order', 'asc')));
+    return snaps.docs.map(d => d.data());
+  }
+
+  // -----------------------------------------------------
+  // Methoden (Responses)
+  // -----------------------------------------------------
+  async submitResponse(
+    surveyId: string,
+    payload: { name?: string; answers: any[] }
+  ): Promise<void> {
+    const respRef = doc(
+      collection(this.firestore, this.rootColName, surveyId, this.responsesSubCol)
+    );
+    await setDoc(respRef, { ...payload, createdAt: serverTimestamp() });
   }
 }

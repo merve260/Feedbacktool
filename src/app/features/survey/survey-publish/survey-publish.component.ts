@@ -46,6 +46,10 @@ export class SurveyPublishComponent {
   linkVisible = false;
   surveyId: string | null = null;
 
+  constructor() {
+    console.log('SurveyPublishComponent CONSTRUCTOR', { showActions: this.showActions });
+  }
+
   // ------ Services ------
   private surveyService = inject(SurveyService);
   private auth = inject(AuthService);
@@ -81,11 +85,14 @@ export class SurveyPublishComponent {
     const hasDates = !!this.startDate && !!this.endDate;
     const hasQuestions = this.canvasQuestions?.length > 0;
 
-    //console.log('---- PUBLISH CHECK ----');
-    //console.log('title:', this.surveyTitle);
-    //console.log('startDate:', this.startDate);
-    //console.log('endDate:', this.endDate);
-    //console.log('questions:', this.canvasQuestions);
+    console.log('READY CHECK', {
+      title: this.surveyTitle,
+      start: this.startDate,
+      end: this.endDate,
+      questions: this.canvasQuestions,
+      result: hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart
+    });
+
 
     return hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart;
   }
@@ -136,6 +143,8 @@ export class SurveyPublishComponent {
 
   // ------------------ Draft speichern ------------------
   async onDraft(): Promise<void> {
+    console.log('PUBLISH INPUTS', this.startDate, this.endDate, this.surveyTitle);
+
     if (!this.isReady() || this.busy) return;
 
     this.errorMsg = '';
@@ -151,9 +160,10 @@ export class SurveyPublishComponent {
         ownerId: u.uid,
         title: this.surveyTitle.trim(),
         description: this.surveySubDescription || null,
-        startAt: this.startDate!,
-        endAt: this.endDate!
+        startAt: this.startDate ? new Date(this.startDate) : undefined,
+        endAt:   this.endDate ? new Date(this.endDate) : undefined
       });
+
 
       this.surveyId = id;
 

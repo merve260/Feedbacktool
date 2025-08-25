@@ -1,3 +1,5 @@
+// src/app/features/survey/surveys-dashboard/surveys-dashboard.component.ts
+
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -5,9 +7,22 @@ import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { Firestore, collection, query, where, orderBy, getDocs, doc, deleteDoc } from '@angular/fire/firestore';
+
+import {
+  Firestore,
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  doc,
+  deleteDoc
+} from '@angular/fire/firestore';
+
 import { Survey } from '../../../../core/models/survey.models';
-import {FirebaseSurveyAdapter} from '../../../../infra/firebase/firebase-survey.adapter'
+import { FirebaseSurveyAdapter } from '../../../../infra/firebase/firebase-survey.adapter';
+
+// Angular Material
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,48 +45,68 @@ import { MatTooltip } from '@angular/material/tooltip';
   styleUrls: ['./surveys-dashboard.component.scss'],
 })
 export class SurveysDashboardComponent {
+
+  // =========================================================
+  // 🔹 Services injizieren (Firestore, Adapter, Auth, Router, Dialog)
+  // =========================================================
   private afs    = inject(Firestore);
-  private fbSvc= inject(FirebaseSurveyAdapter);
+  private fbSvc  = inject(FirebaseSurveyAdapter);
   public  auth   = inject(AuthService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  loading = true;
+  // =========================================================
+  // 🔹 Zustände für UI
+  // =========================================================
+  loading = true;   // Ladeindikator
 
-  /** tüm kayıtlar (ham veri) */
+  // Alle geladenen Umfragen (Rohdaten)
   private allItems: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
 
-  /** görüntülenen (filtre + sort sonrası) */
+  // Gefilterte + sortierte Umfragen für die Anzeige
   items: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
 
-  /** arama metni */
+  // Suchtext für Filter
   search = '';
 
-  /** sıralama yönü: yeni→eski = 'desc', eski→yeni = 'asc' */
+  // Sortierrichtung: desc = neueste oben, asc = älteste oben
   sortDir: 'desc' | 'asc' = 'desc';
 
+  // =========================================================
+  // 🔹 Lifecycle – Initiales Laden
+  // =========================================================
   async ngOnInit(): Promise<void> {
     try {
+      // 1) Aktuellen Benutzer laden
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) {
         this.loading = false;
         return;
       }
 
+      // 2) Firestore-Referenz holen (hier ohne Converter!)
       const colRef = collection(this.afs, 'umfragen');
-      const qy = query(colRef, where('ownerId', '==', u.uid), orderBy('startAt', 'desc') as any);
 
       let snap;
       try {
-        snap = await getDocs(qy);
+        // Versuche mit Sortierung nach "createdAt"
+        snap = await getDocs(
+          query(colRef, where('ownerId', '==', u.uid), orderBy('createdAt', 'desc'))
+        );
       } catch {
-        // Eğer orderBy çalışmazsa sadece where ile çek
+        // Fallback: nur Filter ohne orderBy
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid)));
       }
 
-      const toDate = (x: any): Date | undefined =>
-        x?.toDate?.() ? x.toDate() : (x ?? undefined);
+      // 3) Hilfsfunktion: Timestamp → Date umwandeln
+      const toDate = (x: any): Date | undefined => {
+        if (!x) return undefined;
+        if (x.toDate) return x.toDate();     // Firestore Timestamp
+        if (x instanceof Date) return x;     // Bereits Date
+        return new Date(x);                  // String oder Zahl
+      };
 
+      // 4) Mapping: Firestore-Dokumente → Survey-Objekte
       this.allItems = snap.docs.map(d => {
         const data: any = d.data();
         return {
@@ -79,28 +114,35 @@ export class SurveysDashboardComponent {
           ownerId: data.ownerId,
           title: data.title ?? '',
           description: data.description ?? undefined,
-          startAt: toDate(data.startAt ?? null),
-          endAt:   toDate(data.endAt   ?? null),
+          startAt: toDate(data.startAt),
+          endAt:   toDate(data.endAt),
+
           status:  data.status,
           createdAt: toDate(data.createdAt ?? null),
           updatedAt: toDate(data.updatedAt ?? null),
         } as Survey & { createdAt?: Date; updatedAt?: Date };
       });
 
-      this.applyView(); // ilk görünüm uygula
+      // 5) Erste Ansicht anwenden (Filter + Sortierung)
+      this.applyView();
+
     } finally {
       this.loading = false;
     }
   }
 
-  /** Filtre + sıralamayı uygula */
+  // =========================================================
+  // 🔹 Hilfsmethoden für Filter / Sortierung
+  // =========================================================
   applyView() {
     const q = this.search.trim().toLowerCase();
     let list = [...this.allItems];
 
+    // Filter: Titel durchsuchen
     if (q) list = list.filter(x => (x.title || '').toLowerCase().includes(q));
 
-    const factor = this.sortDir === 'desc' ? -1 : 1; // desc: yeni üstte
+    // Sortierung: nach createdAt oder startAt
+    const factor = this.sortDir === 'desc' ? -1 : 1;
     list.sort((a, b) => {
       const aVal = a.createdAt?.getTime?.() ?? a.startAt?.getTime?.() ?? 0;
       const bVal = b.createdAt?.getTime?.() ?? b.startAt?.getTime?.() ?? 0;
@@ -120,6 +162,9 @@ export class SurveysDashboardComponent {
     this.applyView();
   }
 
+  // =========================================================
+  // 🔹 Status-Label CSS-Klassen
+  // =========================================================
   statusClass(s: Survey['status']) {
     return {
       draft:     'chip chip--draft',
@@ -128,6 +173,9 @@ export class SurveysDashboardComponent {
     }[s];
   }
 
+  // =========================================================
+  // 🔹 Aktionen (Publish / Unpublish / Close / Delete)
+  // =========================================================
   private stripId(s: Survey): Omit<Survey, 'id'> {
     const { id, ...rest } = s;
     return rest;
@@ -167,12 +215,13 @@ export class SurveysDashboardComponent {
     });
   }
 
-  /** Neue Umfrage anlegen */
+  // =========================================================
+  // 🔹 Navigation
+  // =========================================================
   create() {
     this.router.navigateByUrl('/admin/builder');
   }
 
-  /** Vorhandene Umfrage bearbeiten */
   edit(s: Survey) {
     this.router.navigate(['/admin/umfragen', s.id, 'edit']);
   }

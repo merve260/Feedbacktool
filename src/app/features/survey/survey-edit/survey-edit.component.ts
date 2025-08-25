@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyService } from '../../../core/services/survey.service';
 import { Question } from '../../../core/models/survey.models';
 import { SurveyBuilderComponent } from '../survey-builder/survey-builder.component';
-import { NgIf } from '@angular/common';
+import { NgIf, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
 
 @Component({
@@ -13,7 +14,9 @@ import { Auth } from '@angular/fire/auth';
   templateUrl: './survey-edit.component.html',
   styleUrls: ['./survey-edit.component.scss'],
   imports: [
+    CommonModule,
     NgIf,
+    ReactiveFormsModule,   // 🔑 ekle
     MatButtonModule,
     SurveyBuilderComponent
   ]

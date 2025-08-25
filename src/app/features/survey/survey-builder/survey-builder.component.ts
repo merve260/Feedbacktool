@@ -224,6 +224,7 @@ export class SurveyBuilderComponent implements OnInit {
   // SPEICHERN – einheitliche Methode für Draft / Publish
   // ----------------------------------------------------------
   async saveAs(status: SurveyStatus) {
+    console.log('SAVE survey', status, this.startDate, this.endDate     );
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
       alert('Bitte Titel, Zeitraum und mindestens eine Frage angeben.');
@@ -236,26 +237,24 @@ export class SurveyBuilderComponent implements OnInit {
       if (!u) { alert('Bitte einloggen.'); return; }
 
       const title = (this.titleCtrl.value || '').trim();
-      const start = this.startCtrl.value!;
-      const end   = this.endCtrl.value!;
+      const start = this.startCtrl.value ?? undefined;
+      const end   = this.endCtrl.value   ?? undefined;
 
       const survey: Omit<Survey, 'id'> = {
         ownerId: u.uid,
         title,
         description: this.infoForm.controls.description.value ?? undefined,
-        startAt: start,
-        endAt: end,
+        startAt: start ? new Date(start) : undefined,
+        endAt:   end   ? new Date(end)   : undefined,
         status,
       };
 
       const qPayload = this.canvasQuestions.map(this.toQuestion);
 
       if (!this.currentSurveyId) {
-        // Neue Umfrage erstellen
         const id = await this.surveyService.createSurveyWithQuestions(survey, qPayload);
         this.currentSurveyId = id;
       } else {
-        // Bestehende Umfrage aktualisieren
         await this.surveyService.updateSurveyWithQuestions(this.currentSurveyId, survey, qPayload);
       }
 
@@ -270,6 +269,7 @@ export class SurveyBuilderComponent implements OnInit {
     }
   }
 
+
   saveDraft() { return this.saveAs('draft'); }
   async saveAll() { return this.saveAs('draft'); }
 
@@ -281,8 +281,15 @@ export class SurveyBuilderComponent implements OnInit {
   get endCtrl()   { return this.infoForm.controls.endDate; }
 
   get surveyTitle(): string    { return this.titleCtrl.value; }
-  get startDateValue(): Date | null { return this.startCtrl.value; }
-  get endDateValue(): Date | null   { return this.endCtrl.value; }
+  get startDateValue(): Date | null {
+    const val = this.startCtrl.value;
+    return val instanceof Date ? val : (val ? new Date(val) : null);
+  }
+
+  get endDateValue(): Date | null {
+    const val = this.endCtrl.value;
+    return val instanceof Date ? val : (val ? new Date(val) : null);
+  }
 
   // ----------------------------------------------------------
   // Validatoren
