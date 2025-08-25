@@ -47,7 +47,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 export class SurveysDashboardComponent {
 
   // =========================================================
-  // 🔹 Services injizieren (Firestore, Adapter, Auth, Router, Dialog)
+  // Services injizieren (Firestore, Adapter, Auth, Router, Dialog)
   // =========================================================
   private afs    = inject(Firestore);
   private fbSvc  = inject(FirebaseSurveyAdapter);
@@ -56,7 +56,7 @@ export class SurveysDashboardComponent {
   private dialog = inject(MatDialog);
 
   // =========================================================
-  // 🔹 Zustände für UI
+  // Zustände für UI
   // =========================================================
   loading = true;   // Ladeindikator
 
@@ -73,7 +73,7 @@ export class SurveysDashboardComponent {
   sortDir: 'desc' | 'asc' = 'desc';
 
   // =========================================================
-  // 🔹 Lifecycle – Initiales Laden
+  // Lifecycle – Initiales Laden
   // =========================================================
   async ngOnInit(): Promise<void> {
     try {
@@ -132,7 +132,7 @@ export class SurveysDashboardComponent {
   }
 
   // =========================================================
-  // 🔹 Hilfsmethoden für Filter / Sortierung
+  // Hilfsmethoden für Filter / Sortierung
   // =========================================================
   applyView() {
     const q = this.search.trim().toLowerCase();
@@ -163,7 +163,7 @@ export class SurveysDashboardComponent {
   }
 
   // =========================================================
-  // 🔹 Status-Label CSS-Klassen
+  // Status-Label CSS-Klassen
   // =========================================================
   statusClass(s: Survey['status']) {
     return {
@@ -174,7 +174,7 @@ export class SurveysDashboardComponent {
   }
 
   // =========================================================
-  // 🔹 Aktionen (Publish / Unpublish / Close / Delete)
+  // Aktionen (Publish / Unpublish / Close / Delete)
   // =========================================================
   private stripId(s: Survey): Omit<Survey, 'id'> {
     const { id, ...rest } = s;
@@ -216,7 +216,7 @@ export class SurveysDashboardComponent {
   }
 
   // =========================================================
-  // 🔹 Navigation
+  // Navigation
   // =========================================================
   create() {
     this.router.navigateByUrl('/admin/builder');

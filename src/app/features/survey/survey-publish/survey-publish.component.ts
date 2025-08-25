@@ -20,7 +20,7 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./survey-publish.component.scss']
 })
 export class SurveyPublishComponent {
-  // ------ Inputs ------
+  // ===== Eingaben (Inputs) =====
   @Input() startDate: Date | null | undefined = null;
   @Input() endDate: Date | null | undefined = null;
   @Input() showActions: boolean = true;
@@ -33,12 +33,12 @@ export class SurveyPublishComponent {
   @Input() surveySubQuestionCount: number = 0;
   @Input() canvasQuestions: Question[] = [];
 
-  // ------ Outputs ------
+  // ===== Ausgaben (Outputs) =====
   @Output() draftRequested = new EventEmitter<string>();
   @Output() publishRequested = new EventEmitter<string>();
   @Output() questionsChange = new EventEmitter<Question[]>();
 
-  // ------ States ------
+  // ===== Zustände (States) =====
   busy = false;
   publishing = false;
   errorMsg = '';
@@ -47,14 +47,14 @@ export class SurveyPublishComponent {
   surveyId: string | null = null;
 
   constructor() {
-    console.log('SurveyPublishComponent CONSTRUCTOR', { showActions: this.showActions });
+    // console.log('SurveyPublishComponent CONSTRUCTOR', { showActions: this.showActions });
   }
 
-  // ------ Services ------
+  // ===== Services =====
   private surveyService = inject(SurveyService);
   private auth = inject(AuthService);
 
-  // ------------------ Date Helpers ------------------
+  // ------------------ Datumshilfen ------------------
   private startOfDay(d: Date | null | undefined): Date | null {
     if (!d) return null;
     const x = new Date(d);
@@ -79,26 +79,18 @@ export class SurveyPublishComponent {
     return !!(s && e && e < s);
   }
 
-  // ------------------ Validation ------------------
+  // ------------------ Validierung ------------------
   isReady(): boolean {
     const hasTitle = !!this.surveyTitle?.trim();
     const hasDates = !!this.startDate && !!this.endDate;
     const hasQuestions = this.canvasQuestions?.length > 0;
 
-    console.log('READY CHECK', {
-      title: this.surveyTitle,
-      start: this.startDate,
-      end: this.endDate,
-      questions: this.canvasQuestions,
-      result: hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart
-    });
-
+    // console.log('READY CHECK', { title: this.surveyTitle, start: this.startDate, end: this.endDate });
 
     return hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart;
   }
 
-
-  // ------------------ Link Helpers ------------------
+  // ------------------ Link-Funktionen ------------------
   getSurveyLink(): string {
     if (!this.surveyId) return '#';
     return `${window.location.origin}/survey/${this.surveyId}`;
@@ -119,7 +111,7 @@ export class SurveyPublishComponent {
     window.open(`/survey/${this.surveyId}`, '_blank');
   }
 
-  // ------------------ Question Mapping ------------------
+  // ------------------ Fragen-Mapping ------------------
   private mapToQuestion(q: any, index: number): Question {
     const opts = Array.isArray(q.options) ? q.options.filter((x: any) => x != null) : undefined;
     const items = Array.isArray(q.items) ? q.items.filter((x: any) => x != null) : undefined;
@@ -141,9 +133,9 @@ export class SurveyPublishComponent {
     } as Question;
   }
 
-  // ------------------ Draft speichern ------------------
+  // ------------------ Entwurf speichern ------------------
   async onDraft(): Promise<void> {
-    console.log('PUBLISH INPUTS', this.startDate, this.endDate, this.surveyTitle);
+    // console.log('PUBLISH INPUTS', this.startDate, this.endDate, this.surveyTitle);
 
     if (!this.isReady() || this.busy) return;
 
@@ -164,7 +156,6 @@ export class SurveyPublishComponent {
         endAt:   this.endDate ? new Date(this.endDate) : undefined
       });
 
-
       this.surveyId = id;
 
       const writes = this.canvasQuestions.map((q, i) =>
@@ -182,7 +173,7 @@ export class SurveyPublishComponent {
     }
   }
 
-  // ------------------ Veröffentlichen ------------------
+  // ------------------ Umfrage veröffentlichen ------------------
   async publishSurvey(): Promise<void> {
     if (!this.isReady() || this.busy) return;
 
@@ -199,7 +190,7 @@ export class SurveyPublishComponent {
       const id = await this.surveyService.createDraft({
         ownerId: u.uid,
         title: this.surveyTitle.trim(),
-        description: this.surveySubDescription || null,  // 🔑 description fix
+        description: this.surveySubDescription || null,
         startAt: this.startDate!,
         endAt: this.endDate!
       });

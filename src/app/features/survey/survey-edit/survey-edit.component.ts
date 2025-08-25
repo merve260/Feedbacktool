@@ -1,3 +1,4 @@
+// src/app/features/survey/survey-edit/survey-edit.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyService } from '../../../core/services/survey.service';
@@ -16,13 +17,14 @@ import { Auth } from '@angular/fire/auth';
   imports: [
     CommonModule,
     NgIf,
-    ReactiveFormsModule,   // 🔑 ekle
+    ReactiveFormsModule,
     MatButtonModule,
     SurveyBuilderComponent
   ]
 })
 export class SurveyEditComponent implements OnInit {
 
+  // ===== Eigenschaften (State) =====
   surveyId!: string;
   title = '';
   description = '';
@@ -38,26 +40,35 @@ export class SurveyEditComponent implements OnInit {
     private auth: Auth
   ) {}
 
+  // ------------------ Initialisierung ------------------
   async ngOnInit() {
     this.surveyId = this.route.snapshot.paramMap.get('id')!;
-    try {
-      const survey = await this.surveyService.getById(this.surveyId);
 
+    try {
+      // Umfrage laden
+      const survey = await this.surveyService.getById(this.surveyId);
       if (!survey) throw new Error('Not found');
 
+      // Felder setzen
       this.title = survey.title ?? '';
       this.description = survey.description ?? '';
       this.startAt = survey.startAt ?? undefined;
       this.endAt   = survey.endAt   ?? undefined;
+
+      // Fragen laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
+
     } catch (err) {
       this.errorMsg = 'Fehler beim Laden.';
     }
   }
 
+  // ------------------ Update (Speichern) ------------------
   async updateSurvey(status: 'draft' | 'published') {
     if (!this.surveyId) return;
+
     try {
+      // Umfrage + Fragen aktualisieren
       await this.surveyService.updateSurveyWithQuestions(
         this.surveyId,
         {
@@ -71,9 +82,12 @@ export class SurveyEditComponent implements OnInit {
         this.questions
       );
 
+      // Fragenliste nach Update neu laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
 
+      // Nach Dashboard zurück
       this.router.navigate(['/admin/umfragen']);
+
     } catch (err) {
       console.error('Speichern fehlgeschlagen:', err);
       this.errorMsg = 'Speichern fehlgeschlagen.';
