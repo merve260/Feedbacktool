@@ -12,7 +12,14 @@
     </app-survey-builder>
   </div>
 
+
   <div class="edit-actions">
+
+    <!-- Vorschau Button -->
+    <button mat-raised-button color="basic" (click)="openPreview()">
+      Vorschau
+    </button>
+
     <button mat-raised-button color="primary" (click)="updateSurvey('draft')">
       Änderungen als Entwurf speichern
     </button>

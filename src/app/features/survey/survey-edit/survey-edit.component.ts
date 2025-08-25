@@ -8,6 +8,9 @@ import { NgIf, CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
+import { MatDialog } from '@angular/material/dialog';
+import { SurveyPreviewModalComponent } from '../../../shared/modals/survey-preview-modal/survey-preview-modal';
+
 
 @Component({
   selector: 'app-survey-edit',
@@ -37,7 +40,8 @@ export class SurveyEditComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private surveyService: SurveyService,
-    private auth: Auth
+    private auth: Auth,
+    private dialog: MatDialog
   ) {}
 
   // ------------------ Initialisierung ------------------
@@ -93,4 +97,15 @@ export class SurveyEditComponent implements OnInit {
       this.errorMsg = 'Speichern fehlgeschlagen.';
     }
   }
+  openPreview() {
+    this.dialog.open(SurveyPreviewModalComponent, {
+      width: '700px',
+      data: {
+        title: this.title,
+        description: this.description,
+        questions: this.questions
+      }
+    });
+  }
+
 }

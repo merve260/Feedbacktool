@@ -1,0 +1,92 @@
+<h2 mat-dialog-title>Vorschau: {{ data.title }}</h2>
+
+<div mat-dialog-content class="preview-content">
+
+  <p class="description" *ngIf="data.description">{{ data.description }}</p>
+
+  <!-- Name Feld (immer deaktiviert) -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Ihr Name (optional)</mat-label>
+    <input matInput placeholder="Vor- und Nachname" disabled />
+  </mat-form-field>
+
+  <!-- Fragen -->
+  <div *ngFor="let q of data.questions; let i = index" class="question-block">
+    <h3>{{ i + 1 }}. {{ q.title }}</h3>
+
+    <!-- 🔹 Beschreibung -->
+    <p class="question-text" *ngIf="q.text">{{ q.text }}</p>
+
+    <ng-container [ngSwitch]="q.type">
+
+      <!-- Ja / Nein -->
+      <div *ngSwitchCase="'yesno'">
+        <mat-radio-group>
+          <mat-radio-button value="yes" disabled>Ja</mat-radio-button>
+          <mat-radio-button value="no" disabled>Nein</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- Multiple -->
+      <div *ngSwitchCase="'multiple'">
+        <mat-checkbox *ngFor="let opt of q.options" disabled>{{ opt }}</mat-checkbox>
+      </div>
+
+      <!-- Radio -->
+      <div *ngSwitchCase="'radio'">
+        <mat-radio-group>
+          <mat-radio-button *ngFor="let opt of q.options" [value]="opt" disabled>
+            {{ opt }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- Slider -->
+      <div *ngSwitchCase="'slider'">
+        <mat-slider [min]="q.min || 1" [max]="q.max || 10" [step]="q.step || 1" disabled></mat-slider>
+        <small *ngIf="q.thumbLabel">Wertanzeige: aktiviert</small>
+      </div>
+
+      <!-- Sterne -->
+      <div *ngSwitchCase="'star'" class="star-rating">
+        <mat-icon *ngFor="let s of [].constructor(q.maxStars || 5)">star</mat-icon>
+      </div>
+
+      <!-- Freitext -->
+      <div *ngSwitchCase="'freitext'">
+        <mat-form-field class="full-width">
+          <mat-label>{{ q.placeholderText || 'Antwort' }}</mat-label>
+          <input matInput disabled />
+        </mat-form-field>
+      </div>
+
+      <!-- Datum / Uhrzeit -->
+      <div *ngSwitchCase="'date'" class="date-preview">
+        <mat-form-field>
+          <mat-label>{{ q.startLabel || 'Start' }}</mat-label>
+          <input matInput placeholder="{{ q.startPlaceholder || 'Startzeit' }}" disabled />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ q.endLabel || 'Ende' }}</mat-label>
+          <input matInput placeholder="{{ q.endPlaceholder || 'Endzeit' }}" disabled />
+        </mat-form-field>
+      </div>
+
+      <!-- Drag & Drop -->
+      <div *ngSwitchCase="'dragdrop'">
+        <ul>
+          <li *ngFor="let item of q.items">{{ item }}</li>
+        </ul>
+      </div>
+
+      <!-- Fallback -->
+      <div *ngSwitchDefault>
+        <p>Unbekannter Fragetyp</p>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="close()">Schließen</button>
+</div>

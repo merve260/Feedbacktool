@@ -1,0 +1,97 @@
+$primary-lila: #b47ac7;
+$primary-lila-dark: #9e5db6;
+$accent-lila: #7b4683;
+
+.preview-content {
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  min-width: 550px;
+  box-sizing: border-box;
+
+  .description {
+    font-size: 1rem;
+    color: #5e5b5b;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .question-block {
+    margin-bottom: 1.5rem;
+    padding: 1.2rem 1rem;
+    border-radius: 14px;
+    background-color: #ffffff;   // daha net kontrast için beyaz
+    border: 1px solid #e2cdea;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+    h3 {
+      margin: 0 0 0.9rem 0;
+      font-weight: 600;
+      color: #3b2a45;
+    }
+
+    .question-text {
+      font-size: 0.9rem;
+      color: #6b5d6d;
+      margin-bottom: 0.8rem;
+    }
+
+    mat-radio-group,
+    mat-checkbox {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 0.8rem;
+    }
+
+    mat-slider {
+      width: 100%;
+      margin-top: 1rem;
+
+      ::ng-deep .mat-slider-track-fill {
+        background-color: $primary-lila !important;
+      }
+      ::ng-deep .mat-slider-thumb {
+        background-color: $primary-lila !important;
+      }
+    }
+
+    .star-rating {
+      display: flex;
+      gap: 8px;
+      margin-top: 0.8rem;
+
+      mat-icon {
+        font-size: 28px;
+        color: #ccc;
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  margin-top: 1rem;
+  padding: 1rem;
+
+  button {
+    border-radius: 20px;
+    font-weight: 600;
+    background-color: $accent-lila;
+    color: #fff;
+
+    &:hover {
+      background-color: $primary-lila-dark;
+    }
+  }
+}
+::ng-deep .mat-mdc-dialog-title {
+  padding: 1.2rem 1.5rem 0.5rem 1.5rem;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3b2a45;
+}
