@@ -156,10 +156,14 @@ export class SurveyBuilderComponent implements OnInit {
         this.isEditMode = true;
 
         this.titleChange.emit(survey.title);
+        //console.log('emit title ->', survey.title);
         this.descriptionChange.emit(survey.description ?? '');
         this.startDateChange.emit(survey.startAt ? new Date(survey.startAt) : undefined);
+        //console.log('emit startDate ->', survey.startAt);
         this.endDateChange.emit(survey.endAt ? new Date(survey.endAt) : undefined);
+        //console.log('emit endDate ->', survey.endAt);
         this.questionsChange.emit(questions ?? []);
+        //console.log('emit questions ->', questions);
       }
 
     }
@@ -327,50 +331,106 @@ export class SurveyBuilderComponent implements OnInit {
   // Modale zum Erstellen neuer Fragen
   // ----------------------------------------------------------
   openYesNoModal(questionData: any) {
-    const ref = this.dialog.open(YesNoModalComponent, { data: { ...questionData, options: ['Ja','Nein'] }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(YesNoModalComponent, {
+      data: { ...questionData, options: ['Ja','Nein'] },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r);
+      //  console.log('add question ->', this.canvasQuestions);
+        this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openMultipleChoiceModal(questionData: any) {
-    const ref = this.dialog.open(MultipleChoiceModalComponent, { data: { ...questionData, options: ['', ''] }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(MultipleChoiceModalComponent, {
+      disableClose: true,
+      panelClass: 'pol-dialog',
+      data: { ...questionData, options: ['', ''] },
+
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openDateTimeModal(questionData: any) {
-    const ref = this.dialog.open(DateTimeModalComponent, { data: { ...questionData }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push({ ...questionData, ...r }); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(DateTimeModalComponent, {
+      data: { ...questionData },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push({ ...questionData, ...r }); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openDragDropModal(questionData: any) {
-    const ref = this.dialog.open(DragDropModalComponent, { data: { ...questionData, items: ['Element 1','Element 2'] }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(DragDropModalComponent, {
+      data: { ...questionData, items: ['Element 1','Element 2'] },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openFreitextModal(questionData: any) {
-    const ref = this.dialog.open(FreitextModalComponent, { data: { ...questionData, placeholderText: '' }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(FreitextModalComponent, {
+      data: { ...questionData, placeholderText: '' },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openStarRatingModal(questionData: any) {
-    const ref = this.dialog.open(StarRatingModalComponent, { data: { ...questionData, maxStars: 5 }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(StarRatingModalComponent, {
+      data: { ...questionData, maxStars: 5 },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openSliderModal(questionData: any) {
-    const ref = this.dialog.open(SkalaSliderModalComponent, { data: { ...questionData }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(SkalaSliderModalComponent, {
+      data: { ...questionData },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
 
   openRadioModal(questionData: any) {
-    const ref = this.dialog.open(RadioModalComponent, { data: { ...questionData, options: ['Option 1','Option 2'] }, disableClose: true });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); } });
+    const ref = this.dialog.open(RadioModalComponent, {
+      data: { ...questionData, options: ['Option 1','Option 2'] },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    });
+    ref.afterClosed().subscribe(r => {
+      if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }
+    });
   }
+
 
   // ----------------------------------------------------------
   // Existierende Frage bearbeiten
   // ----------------------------------------------------------
   private openDialogSame<T, D = any>(component: any, data: D) {
-    return this.dialog.open<T>(component, { data, disableClose: true });
+    return this.dialog.open<T>(component, {
+      data,
+      disableClose: true,
+      panelClass: 'pol-dialog',
+      width: 'min(92vw, 550px)'});
   }
 
   editQuestion(index: number) {

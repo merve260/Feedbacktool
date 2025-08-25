@@ -1,74 +1,91 @@
-/* ===== Sternebewertung – kompakt ===== */
-$brand:  #824CFF;
-$border: #e6e2f3;
-$soft:   #faf7ff;
+@use '../../../../styles/_modal-formfield' as *;
 
-.modal-header{
-  display:flex; justify-content:flex-end; padding-bottom:0;
-  .close-button{ margin-left:auto; }
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0;
+
+  .close-button {
+    color: #666;
+    transition: color .2s;
+    &:hover { color: #000; }
+  }
 }
 
-.modal-container{
-  display:flex; flex-direction:column; gap:16px;
-  padding:24px; width:min(92vw,720px); max-width:650px;
-  max-height:70vh; overflow-y:auto; box-sizing:border-box;
-  margin:0 auto; border-radius:14px;
-  box-shadow:inset 0 0 0 1px var(--brand-border);
+/* Container */
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  width: min(92vw, 520px);
+  margin: 20px auto;
+  max-height: 75vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px var(--brand-border);
 }
 
-h2{ margin:0 0 6px; font-size:22px; font-weight:700; }
-.full-width{ width:100%; }
+h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
 
-/* ---- Material-Felder (tek blok) ---- */
-:host ::ng-deep{
-  .mat-mdc-form-field{ width:100%; }
+.full-width { width: 100%; }
 
-  .mat-mdc-text-field-wrapper{
-    background:$soft; border:1px solid $border; border-radius:12px;
-    transition:box-shadow .2s, border-color .2s, background .2s;
+/* Vorschau */
+.preview-label-titel {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 12px 0 8px;
+  color: #555;
+}
+
+.preview-box {
+  margin-top: .5rem;
+  padding: .75rem;
+  border-radius: 8px;
+  border: 1px solid var(--brand-border);
+  background: #fafafa; /* ✅ gri */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preview-label {
+  font-size: .8rem;
+  color: #999;
+  margin: .4rem 0 .1rem;
+}
+
+.preview-value,
+.frage-text {
+  margin: 0 0 .5rem;
+  font-size: .9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Sterne Vorschau */
+.stars {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+
+  mat-icon {
+    color: #FFA000; /* gold */
+    font-size: 24px;
+    line-height: 1;
   }
-
-  .mat-mdc-form-field:focus-within .mat-mdc-text-field-wrapper{
-    background:#fff; border-color:$brand; box-shadow:0 0 0 3px rgba(130,76,255,.14);
-  }
-
-  .mdc-line-ripple::before, .mdc-line-ripple::after{ border-bottom-color:transparent !important; }
-
-
-  .mat-mdc-form-field.mat-mdc-form-field-should-float .mdc-floating-label,
-  .mat-mdc-form-field.mat-focused .mdc-floating-label,
-  .mdc-floating-label--float-above{
-    transform:translateY(-22px) scale(.75) !important; opacity:1;
-  }
-  .mdc-text-field--filled .mdc-floating-label{ left:16px !important; }
-
-  .mat-mdc-select-arrow-wrapper{ margin-right:8px; }
-
-  /* Butonlar */
-  .mat-mdc-raised-button.mat-primary{
-    --mdc-filled-button-container-color:#824CFF !important;
-    --mdc-filled-button-label-text-color:#fff !important;
-    padding:0 20px;
-  }
-  .modal-actions .mat-mdc-button-base,
-  .modal-actions .mat-mdc-raised-button,
-  .modal-actions .mat-mdc-outlined-button,
-  .modal-actions .mat-mdc-unelevated-button,
-  .modal-actions .mat-mdc-text-button {
-    height: 36px;
-    padding: 0 20px; }
-  }
-
-/* ---- Vorschau ---- */
-.preview-label-titel{ color:#5e5b5b; font-size:15px; margin:4px 0 8px; }
-.preview-box{ border:1px solid #ddd; border-radius:10px; background:#f6f6f8; padding:14px; }
-.preview-label{ font-size:12px; color:#8b8b8b; margin:4px 0; }
-.frage-text{ font-size:15px; color:#2a2a2a; margin:2px 0 8px; font-weight:500; }
-
-/* Sterne */
-.stars{ display:flex; gap:10px; margin-top:8px;
-  mat-icon{ color:#FFA000; font-size:26px; line-height:1; }
 }
 
 /* Aktionen */
-.modal-actions{ display:flex; justify-content:flex-end; gap:12px; margin-top:8px; }
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}

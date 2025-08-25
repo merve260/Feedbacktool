@@ -55,7 +55,7 @@ export class StarRatingModalComponent {
       this.dialogRef.close();
     } else {
       const confirmDialog = this.dialog.open(ConfirmDialogComponent, {
-        width: '400px',
+        width: '700px',
         disableClose: true,
         data: {
           title: 'Änderungen verwerfen?',

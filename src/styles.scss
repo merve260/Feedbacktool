@@ -1,40 +1,54 @@
 /* =======================
    Globale Basis-Styles
    ======================= */
-@use '@angular/material' as mat;
 
+/* 1) Imports */
+@use '@angular/material' as mat;
+@use 'styles/_theme-colors' as *;
+@use 'styles/_modal-formfield' as *;
+
+/* 2) Angular Material Core aktivieren */
 @include mat.core();
 
+/* 3) Eigenes Theme definieren */
 $my-theme: mat.define-theme((
   color: (theme-type: light),
 ));
 
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-/* Markenfarben (frei anpassbar) */
-:root {
-  --brand-primary: #996dda;   /* Primär */
-  --brand-border:  #e6e2f3;   /* zarte Linie */
-  --brand-soft:    #faf7ff;   /* softer Hintergrund */
-
+/* 4) Theme-Mixins IMMER in einem Selector */
+html {
   @include mat.core-theme($my-theme);
   @include mat.all-component-themes($my-theme);
   @include mat.all-component-typographies($my-theme);
 }
 
+/* =======================
+   Farben als CSS Vars
+   ======================= */
+:root {
+  --brand-primary: #996dda;   /* Primärfarbe */
+  --brand-border:  #e6e2f3;   /* dezente Linie */
+  --brand-soft:    #fafafa;   /* softer Hintergrund */
+}
 
 /* =======================
-   Overlay/Backdrop
+   Base Layout
    ======================= */
-/* Allgemeiner, weicher Backdrop (Datepicker/Dialogs etc.) */
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* =======================
+   Overlay / Backdrop
+   ======================= */
 .cdk-overlay-backdrop.mat-overlay-transparent-backdrop {
   background-color: rgba(14, 9, 30, 0.28) !important;
   backdrop-filter: blur(2px);
 }
-
-/* Spezieller Backdrop für Dialogs mit panelClass/backdropClass */
 .pol-backdrop.cdk-overlay-backdrop {
   background: rgba(14, 9, 30, 0.28) !important;
   backdrop-filter: blur(2px);
@@ -43,51 +57,58 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 /* =======================
    Dialog-Oberfläche
    ======================= */
-/* Verwende panelClass: 'pol-dialog' beim Öffnen */
 .pol-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
-  width: min(92vw, 720px) !important;     /* genügend Breite */
-  border-radius: 18px !important;          /* runde Ecken */
+  border-radius: 18px !important;
   background: #fff !important;
   border: 1px solid var(--brand-border);
   box-shadow: 0 16px 40px rgba(22, 8, 56, 0.18) !important;
   overflow: hidden;
-}
-.pol-dialog .mat-mdc-dialog-title  { padding: 20px 24px 8px; font-weight: 700; }
-.pol-dialog .mat-mdc-dialog-content{ padding: 8px 24px 0; }
-.pol-dialog .mat-mdc-dialog-actions{ padding: 16px 24px 24px; gap: 12px; }
 
-/* Formfelder im Dialog: „Soft-Box“-Look */
-.pol-dialog .mat-mdc-form-field { width: 100%; }
-.pol-dialog .mat-mdc-text-field-wrapper {
-  background: var(--brand-soft);
-  border: 1px solid var(--brand-border);
-  border-radius: 12px;
-  transition: box-shadow .2s, border-color .2s, background .2s;
 }
-.pol-dialog .mat-mdc-form-field:focus-within .mat-mdc-text-field-wrapper {
-  background: #fff;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(130, 76, 255, 0.14);
+.pol-dialog .mat-mdc-dialog-title {
+  padding: 20px 24px 8px;
+  font-weight: 700;
 }
-/* Unterlinie neutralisieren */
-.pol-dialog .mdc-line-ripple::before,
-.pol-dialog .mdc-line-ripple::after { border-bottom-color: transparent !important; }
+.pol-dialog .mat-mdc-dialog-content {
+  padding: 8px 24px 0;
+}
+.pol-dialog .mat-mdc-dialog-actions {
+  padding: 16px 24px 24px;
+  gap: 12px;
+}
 
-/* Buttons im Dialog als „Pill“ */
-.pol-dialog .mat-mdc-raised-button.mat-primary {
-  --mdc-filled-button-container-color: var(--brand-primary) !important;
-  --mdc-filled-button-label-text-color: #fff !important;
-  border-radius: 6px !important;
-  padding: 0 20px;
-}
-.pol-dialog .mat-mdc-outlined-button {
-  border-radius: 999px !important;
-  --mdc-outlined-button-outline-color: var(--brand-primary) !important;
-  --mdc-outlined-button-label-text-color: var(--brand-primary) !important;
+/* Einheitliche Breite */
+::ng-deep .cdk-overlay-pane.pol-dialog {
+  width: auto !important;
+  max-width: min(92vw, 550px) !important;
 }
 
 /* =======================
-   Tooltip (global)
+   Buttons
+   ======================= */
+.modal-actions button {
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: 500;
+}
+.modal-actions button[mat-button] {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.modal-actions button[mat-button]:hover {
+  background: #eee;
+}
+.modal-actions button[mat-raised-button] {
+  background-color: var(--brand-primary);
+  color: #fff;
+}
+.modal-actions button[mat-raised-button]:hover {
+  background-color: #6f3fd6;
+}
+
+/* =======================
+   Tooltip
    ======================= */
 .mat-mdc-tooltip {
   background-color: rgba(0, 0, 0, 0.82) !important;
@@ -102,15 +123,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   text-align: center;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
-/* Positions-Feinschliff */
 .mat-mdc-tooltip-show { transform: translateY(-4px); }
-.cdk-tooltip-position-below .mat-mdc-tooltip  { transform: translateY(4px);  }
+.cdk-tooltip-position-below .mat-mdc-tooltip  { transform: translateY(4px); }
 .cdk-tooltip-position-above .mat-mdc-tooltip  { transform: translateY(-4px); }
 .cdk-tooltip-position-left  .mat-mdc-tooltip  { transform: translateX(-4px); }
-.cdk-tooltip-position-right .mat-mdc-tooltip  { transform: translateX(4px);  }
+.cdk-tooltip-position-right .mat-mdc-tooltip { transform: translateX(4px); }
 
 /* =======================
-   Mat-Select Panel (Overlay)
+   Select Panel
    ======================= */
 .mdc-menu-surface.mat-mdc-select-panel,
 .mat-mdc-select-panel {
@@ -125,7 +145,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-mdc-option.mdc-list-item--selected { background: #ede7f6 !important; }
 
 /* =======================
-   Datepicker (Beispiel: aktiver Tag)
+   Datepicker
    ======================= */
 .mat-calendar-body-cell.mat-calendar-body-active {
   background-color: var(--brand-primary) !important;
@@ -134,40 +154,50 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 /* =======================
-   Link-/Icon-Bereich im Publisher (optional)
+   Vorschau Container
    ======================= */
-.link-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  a {
-    color: #1e40af;
-    font-weight: 500;
-    text-decoration: underline;
-  }
-  button:hover mat-icon { color: #000; }
+.pol-dialog .preview-box,
+.pol-dialog .preview-container {
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.4;
 }
-.modal-actions button {
-  border-radius: 6px;
-  padding: 6px 16px;
+.pol-dialog .preview-label-titel {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 12px 0 8px;
+  color: #555;
+}
+.pol-dialog .preview-label {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 4px;
   font-weight: 500;
 }
-
-.modal-actions button[mat-button] {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+.pol-dialog .preview-value,
+.pol-dialog .frage-text {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
 }
-
-.modal-actions button[mat-button]:hover {
-  background: #eee;
+.pol-dialog .preview-multiple-options,
+.pol-dialog .preview-radio-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
 }
-
-.modal-actions button[mat-raised-button] {
-  background-color: #824CFF;
-  color: #fff;
+.pol-dialog mat-checkbox,
+.pol-dialog mat-radio-button.preview-radio {
+  opacity: 0.7;
+  pointer-events: none;
 }
-
-.modal-actions button[mat-raised-button]:hover {
-  background-color: #6f3fd6;
+/* Einheitliche Breite für alle Dialoge */
+::ng-deep .cdk-overlay-pane.pol-dialog {
+  width: auto !important;
+  max-width: min(92vw, 450px) !important; /* Standard: mittlere Größe */
 }

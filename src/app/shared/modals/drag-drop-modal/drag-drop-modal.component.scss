@@ -1,177 +1,128 @@
+@use '../../../../styles/_modal-formfield' as *;
 
-$brand: #824CFF;
-
-/* Kopfzeile */
+/* ===== Modal Header ===== */
 .modal-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-
-  h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-  }
+  justify-content: flex-end;
+  margin-bottom: 0;
 
   .close-button {
-    margin-left: auto;
+    color: #666;
+    transition: color .2s;
+    &:hover { color: #000; }
   }
 }
 
-/* Container & Grundlayout */
+/* ===== Modal Container ===== */
 .modal-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding: 24px;
-  width: 100%;
-  max-height: 70vh;
+  width: min(92vw, 550px);
+  margin: 20px auto;
+  max-height: 75vh;
   overflow-y: auto;
-  max-width: 600px;
   box-sizing: border-box;
-  margin: 0 auto;
+  border-radius: 14px;
   box-shadow: inset 0 0 0 1px var(--brand-border);
-  --mdc-filled-text-field-container-color:#faf5ff;
+}
 
-  h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-  }
+h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
 
-  .full-width {
-    width: 100%;
-    margin: 5px 0;
-  }
+.full-width { width: 100%; }
 
-  .drag-item-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
+/* ===== Input-Elemente ===== */
+.drag-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.item-field { flex: 1; }
 
-  .item-field {
-    flex: 1;
-  }
+/* ===== Vorschau ===== */
+.preview-label-titel {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 12px 0 8px;
+  color: #555;
+}
 
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 16px;
-    border-top: 1px solid #eee;
-    padding-top: 12px;
-    background-color: #fff;
-  }
+.preview-box {
+  margin-top: .5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--brand-border);
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
 
-  .preview-label-titel {
-    font-weight: 600;
-    font-size: 14px;
-    margin-top: 20px;
-    margin-bottom: 8px;
-    color: #555;
-  }
+/* Dropzone */
+.preview-drag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 2px dashed rgba(130, 76, 255, .25);
+  border-radius: 10px;
+  transition: border-color .15s ease, background-color .15s ease;
+  min-height: 80px;
+}
 
-  .preview-label {
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 4px;
-    margin-top: 12px;
-  }
+.preview-drag-list.cdk-drop-list-dragging,
+.preview-drag-list.cdk-drop-list-receiving {
+  border-color: var(--brand-primary);
+  background-color: rgba(130, 76, 255, .06);
+}
 
-  .frage-text {
-    font-weight: 500;
-    color: #333;
-    margin-bottom: 8px;
-  }
+.empty-hint {
+  font-size: .85rem;
+  color: #888;
+  text-align: center;
+  padding: 10px 0;
+}
 
-  /* Vorschau-Box */
-  .preview-box {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    width: calc(100% + 30px);
-    margin-left: -16px;
-    box-sizing: border-box;
-    background-color: #fafafa;
-  }
+/* Drag-Items */
+.preview-drag-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: #eaeaea;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: grab;
+  transition: background .15s, box-shadow .15s;
+}
 
-  /* Dropzone – lila Rahmen + Zustände */
-  .preview-drag-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 95%;
-    padding: 0.75rem;
-    border: 2px dashed rgba($brand, 0.25);
-    border-radius: 10px;
-    transition: border-color .15s ease, background-color .15s ease;
-  }
+.preview-drag-item:hover {
+  background: #e2e2e2;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
 
-  .preview-drag-list.cdk-drop-list-dragging,
-  .preview-drag-list.cdk-drop-list-receiving {
-    border-color: $brand;
-    background-color: rgba($brand, 0.06);
-  }
+.preview-drag-item:active {
+  cursor: grabbing;
+}
 
-  /* Elemente */
-  .preview-drag-item {
-    min-height: 35px;
-    padding: 0.8rem 1rem;
-    background-color: #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: grab;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
-  }
+.drag-handle {
+  color: var(--brand-primary);
+  cursor: grab;
+}
 
-  .preview-drag-item:hover {
-    background-color: #e7e7e7;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-  }
-
-  .preview-drag-item:active {
-    cursor: grabbing;
-  }
-
-  /* Optionaler Griff (wenn im HTML genutzt) */
-  .drag-handle {
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
-    background: #f0eef8;
-    color: #6f48d9;
-    flex: 0 0 26px;
-  }
-
-  /* CDK-Preview/Placeholder schöner */
-  .cdk-drag-preview {
-    border-radius: 8px;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
-    transform: rotate(0.5deg);
-  }
-
-  .cdk-drag-placeholder {
-    opacity: 0; /* Platzhalter unsichtbar */
-  }
-
-  .preview-drag-item.cdk-drag-animating {
-    transition: transform .18s ease;
-  }
-}.weitereOption{
-   display: inline-flex;
-   align-items: center;
-   gap: 6px;
-   border-radius: 8px;
-   padding: 6px 12px;
- }
+/* ===== Aktionen ===== */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+}

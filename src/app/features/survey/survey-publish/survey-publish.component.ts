@@ -80,8 +80,16 @@ export class SurveyPublishComponent {
     const hasTitle = !!this.surveyTitle?.trim();
     const hasDates = !!this.startDate && !!this.endDate;
     const hasQuestions = this.canvasQuestions?.length > 0;
+
+    //console.log('---- PUBLISH CHECK ----');
+    //console.log('title:', this.surveyTitle);
+    //console.log('startDate:', this.startDate);
+    //console.log('endDate:', this.endDate);
+    //console.log('questions:', this.canvasQuestions);
+
     return hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart;
   }
+
 
   // ------------------ Link Helpers ------------------
   getSurveyLink(): string {
