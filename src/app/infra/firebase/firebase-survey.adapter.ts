@@ -22,16 +22,15 @@ import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question, SurveyStatus } from '../../core/models/survey.models';
 import { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore';
 
-/** Entfernt alle `undefined` Felder → Firestore akzeptiert das nicht */
+/** 🔹 Entfernt alle `undefined`-Felder → Firestore akzeptiert das nicht */
 function omitUndefined<T extends object>(obj: T): Partial<T> {
   const out: Partial<T> = {};
-  (Object.entries(obj) as [keyof T, any][]).forEach(([k, v]) => {
-    if (v !== undefined) (out as any)[k] = v;
-  });
+  (Object.entries(obj) as [keyof T, any][])
+    .forEach(([k, v]) => { if (v !== undefined) (out as any)[k] = v; });
   return out;
 }
 
-/** Alles in Date normalisieren (auch Firestore Timestamp oder String) */
+/** 🔹 Hilfsfunktion: Egal ob Date, Firestore Timestamp oder String → immer Date */
 function toDateSafe(v: any): Date | undefined {
   if (!v) return undefined;
   if (v instanceof Date) return v;
@@ -43,7 +42,7 @@ function toDateSafe(v: any): Date | undefined {
   return undefined;
 }
 
-/** Survey-Daten für Firestore vorbereiten */
+/** 🔹 Bereitet Survey-Daten für Firestore vor */
 function prepareSurveyData(
   s: Partial<Survey>,
   statusOverride?: SurveyStatus
@@ -74,7 +73,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   constructor(private firestore: Firestore) {}
 
   // -----------------------------------------------------
-  // Converter
+  // 🔹 Converter – sorgt für Typ-Sicherheit bei Firestore
   // -----------------------------------------------------
   private surveyConverter: FirestoreDataConverter<Survey> = {
     toFirestore(s: Survey) {
@@ -143,7 +142,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   };
 
   // -----------------------------------------------------
-  // Referenzen
+  // 🔹 Referenzen
   // -----------------------------------------------------
   private surveysCol(): CollectionReference<Survey> {
     return collection(this.firestore, this.rootColName).withConverter(this.surveyConverter);
@@ -152,18 +151,16 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     return doc(this.firestore, this.rootColName, id).withConverter(this.surveyConverter);
   }
   private questionsCol(surveyId: string): CollectionReference<Question> {
-    return collection(this.firestore, this.rootColName, surveyId, this.subColName).withConverter(
-      this.questionConverter
-    );
+    return collection(this.firestore, this.rootColName, surveyId, this.subColName)
+      .withConverter(this.questionConverter);
   }
   private questionDoc(surveyId: string, qId: string): DocumentReference<Question> {
-    return doc(this.firestore, this.rootColName, surveyId, this.subColName, qId).withConverter(
-      this.questionConverter
-    );
+    return doc(this.firestore, this.rootColName, surveyId, this.subColName, qId)
+      .withConverter(this.questionConverter);
   }
 
   // -----------------------------------------------------
-  // Methoden (Survey)
+  // 🔹 Methoden (Survey)
   // -----------------------------------------------------
   async createDraft(s: Partial<Survey>): Promise<string> {
     const ref = doc(this.surveysCol());
@@ -265,7 +262,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   // -----------------------------------------------------
-  // Methoden (Questions)
+  // 🔹 Methoden (Questions)
   // -----------------------------------------------------
   async addQuestion(surveyId: string, q: Question): Promise<string> {
     const qRef = doc(this.questionsCol(surveyId));
@@ -287,7 +284,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   // -----------------------------------------------------
-  // Methoden (Responses)
+  // 🔹 Methoden (Responses)
   // -----------------------------------------------------
   async submitResponse(
     surveyId: string,
