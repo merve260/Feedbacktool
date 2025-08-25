@@ -36,7 +36,11 @@ export interface Question {
 export interface Answer {
   id: string;
   questionId: string;
-  respondentId: string;
-  value: string | number | boolean | string[];
   answeredAt: Date;
+
+  // verschiedene mögliche Werte
+  textValue?: string;       // Freitext, Radio, Yes/No
+  numberValue?: number;     // Slider, Star
+  listValue?: string[];     // Multiple, DragDrop
+  dateRangeValue?: { start: string; end: string }; // Date
 }

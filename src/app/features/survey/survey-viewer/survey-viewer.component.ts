@@ -1,7 +1,8 @@
+// src/app/features/survey/survey-viewer/survey-viewer.component.ts
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import {NgClass, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
@@ -10,9 +11,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 
 import { SurveyService } from '../../../core/services/survey.service';
-import { Question } from '../../../core/models/survey.models';
+import { Question, Answer } from '../../../core/models/survey.models';
+
+// Firestore-ID Generator (für eindeutige Antwort-IDs)
+import { doc, collection, Firestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-survey-viewer',
@@ -33,15 +39,18 @@ import { Question } from '../../../core/models/survey.models';
     MatFormFieldModule,
     MatInputModule,
     MatProgressBarModule,
-    MatButton
+    MatButton,
+    MatCheckbox,
+    MatIconModule,
+    NgClass,
+    NgForOf
   ]
 })
 export class SurveyViewerComponent implements OnInit {
   surveyId = '';
-  // Firestore’dan gelen veri
   surveyData: { title: string; questions: Question[] } | null = null;
 
-  // UI state
+  // 🔄 UI-Zustand
   currentIndex = 0;
   answers: any[] = [];
   isCompleted = false;
@@ -51,16 +60,19 @@ export class SurveyViewerComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private surveyService: SurveyService
+    private surveyService: SurveyService,
+    private firestore: Firestore
   ) {}
 
   ngOnInit(): void {
+    // Survey-ID aus der URL lesen und laden
     this.route.paramMap.subscribe(async (params) => {
       this.surveyId = params.get('id') || '';
       await this.loadSurvey(this.surveyId);
     });
   }
 
+  // ----------------- Umfrage + Fragen laden -----------------
   private async loadSurvey(id: string): Promise<void> {
     this.loading = true;
     this.errorMsg = '';
@@ -69,7 +81,6 @@ export class SurveyViewerComponent implements OnInit {
     this.answers = [];
 
     try {
-      // 1) Umfrage laden → kann null sein!
       const survey = await this.surveyService.getById(id);
       if (!survey) {
         this.errorMsg = 'Diese Umfrage existiert nicht oder ist nicht mehr verfügbar.';
@@ -77,19 +88,35 @@ export class SurveyViewerComponent implements OnInit {
         return;
       }
 
-      // 2) Fragen laden (geordnet)
       const questions = await this.surveyService.listQuestions(id);
 
-      // 3) View-Model befüllen (hier ist survey garantiert vorhanden)
       this.surveyData = {
         title: survey.title ?? 'Umfrage',
         questions: questions ?? []
       };
 
-      // 4) Antwort-Array initialisieren (Slider z. B. mit min oder 1)
-      this.answers = this.surveyData.questions.map((q: any) =>
-        q?.type === 'slider' ? (q?.min ?? 1) : null
-      );
+      // Initialwerte je nach Fragetyp setzen
+      this.answers = this.surveyData.questions.map((q: Question) => {
+        switch (q.type) {
+          case 'yesno':
+          case 'radio':
+            return null;
+          case 'multiple':
+            return Array(q.options?.length || 0).fill(false);
+          case 'slider':
+            return q.min ?? 1;
+          case 'star':
+            return 0;
+          case 'freitext':
+            return '';
+          case 'date':
+            return { start: '', end: '' };
+          case 'dragdrop':
+            return q.items ? [...q.items] : [];
+          default:
+            return null;
+        }
+      });
 
     } catch (e: any) {
       console.error(e);
@@ -99,6 +126,7 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
+  // ----------------- Navigation -----------------
   get currentQuestion() {
     return this.surveyData?.questions?.[this.currentIndex];
   }
@@ -122,14 +150,45 @@ export class SurveyViewerComponent implements OnInit {
     return ((this.currentIndex + 1) / total) * 100;
   }
 
+  // ----------------- Antworten speichern -----------------
   async speichern(): Promise<void> {
+    if (!this.surveyData) return;
+
     try {
-      console.log('Antworten:', this.answers, 'Name:', this.respondentName);
-      // Firestore'a kaydet
-      await this.surveyService.submitResponse(this.surveyId, {
-        name: this.respondentName?.trim() || undefined, // boşsa göndermeyiz
-        answers: this.answers
+      const responses: Answer[] = this.surveyData.questions.map((q, i) => {
+        const val = this.answers[i];
+        const answer: Answer = {
+          id: this.generateId(),         // eindeutige Antwort-ID
+          questionId: q.id,
+          answeredAt: new Date()
+        };
+
+        // Typ-spezifische Antwortzuordnung
+        if (q.type === 'yesno' || q.type === 'radio' || q.type === 'freitext') {
+          answer.textValue = val ?? '';
+        } else if (q.type === 'slider' || q.type === 'star') {
+          answer.numberValue = typeof val === 'number' ? val : Number(val);
+        } else if (q.type === 'multiple' || q.type === 'dragdrop') {
+          if (Array.isArray(val) && q.options) {
+            answer.listValue = q.type === 'multiple'
+              ? q.options.filter((_, idx) => val[idx])
+              : val;
+          }
+        } else if (q.type === 'date') {
+          answer.dateRangeValue = {
+            start: val?.start || '',
+            end: val?.end || ''
+          };
+        }
+        return answer;
       });
+
+      // Name speichern → falls leer, "Anonym"
+      await this.surveyService.submitResponse(this.surveyId, {
+        name: this.respondentName?.trim() || 'Anonym',
+        answers: responses
+      });
+
       this.isCompleted = true;
     } catch (e: any) {
       console.error(e);
@@ -137,4 +196,8 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
+  // ----------------- Hilfsfunktion: Firestore-ID -----------------
+  private generateId(): string {
+    return doc(collection(this.firestore, '_')).id;
+  }
 }

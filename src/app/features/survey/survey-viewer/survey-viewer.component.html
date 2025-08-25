@@ -9,18 +9,18 @@
     </mat-form-field>
   </div>
 
+  <!-- Fortschritt -->
   <div class="progress-info">
     <p>Frage {{ currentIndex + 1 }} von {{ data.questions.length }}</p>
-    <mat-progress-bar
-      mode="determinate"
-      [value]="getProgress()"
-    ></mat-progress-bar>
+    <mat-progress-bar mode="determinate" [value]="getProgress()"></mat-progress-bar>
   </div>
 
+  <!-- Aktuelle Frage -->
   <div class="question-box" *ngIf="currentQuestion">
     <h3>{{ currentQuestion.title }}</h3>
 
     <ng-container [ngSwitch]="currentQuestion.type">
+
       <!-- Ja / Nein -->
       <div *ngSwitchCase="'yesno'">
         <mat-radio-group [(ngModel)]="answers[currentIndex]">
@@ -29,17 +29,46 @@
         </mat-radio-group>
       </div>
 
+      <!-- Multiple Choice -->
+      <div *ngSwitchCase="'multiple'">
+        <div *ngFor="let opt of currentQuestion.options; let i = index">
+          <mat-checkbox [(ngModel)]="answers[currentIndex][i]">
+            {{ opt }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <!-- Radio -->
+      <div *ngSwitchCase="'radio'">
+        <mat-radio-group [(ngModel)]="answers[currentIndex]">
+          <mat-radio-button *ngFor="let opt of currentQuestion.options" [value]="opt">
+            {{ opt }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
       <!-- Slider -->
       <div *ngSwitchCase="'slider'">
         <mat-slider>
           <input
             matSliderThumb
-            min="1"
-            max="10"
-            step="1"
+            [min]="currentQuestion.min || 1"
+            [max]="currentQuestion.max || 10"
+            [step]="currentQuestion.step || 1"
             [(ngModel)]="answers[currentIndex]"
           />
         </mat-slider>
+      </div>
+
+      <!-- Sternebewertung -->
+      <div *ngSwitchCase="'star'" class="star-rating">
+        <ng-container *ngFor="let s of [].constructor(currentQuestion.maxStars || 5); let i = index">
+          <mat-icon
+            (click)="answers[currentIndex] = i+1"
+            [ngClass]="{ active: (answers[currentIndex] || 0) > i }">
+            star
+          </mat-icon>
+        </ng-container>
       </div>
 
       <!-- Freitext -->
@@ -50,41 +79,65 @@
         </mat-form-field>
       </div>
 
-      <!-- Bilinmeyen -->
+      <!-- Datum / Uhrzeit -->
+      <div *ngSwitchCase="'date'">
+        <mat-form-field appearance="fill">
+          <mat-label>{{ currentQuestion.startLabel || 'Start' }}</mat-label>
+          <input matInput [(ngModel)]="answers[currentIndex].start" placeholder="Startzeit" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>{{ currentQuestion.endLabel || 'Ende' }}</mat-label>
+          <input matInput [(ngModel)]="answers[currentIndex].end" placeholder="Endzeit" />
+        </mat-form-field>
+      </div>
+
+      <!-- Drag & Drop (vereinfachte Anzeige) -->
+      <div *ngSwitchCase="'dragdrop'">
+        <p>Ordnen Sie die Elemente in Gedanken:</p>
+        <ul>
+          <li *ngFor="let item of currentQuestion.items">{{ item }}</li>
+        </ul>
+
+      </div>
+
+      <!-- Fallback -->
       <div *ngSwitchDefault>
         <p>Unbekannter Fragetyp</p>
       </div>
+
     </ng-container>
   </div>
 
   <!-- Navigation -->
-  <button
-    mat-raised-button
-    color="basic"
-    (click)="zurueck()"
-    [disabled]="currentIndex === 0">
-    Zurück
-  </button>
+  <div class="button-group">
+    <button
+      mat-raised-button
+      color="basic"
+      (click)="zurueck()"
+      [disabled]="currentIndex === 0">
+      Zurück
+    </button>
 
-  <!-- Weiter -->
-  <button
-    mat-raised-button
-    color="primary"
-    *ngIf="currentIndex < data.questions.length - 1"
-    (click)="weiter()">
-    Weiter
-  </button>
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="currentIndex < data.questions.length - 1"
+      (click)="weiter()">
+      Weiter
+    </button>
 
-  <!-- Speichern -->
-  <button
-    mat-raised-button
-    color="accent"
-    *ngIf="currentIndex === data.questions.length - 1"
-    (click)="speichern()">
-    Speichern
-  </button>
+    <button
+      mat-raised-button
+      color="accent"
+      *ngIf="currentIndex === data.questions.length - 1"
+      (click)="speichern()">
+      Speichern
+    </button>
+  </div>
 </div>
 
+<!-- Fertig-Ansicht -->
 <div class="survey-complete" *ngIf="isCompleted">
   <h2>Vielen Dank für Ihre Teilnahme!</h2>
   <p>Ihre Umfrage wurde erfolgreich übermittelt.</p>
