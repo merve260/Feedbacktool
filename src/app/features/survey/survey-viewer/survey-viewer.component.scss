@@ -40,15 +40,25 @@ $accent-lila: #7b4683;
 
   .question-box {
     margin-bottom: 2rem;
-    padding: 1.5rem;
-    border-radius: 16px;
+    padding: 2rem;
+    border-radius: 20px;
     background-color: #fef6ff;
     border: 1px solid #e2cdea;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 
     h3 {
       margin-top: 0;
+      margin-bottom: 1rem;
       color: #3b2a45;
+      font-size: 1.2rem;
       font-weight: 600;
+    }
+    mat-form-field {
+      font-size: 1rem;
+    }
+
+    input {
+      font-size: 1rem;
     }
   }
 
@@ -125,17 +135,21 @@ $accent-lila: #7b4683;
   margin-top: 1rem;
 
   mat-icon {
-    font-size: 32px;
+    font-size: 28px;
     color: #ccc;
     cursor: pointer;
     transition: 0.2s;
+
     &.active {
-      color: $primary-lila;
+      color: #FFD700;
     }
+
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.2);
     }
   }
+
+
 
 }
 // Lila Theme Overrides für Checkbox & Radio
@@ -166,14 +180,14 @@ $accent-lila: #7b4683;
 
   mat-slider {
     flex: 1;
-    --mdc-slider-handle-color: #8133ae;               /* topuz rengi */
-    --mdc-slider-focus-handle-color: #9e5db6;         /* focus old. renk */
+    --mdc-slider-handle-color: #8133ae;
+    --mdc-slider-focus-handle-color: #9e5db6;
     --mdc-slider-hover-handle-color: #9e5db6;
-    --mdc-slider-active-track-color: #8133ae;         /* aktif çizgi */
-    --mdc-slider-inactive-track-color: #d2a6e1;       /* pasif çizgi */
+    --mdc-slider-active-track-color: #8133ae;
+    --mdc-slider-inactive-track-color: #d2a6e1;
     --mdc-slider-with-tick-marks-active-container-color: #8133ae;
     --mdc-slider-with-tick-marks-inactive-container-color: #e2cdea;
-    --mdc-slider-value-indicator-color: #8133ae;      /* baloncuk */
+    --mdc-slider-value-indicator-color: #8133ae;
     --mdc-slider-value-indicator-text-color: #fff;
 
   }
@@ -191,4 +205,109 @@ $accent-lila: #7b4683;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   }
 }
+.preview-drag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 2px dashed rgba(130, 76, 255, .25);
+  border-radius: 10px;
+  transition: border-color .15s ease, background-color .15s ease;
+  min-height: 80px;
+}
+
+.preview-drag-list.cdk-drop-list-dragging,
+.preview-drag-list.cdk-drop-list-receiving {
+  border-color: var(--brand-primary);
+  background-color: rgba(130, 76, 255, .06);
+}
+
+.preview-drag-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: #fef6ff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: grab;
+  transition: background .15s, box-shadow .15s;
+  border: 1px solid #e2cdea;
+}
+
+.preview-drag-item:hover {
+  background: #f3e6ff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+.drag-handle {
+  color: var(--brand-primary);
+  cursor: grab;
+}
+.date-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 1rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  input[type="time"] {
+    font-size: 1rem;
+    padding: 6px;
+  }
+}
+.button-group button[color="basic"] {
+  color: #7a1c88 !important;
+  font-weight: 600;
+}
+.slider-container {
+  position: relative;
+  width: 100%;
+  margin-top: 1.5rem;
+
+  .custom-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 4px;
+    background: #e2cdea;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #8133ae;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+  }
+
+  .slider-bubble {
+    position: absolute;
+    top: -32px;
+    transform: translateX(-50%);
+    background: #8133ae;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: left 0.2s ease;
+  }
+}
+
+
+
+
 
