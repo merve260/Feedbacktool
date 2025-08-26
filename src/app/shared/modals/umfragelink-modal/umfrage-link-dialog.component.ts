@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-umfrage-link-dialog',
@@ -30,10 +31,11 @@ export class UmfrageLinkDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { id: string; endDate?: string },
     private snackBar: MatSnackBar
   ) {
-    // Link generieren
-    this.surveyLink = `https://meine-app.de/survey/${data.id}`;
+    this.surveyLink = `${environment.apiBaseUrl}/survey/${data.id}`;
     this.endDate = data.endDate ? new Date(data.endDate) : null;
   }
+
+
 
   /** Link kopieren */
   copyLink(): void {

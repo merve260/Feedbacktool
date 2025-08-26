@@ -9,5 +9,5 @@ export const environment = {
     appId: '1:194277599474:web:8ead686d883240b6f1c86b',
   },
   dataProvider: 'firebase',
-  apiBaseUrl: ''
+  apiBaseUrl: 'http://localhost:4200'
 };
