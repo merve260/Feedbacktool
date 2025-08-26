@@ -48,17 +48,23 @@
       </div>
 
       <!-- Slider -->
-      <div *ngSwitchCase="'slider'">
-        <mat-slider>
-          <input
-            matSliderThumb
-            [min]="currentQuestion.min || 1"
-            [max]="currentQuestion.max || 10"
-            [step]="currentQuestion.step || 1"
-            [(ngModel)]="answers[currentIndex]"
-          />
+      <!-- Slider -->
+      <div *ngSwitchCase="'slider'" class="slider-wrapper">
+        <mat-slider
+          [min]="currentQuestion.min || 1"
+          [max]="currentQuestion.max || 10"
+          [step]="currentQuestion.step || 1"
+          discrete
+          showTickMarks
+          showValue="true">
+          <input matSliderThumb [(ngModel)]="answers[currentIndex]" />
         </mat-slider>
       </div>
+
+
+
+
+
 
       <!-- Sternebewertung -->
       <div *ngSwitchCase="'star'" class="star-rating">

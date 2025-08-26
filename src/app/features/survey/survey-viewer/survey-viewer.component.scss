@@ -158,3 +158,37 @@ $accent-lila: #7b4683;
 ::ng-deep .mat-radio-button .mat-radio-ripple .mat-ripple-element {
   background-color: rgba(180, 122, 199, 0.2) !important;
 }
+.slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 1rem;
+
+  mat-slider {
+    flex: 1;
+    --mdc-slider-handle-color: #8133ae;               /* topuz rengi */
+    --mdc-slider-focus-handle-color: #9e5db6;         /* focus old. renk */
+    --mdc-slider-hover-handle-color: #9e5db6;
+    --mdc-slider-active-track-color: #8133ae;         /* aktif çizgi */
+    --mdc-slider-inactive-track-color: #d2a6e1;       /* pasif çizgi */
+    --mdc-slider-with-tick-marks-active-container-color: #8133ae;
+    --mdc-slider-with-tick-marks-inactive-container-color: #e2cdea;
+    --mdc-slider-value-indicator-color: #8133ae;      /* baloncuk */
+    --mdc-slider-value-indicator-text-color: #fff;
+
+  }
+
+  .slider-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #7b4683;
+    min-width: 28px;
+    text-align: center;
+    background: #fef6ff;
+    border: 1px solid #e2cdea;
+    padding: 4px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+}
+
