@@ -66,9 +66,6 @@
           <mat-icon>edit</mat-icon>
           <span>Bearbeiten</span>
         </button>
-
-
-
         <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">
           <mat-icon>publish</mat-icon>
           <span>Veröffentlichen</span>
@@ -80,6 +77,10 @@
         <button mat-menu-item *ngIf="s.status==='published' || s.status ==='draft' " (click)="close(s)">
           <mat-icon>lock</mat-icon>
           <span>Schließen</span>
+        </button>
+        <button mat-menu-item *ngIf="s.status==='published'" (click)="openLinkDialog(s)">
+          <mat-icon>link</mat-icon>
+          <span>Link anzeigen</span>
         </button>
         <button mat-menu-item (click)="remove(s)" class="warn">
           <mat-icon class="warn">delete</mat-icon>

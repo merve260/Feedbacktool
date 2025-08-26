@@ -28,7 +28,7 @@ html {
 :root {
   --brand-primary: #996dda;   /* Primärfarbe */
   --brand-border:  #e6e2f3;   /* dezente Linie */
-  --brand-soft:    #fafafa;   /* softer Hintergrund */
+  --brand-soft: #efeaf3;   /* softer Hintergrund */
 }
 
 /* =======================
@@ -191,11 +191,17 @@ body {
   gap: 6px;
   padding-top: 4px;
 }
-.pol-dialog mat-checkbox,
-.pol-dialog mat-radio-button.preview-radio {
+.pol-dialog .preview-box mat-checkbox,
+.pol-dialog .preview-box mat-radio-button.preview-radio {
   opacity: 0.7;
   pointer-events: none;
 }
+
+.pol-dialog mat-checkbox {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Einheitliche Breite für alle Dialoge */
 ::ng-deep .cdk-overlay-pane.pol-dialog {
   width: auto !important;

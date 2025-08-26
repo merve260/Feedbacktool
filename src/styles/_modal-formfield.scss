@@ -2,7 +2,13 @@
    Gemeinsame Formfield Styles für Modals
    =============================== */
 .pol-dialog {
-  .mat-mdc-form-field { width: 100%; }
+
+  /* ===============================
+     Input / Select / Textarea
+     =============================== */
+  mat-form-field {
+    width: 100%;
+  }
 
   .mat-mdc-text-field-wrapper {
     background: var(--brand-soft);
@@ -22,13 +28,36 @@
     border-bottom-color: transparent !important;
   }
 
-  /* Label-Position */
+  /* Floating Label */
   .mat-mdc-form-field.mat-mdc-form-field-should-float .mdc-floating-label,
   .mat-mdc-form-field.mat-focused .mdc-floating-label,
   .mdc-floating-label--float-above {
     transform: translateY(-22px) scale(.75) !important;
   }
+
   .mdc-text-field--filled .mdc-floating-label {
     left: 16px !important;
+  }
+
+  /* ===============================
+     Checkbox (MAT-MDC!)
+     =============================== */
+  .mat-mdc-checkbox .mdc-form-field,
+  .mat-mdc-checkbox .mat-internal-form-field {
+    width: auto !important;
+    max-width: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+  }
+
+  .mat-mdc-checkbox .mdc-checkbox {
+    flex: 0 0 auto !important;
+  }
+
+  .mat-mdc-checkbox .mdc-label {
+    margin-left: 6px !important;
+    cursor: pointer !important;
+    white-space: nowrap;
   }
 }

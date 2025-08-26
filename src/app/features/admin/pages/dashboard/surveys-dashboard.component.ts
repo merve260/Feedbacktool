@@ -29,6 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
 import { MatTooltip } from '@angular/material/tooltip';
+import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-modal/umfrage-link-dialog.component';
 
 @Component({
   selector: 'app-surveys-dashboard',
@@ -221,6 +222,16 @@ export class SurveysDashboardComponent {
   create() {
     this.router.navigateByUrl('/admin/builder');
   }
+  openLinkDialog(survey: Survey) {
+    this.dialog.open(UmfrageLinkDialogComponent, {
+      width: '720px',
+      data: {
+        id: survey.id,
+        endDate: survey.endAt ? survey.endAt.toISOString() : null
+      }
+    });
+  }
+
 
   edit(s: Survey) {
     this.router.navigate(['/admin/umfragen', s.id, 'edit']);

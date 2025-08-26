@@ -39,6 +39,7 @@
   </mat-form-field>
 
   <!-- Thumb Label -->
+
   <mat-checkbox [(ngModel)]="thumbLabel">Wertanzeige beim Ziehen anzeigen</mat-checkbox>
 
   <!-- Fehlermeldung -->
@@ -74,14 +75,9 @@
       >
     {{ value }} / {{max}}
   </span>
-
-
       <span class="slider-value" *ngIf="!thumbLabel">{{ value }}</span>
     </div>
-
-
   </div>
-
   <!-- Aktionen -->
   <div class="modal-actions">
     <button mat-button (click)="onClose()">Abbrechen</button>
