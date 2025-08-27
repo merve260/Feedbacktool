@@ -1,0 +1,47 @@
+.card {
+  background: #fff;
+  border: 1px solid #ece8ff;
+  border-radius: 14px;
+  padding: 20px;
+  width: 80%;
+}
+
+h2 {
+  margin-top: 0;
+  color: #2e236d;
+}
+
+.meta {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #6d63a8;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.export-btn {
+  background: #6b4cff;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    background: #5940d4;
+  }
+
+  &:active {
+    background: #4a35b3;
+    transform: scale(0.97);
+  }
+}
+

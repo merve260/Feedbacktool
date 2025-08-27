@@ -21,14 +21,6 @@
 
     <ng-container [ngSwitch]="currentQuestion.type">
 
-      <!-- Ja / Nein -->
-      <div *ngSwitchCase="'yesno'">
-        <mat-radio-group [(ngModel)]="answers[currentIndex]">
-          <mat-radio-button value="yes">Ja</mat-radio-button>
-          <mat-radio-button value="no">Nein</mat-radio-button>
-        </mat-radio-group>
-      </div>
-
       <!-- Multiple Choice -->
       <div *ngSwitchCase="'multiple'">
         <div *ngFor="let opt of currentQuestion.options; let i = index">
@@ -38,7 +30,7 @@
         </div>
       </div>
 
-      <!-- Radio -->
+      <!-- Radiobutton Auswahl -->
       <div *ngSwitchCase="'radio'">
         <mat-radio-group [(ngModel)]="answers[currentIndex]">
           <mat-radio-button *ngFor="let opt of currentQuestion.options" [value]="opt">
@@ -47,34 +39,27 @@
         </mat-radio-group>
       </div>
 
-      <!-- Slider -->
-      <!-- Slider -->
-      <div *ngSwitchCase="'slider'" class="slider-wrapper">
-        <!-- Slider -->
-        <div *ngSwitchCase="'slider'" class="slider-container">
-          <input
-            type="range"
-            class="custom-slider"
-            [min]="currentQuestion.min || 1"
-            [max]="currentQuestion.max || 10"
-            [step]="currentQuestion.step || 1"
-            [(ngModel)]="answers[currentIndex]"
-            (input)="onSlide(currentIndex)"
-            [style.background]="getSliderBackground(answers[currentIndex], currentQuestion.min || 1, currentQuestion.max || 10)"
-          />
+      <!-- Skala / Slider -->
+      <div *ngSwitchCase="'slider'" class="slider-container">
+        <input
+          type="range"
+          class="custom-slider"
+          [min]="currentQuestion.min || 1"
+          [max]="currentQuestion.max || 10"
+          [step]="currentQuestion.step || 1"
+          [(ngModel)]="answers[currentIndex]"
+          (input)="onSlide(currentIndex)"
+          [style.background]="getSliderBackground(answers[currentIndex], currentQuestion.min || 1, currentQuestion.max || 10)"
+        />
 
-          <!-- Bubble -->
-          <span
-            class="slider-bubble"
-            [style.left.%]="getPercent(currentIndex)"
-          >
-    {{ answers[currentIndex] }} / {{ currentQuestion.max || 10 }}
-  </span>
-        </div>
-
-
+        <!-- Wert-Blase -->
+        <span
+          class="slider-bubble"
+          [style.left.%]="getPercent(currentIndex)"
+        >
+          {{ answers[currentIndex] }} / {{ currentQuestion.max || 10 }}
+        </span>
       </div>
-
 
       <!-- Sternebewertung -->
       <div *ngSwitchCase="'star'" class="star-rating">
@@ -93,42 +78,6 @@
           <mat-label>Ihre Antwort</mat-label>
           <input matInput [(ngModel)]="answers[currentIndex]" />
         </mat-form-field>
-      </div>
-
-      <!-- Datum / Uhrzeit -->
-      <div *ngSwitchCase="'date'" class="date-wrapper">
-        <!-- Datum -->
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>{{ currentQuestion.startLabel || 'Datum' }}</mat-label>
-          <input matInput [matDatepicker]="picker" [(ngModel)]="answers[currentIndex].date" />
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-
-
-        <!-- Uhrzeit -->
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>{{ currentQuestion.endLabel || 'Uhrzeit' }}</mat-label>
-          <input matInput type="time" [(ngModel)]="answers[currentIndex].time" />
-        </mat-form-field>
-      </div>
-
-
-      <!-- Drag & Drop -->
-      <div *ngSwitchCase="'dragdrop'" class="preview-drag-list"
-           cdkDropList [cdkDropListData]="answers[currentIndex]"
-           (cdkDropListDropped)="onDrop($event)">
-
-        <div class="empty-hint" *ngIf="!answers[currentIndex]?.length">
-          Hier ablegen, um die Reihenfolge zu testen.
-        </div>
-
-        <div *ngFor="let item of answers[currentIndex]" cdkDrag class="preview-drag-item">
-          <span cdkDragHandle class="drag-handle">
-            <mat-icon>drag_indicator</mat-icon>
-          </span>
-          <span>{{ item }}</span>
-        </div>
       </div>
 
       <!-- Default -->

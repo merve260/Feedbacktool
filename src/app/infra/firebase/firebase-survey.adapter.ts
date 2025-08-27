@@ -109,9 +109,6 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         thumbLabel: q.thumbLabel ?? null,
         placeholderText: q.placeholderText ?? null,
         maxStars: q.maxStars ?? null,
-        items: q.items ?? null,
-        startPlaceholder: q.startPlaceholder ?? null,
-        endPlaceholder: q.endPlaceholder ?? null,
         order: (q as any).order ?? null,
         createdAt: (q as any).createdAt ?? serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -131,15 +128,13 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         thumbLabel: d.thumbLabel ?? undefined,
         placeholderText: d.placeholderText ?? undefined,
         maxStars: d.maxStars ?? undefined,
-        items: d.items ?? undefined,
-        startPlaceholder: d.startPlaceholder ?? undefined,
-        endPlaceholder: d.endPlaceholder ?? undefined,
         order: d.order ?? undefined,
         createdAt: d.createdAt?.toDate?.(),
         updatedAt: d.updatedAt?.toDate?.(),
       };
     },
   };
+
 
   // -----------------------------------------------------
   // Referenzen

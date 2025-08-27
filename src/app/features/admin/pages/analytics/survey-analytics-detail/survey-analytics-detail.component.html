@@ -1,0 +1,21 @@
+<div class="card" *ngIf="survey; else loading">
+  <h2>Analyse – {{ survey.title }}</h2>
+  <p *ngIf="survey.description">{{ survey.description }}</p>
+
+  <div class="meta">
+    <span><strong>Status:</strong> {{ survey.status }}</span>
+    <span><strong>Start:</strong> {{ survey.startAt | date:'dd.MM.yyyy' }}</span>
+    <span><strong>Ende:</strong> {{ survey.endAt | date:'dd.MM.yyyy' }}</span>
+    <span><strong>Anzahl Antworten:</strong> {{ answers.length }}</span>
+
+    <button class="export-btn" (click)="exportToExcel()"> Excel Export</button>
+  </div>
+
+  <!-- Später: Tabellen / Charts -->
+</div>
+
+<ng-template #loading>
+  <div class="card">
+    <p>Lade Daten...</p>
+  </div>
+</ng-template>

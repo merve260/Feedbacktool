@@ -1,4 +1,3 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 import { LoginComponent } from './features/admin/login/login.component';
@@ -15,6 +14,7 @@ import { SurveysDashboardComponent } from './features/admin/pages/dashboard/surv
 import { ResultsAnalyticsComponent } from './features/admin/pages/analytics/results-analytics.component';
 import { ProfileSettingsComponent } from './features/admin/pages/profil-settings/profile-settings.component';
 import { SurveyEditComponent } from './features/survey/survey-edit/survey-edit.component';
+import { SurveyAnalyticsDetailComponent } from './features/admin/pages/analytics/survey-analytics-detail/survey-analytics-detail.component';
 
 export const routes: Routes = [
 
@@ -34,12 +34,16 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'umfragen', pathMatch: 'full' },
-      { path: 'umfragen',   component: SurveysDashboardComponent, data: { title: 'Meine Umfragen' } },
+      { path: 'umfragen', component: SurveysDashboardComponent, data: { title: 'Meine Umfragen' } },
 
-      // ✨ Edit-Route buraya eklendi
+      // ✨ Edit
       { path: 'umfragen/:id/edit', component: SurveyEditComponent, data: { title: 'Umfrage bearbeiten' } },
 
+      // ✨ Ergebnisse
       { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'Umfrage Ergebnisse & Analytics' } },
+      { path: 'ergebnisse/:id', component: SurveyAnalyticsDetailComponent, data: { title: 'Analyse Detail' } },
+
+      // ✨ Profil
       {
         path: 'profil',
         component: ProfileSettingsComponent,
@@ -55,6 +59,6 @@ export const routes: Routes = [
   // --- Startseite → Dashboard ---
   { path: '', pathMatch: 'full', redirectTo: 'admin/umfragen' },
 
-  // --- Fallback (unbekannte Route) ---
+  // --- Fallback ---
   { path: '**', redirectTo: 'admin/umfragen' },
 ];

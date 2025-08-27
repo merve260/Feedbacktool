@@ -16,11 +16,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
-
-// Drag & Drop
-import { CdkDrag, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 // Services & Modelle
 import { SurveyService } from '../../../core/services/survey.service';
@@ -39,6 +34,9 @@ import { doc, collection, Firestore } from '@angular/fire/firestore';
     NgIf,
     NgSwitch,
     NgSwitchCase,
+    NgSwitchDefault,
+    NgForOf,
+    NgClass,
     FormsModule,
     MatRadioGroup,
     MatRadioButton,
@@ -47,29 +45,20 @@ import { doc, collection, Firestore } from '@angular/fire/firestore';
     MatProgressBarModule,
     MatButton,
     MatCheckbox,
-    MatIconModule,
-    NgClass,
-    NgForOf,
-    CdkDropList,
-    CdkDragHandle,
-    CdkDrag,
-    MatDatepickerInput,
-    MatDatepickerToggle,
-    MatDatepicker,
-    NgSwitchDefault
+    MatIconModule
   ]
 })
 export class SurveyViewerComponent implements OnInit {
   surveyId = '';
   surveyData: { title: string; questions: Question[] } | null = null;
 
-  // UI-Zustand
-  currentIndex = 0;              // Index der aktuellen Frage
-  answers: any[] = [];           // Gesammelte Antworten
-  isCompleted = false;           // Wurde die Umfrage beendet?
-  loading = false;               // Ladezustand
-  errorMsg = '';                 // Fehlermeldung
-  respondentName = '';           // Teilnehmername (optional)
+  // ---------------- UI-Zustand ----------------
+  currentIndex = 0;       // Index der aktuellen Frage
+  answers: any[] = [];    // Gesammelte Antworten
+  isCompleted = false;    // Wurde die Umfrage beendet?
+  loading = false;        // Ladezustand
+  errorMsg = '';          // Fehlermeldung
+  respondentName = '';    // Teilnehmername (optional)
 
   constructor(
     private route: ActivatedRoute,
@@ -85,7 +74,7 @@ export class SurveyViewerComponent implements OnInit {
     });
   }
 
-  // ----------------- Umfrage laden -----------------
+  // ---------------- Umfrage laden ----------------
   private async loadSurvey(id: string): Promise<void> {
     this.loading = true;
     this.errorMsg = '';
@@ -111,7 +100,6 @@ export class SurveyViewerComponent implements OnInit {
       // Initialwerte je nach Fragetyp setzen
       this.answers = this.surveyData.questions.map((q: Question) => {
         switch (q.type) {
-          case 'yesno':
           case 'radio':
             return null;
 
@@ -127,12 +115,6 @@ export class SurveyViewerComponent implements OnInit {
           case 'freitext':
             return '';
 
-          case 'date':
-            return { date: null, time: '' };
-
-          case 'dragdrop':
-            return q.items ? [...q.items] : [];
-
           default:
             return null;
         }
@@ -146,7 +128,7 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
-  // ----------------- Navigation -----------------
+  // ---------------- Navigation ----------------
   get currentQuestion() {
     return this.surveyData?.questions?.[this.currentIndex];
   }
@@ -170,7 +152,7 @@ export class SurveyViewerComponent implements OnInit {
     return ((this.currentIndex + 1) / total) * 100;
   }
 
-  // ----------------- Antworten speichern -----------------
+  // ---------------- Antworten speichern ----------------
   async speichern(): Promise<void> {
     if (!this.surveyData) return;
 
@@ -185,35 +167,18 @@ export class SurveyViewerComponent implements OnInit {
         };
 
         // Antwort je nach Typ zuordnen
-        if (q.type === 'yesno' || q.type === 'radio' || q.type === 'freitext') {
+        if (q.type === 'radio' || q.type === 'freitext') {
           answer.textValue = val ?? '';
 
         } else if (q.type === 'slider' || q.type === 'star') {
           answer.numberValue = typeof val === 'number' ? val : Number(val);
 
-        } else if (q.type === 'multiple' || q.type === 'dragdrop') {
+        } else if (q.type === 'multiple') {
           if (Array.isArray(val) && q.options) {
-            answer.listValue = q.type === 'multiple'
-              ? q.options.filter((_, idx) => val[idx])
-              : val;
+            answer.listValue = q.options.filter((_, idx) => val[idx]);
           }
-
-        } else if (q.type === 'date') {
-          let combined: Date | null = null;
-          if (val?.date) {
-            combined = new Date(val.date);
-            if (val.time) {
-              const [hh, mm] = val.time.split(':').map(Number);
-              if (!isNaN(hh)) combined.setHours(hh);
-              if (!isNaN(mm)) combined.setMinutes(mm);
-            }
-          }
-
-          answer.dateRangeValue = {
-            start: combined ? combined.toISOString() : '',
-            end: '' // falls du später ein Enddatum brauchst
-          };
         }
+
         return answer;
       });
 
@@ -230,28 +195,25 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
-  // ----------------- Hilfsfunktionen -----------------
+  // ---------------- Hilfsfunktionen ----------------
   private generateId(): string {
     return doc(collection(this.firestore, '_')).id;
   }
 
-  onDrop(event: CdkDragDrop<string[]>): void {
-    moveItemInArray(this.answers[this.currentIndex], event.previousIndex, event.currentIndex);
-  }
   getPercent(i: number): number {
     const min = this.surveyData?.questions[i].min ?? 1;
     const max = this.surveyData?.questions[i].max ?? 10;
     const val = this.answers[i] ?? min;
     return ((val - min) / (max - min)) * 100;
   }
+
   onSlide(i: number): void {
     const val = this.answers[i];
     console.log(`Slider für Frage ${i + 1}: Wert = ${val}`);
   }
+
   getSliderBackground(value: number, min: number, max: number): string {
     const percent = ((value - min) / (max - min)) * 100;
     return `linear-gradient(to right, #8133ae ${percent}%, #e2cdea ${percent}%)`;
   }
-
-
 }

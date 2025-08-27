@@ -1,3 +1,4 @@
+// 🎨 Farbvariablen für Lila-Theme
 $primary-lila: #b47ac7;
 $primary-lila-dark: #9e5db6;
 $accent-lila: #7b4683;
@@ -20,6 +21,7 @@ $accent-lila: #7b4683;
     font-weight: 600;
   }
 
+  // Fortschrittsanzeige
   .progress-info {
     margin-bottom: 1.5rem;
     p {
@@ -38,6 +40,7 @@ $accent-lila: #7b4683;
     }
   }
 
+  // Box für aktuelle Frage
   .question-box {
     margin-bottom: 2rem;
     padding: 2rem;
@@ -53,15 +56,9 @@ $accent-lila: #7b4683;
       font-size: 1.2rem;
       font-weight: 600;
     }
-    mat-form-field {
-      font-size: 1rem;
-    }
-
-    input {
-      font-size: 1rem;
-    }
   }
 
+  // Buttons
   .button-group {
     display: flex;
     justify-content: space-between;
@@ -110,6 +107,7 @@ $accent-lila: #7b4683;
   }
 }
 
+// Fertig-Ansicht
 .survey-complete {
   text-align: center;
   padding: 3rem 2rem;
@@ -129,6 +127,8 @@ $accent-lila: #7b4683;
     color: #3b2a45;
   }
 }
+
+// Sternebewertung
 .star-rating {
   display: flex;
   gap: 8px;
@@ -148,122 +148,26 @@ $accent-lila: #7b4683;
       transform: scale(1.2);
     }
   }
-
-
-
 }
-// Lila Theme Overrides für Checkbox & Radio
+
+// Overrides für Checkbox & Radiobuttons
 ::ng-deep .mat-checkbox .mat-checkbox-frame {
   border-color: $primary-lila !important;
 }
-
 ::ng-deep .mat-checkbox-checked .mat-checkbox-background {
   background-color: $primary-lila !important;
 }
-
 ::ng-deep .mat-radio-button .mat-radio-outer-circle {
   border-color: $primary-lila !important;
 }
-
 ::ng-deep .mat-radio-button.mat-radio-checked .mat-radio-inner-circle {
   background-color: $primary-lila !important;
 }
-
 ::ng-deep .mat-radio-button .mat-radio-ripple .mat-ripple-element {
   background-color: rgba(180, 122, 199, 0.2) !important;
 }
-.slider-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 1rem;
 
-  mat-slider {
-    flex: 1;
-    --mdc-slider-handle-color: #8133ae;
-    --mdc-slider-focus-handle-color: #9e5db6;
-    --mdc-slider-hover-handle-color: #9e5db6;
-    --mdc-slider-active-track-color: #8133ae;
-    --mdc-slider-inactive-track-color: #d2a6e1;
-    --mdc-slider-with-tick-marks-active-container-color: #8133ae;
-    --mdc-slider-with-tick-marks-inactive-container-color: #e2cdea;
-    --mdc-slider-value-indicator-color: #8133ae;
-    --mdc-slider-value-indicator-text-color: #fff;
-
-  }
-
-  .slider-value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #7b4683;
-    min-width: 28px;
-    text-align: center;
-    background: #fef6ff;
-    border: 1px solid #e2cdea;
-    padding: 4px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-}
-.preview-drag-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  border: 2px dashed rgba(130, 76, 255, .25);
-  border-radius: 10px;
-  transition: border-color .15s ease, background-color .15s ease;
-  min-height: 80px;
-}
-
-.preview-drag-list.cdk-drop-list-dragging,
-.preview-drag-list.cdk-drop-list-receiving {
-  border-color: var(--brand-primary);
-  background-color: rgba(130, 76, 255, .06);
-}
-
-.preview-drag-item {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  background: #fef6ff;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: grab;
-  transition: background .15s, box-shadow .15s;
-  border: 1px solid #e2cdea;
-}
-
-.preview-drag-item:hover {
-  background: #f3e6ff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.12);
-}
-
-.drag-handle {
-  color: var(--brand-primary);
-  cursor: grab;
-}
-.date-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 1rem;
-
-  mat-form-field {
-    width: 100%;
-  }
-
-  input[type="time"] {
-    font-size: 1rem;
-    padding: 6px;
-  }
-}
-.button-group button[color="basic"] {
-  color: #7a1c88 !important;
-  font-weight: 600;
-}
+// Slider
 .slider-container {
   position: relative;
   width: 100%;
@@ -306,8 +210,3 @@ $accent-lila: #7b4683;
     transition: left 0.2s ease;
   }
 }
-
-
-
-
-

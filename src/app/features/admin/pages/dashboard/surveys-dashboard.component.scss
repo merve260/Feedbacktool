@@ -7,6 +7,7 @@
     gap: 12px;
     margin-bottom: 20px;
     width: 80%;
+    flex-wrap: wrap;
   }
 
   /* Suche */
@@ -20,6 +21,7 @@
     padding: 6px 10px;
     background: #fff;
     transition: all 0.2s ease;
+    min-width: 200px;
   }
 
   .toolbar .search:focus-within {
@@ -29,7 +31,7 @@
 
   .toolbar .search mat-icon {
     color: var(--brand-primary);
-    font-size: 25px;
+    font-size: 20px;
   }
 
   .toolbar .search input {
@@ -63,6 +65,7 @@
     cursor: pointer;
     transition: background 0.2s ease;
     white-space: nowrap;
+    align-self: flex-start;
   }
   .toolbar .btn-primary:hover {
     background: #5e38b8;
@@ -75,7 +78,7 @@
     border-radius: 14px;
     overflow: auto;
     width: 80%;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     box-sizing: border-box;
   }
 
@@ -119,7 +122,7 @@
 
   /* ===== Responsive ===== */
   @media (max-width: 1024px) {
-    .toolbar { flex-direction: column; align-items: stretch; width: 100%; }
+    .toolbar { flex-direction: column; align-items: stretch; }
     .list { width: 100%; }
     .row { grid-template-columns: 1.5fr 1fr 0.6fr 1fr 40px; gap: 8px; }
   }
@@ -139,7 +142,7 @@
       border: 1px solid #ece8ff;
       border-radius: 12px;
       margin-bottom: 10px;
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
     .title   { grid-area: title; font-weight: 600; }
     .range   { grid-area: range; font-size: 0.9rem; color: #555; }

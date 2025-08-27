@@ -1,12 +1,11 @@
 /* src/app/features/survey/survey-publish/survey-publish.component.scss */
 
-/* Container */
+/* Container für Aktionen */
 .publish-actions {
   margin-top: 2rem;
   display: flex;
-  flex-wrap: wrap; /* mobil uyumlu */
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
   padding: 1rem;
   background-color: #f9f5ff;
   border: 1px solid #d1c4e9;
@@ -14,7 +13,7 @@
   box-shadow: 0 2px 8px rgba(130, 76, 255, 0.1);
 }
 
-/* Primärer (raised) Button */
+/* Buttons */
 button[mat-raised-button] {
   background-color: #824CFF;
   color: #fff;
@@ -27,7 +26,6 @@ button[mat-raised-button] {
   }
 }
 
-/* Sekundärer (stroked) Button */
 button[mat-stroked-button] {
   border-color: #824CFF;
   color: #824CFF;
@@ -60,13 +58,14 @@ button[mat-stroked-button][disabled] {
   button:hover mat-icon { color: #000; }
 }
 
-/* Toast */
+/* Toast (Bestätigung nach Kopieren) */
 .toast {
   margin-top: 0.5rem;
   color: #4CAF50;
   font-weight: bold;
   animation: fadeout 2s forwards;
 }
+
 @keyframes fadeout {
   0% { opacity: 1; }
   80% { opacity: 1; }
@@ -74,10 +73,19 @@ button[mat-stroked-button][disabled] {
 }
 
 /* Hinweise & Fehler */
-.note { color:#995; font-size:.9rem; }
+.note {
+  color: #995;
+  font-size: .9rem;
+}
+
 .error-message {
-  display:flex; align-items:center; gap:8px;
-  padding:8px 12px; border-radius:10px;
-  background:#fff2f2; border:1px solid #f3c6c6; color:#575559;
-  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #fff2f2;
+  border: 1px solid #f3c6c6;
+  color: #575559;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
 }

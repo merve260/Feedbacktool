@@ -23,14 +23,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 
-import { YesNoModalComponent } from '../../../shared/modals/yesno-modal/yesno-modal.component';
 import { MultipleChoiceModalComponent } from '../../../shared/modals/multiple-choice-modal/multiple-choice-modal.component';
-import { DateTimeModalComponent } from '../../../shared/modals/datetime-modal/datetime-modal.component';
-import { DragDropModalComponent } from '../../../shared/modals/drag-drop-modal/drag-drop-modal.component';
 import { FreitextModalComponent } from '../../../shared/modals/freitext-modal/freitext-modal.component';
 import { StarRatingModalComponent } from '../../../shared/modals/star-rating-modal/star-rating-modal.component';
 import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
 import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
+
 import { SurveyPublishComponent } from '../survey-publish/survey-publish.component';
 
 import { Survey, Question, SurveyStatus } from '../../../core/models/survey.models';
@@ -38,6 +36,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { SurveyService } from '../../../core/services/survey.service';
+import { ComponentType } from '@angular/cdk/overlay';
+
 
 @Component({
   selector: 'app-survey-builder',
@@ -64,7 +64,6 @@ export class SurveyBuilderComponent implements OnInit {
 
   // ===== Eingangs- und Ausgangsparameter (2-Wege-Bindung) =====
   @Input() surveyId?: string;
-
   @Input() title: string = '';
   @Output() titleChange = new EventEmitter<string>();
 
@@ -82,12 +81,9 @@ export class SurveyBuilderComponent implements OnInit {
 
   @Input() showActions = true;
 
-  // ===== Verfügbare Fragetypen (Palette links) =====
+  // ===== Verfügbare Fragetypen (links in der Palette) =====
   questionTypes = [
-    { type: 'yesno',    label: 'Ja / Nein' },
     { type: 'multiple', label: 'Mehrfachauswahl' },
-    { type: 'date',     label: 'Datum / Uhrzeit' },
-    { type: 'dragdrop', label: 'Drag & Drop' },
     { type: 'freitext', label: 'Freitext' },
     { type: 'star',     label: 'Sternebewertung' },
     { type: 'slider',   label: 'Skala / Slider' },
@@ -105,9 +101,9 @@ export class SurveyBuilderComponent implements OnInit {
     description: FormControl<string | null>;
   }>;
 
-  isEditMode = false;              // Bearbeiten-Modus
-  isSaving = false;                // Speichern-Status
-  currentSurveyId: string | null = null;  // Aktuelle Umfrage-ID
+  isEditMode = false;
+  isSaving = false;
+  currentSurveyId: string | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -116,7 +112,7 @@ export class SurveyBuilderComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
   ) {
-    // Formular initialisieren
+    // Initialisiere das Formular
     this.infoForm = new FormGroup({
       title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       startDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
@@ -145,23 +141,19 @@ export class SurveyBuilderComponent implements OnInit {
         this.isEditMode = true;
 
         this.titleChange.emit(survey.title);
-        // console.log('emit title ->', survey.title);
         this.descriptionChange.emit(survey.description ?? '');
         this.startDateChange.emit(survey.startAt ? new Date(survey.startAt) : undefined);
-        // console.log('emit startDate ->', survey.startAt);
         this.endDateChange.emit(survey.endAt ? new Date(survey.endAt) : undefined);
-        // console.log('emit endDate ->', survey.endAt);
         this.questionsChange.emit(questions ?? []);
-        // console.log('emit questions ->', questions);
       }
     }
   }
 
-  // ------------------ Hilfsfunktion: Normalisieren ------------------
+  // ------------------ Normalisierung einer Frage ------------------
   private toQuestion = (q: any): Omit<Question, 'id'> & { id?: string } => {
     const base: any = { id: q.id, type: q.type, title: q.title, text: q.text };
 
-    if (['yesno','multiple','radio'].includes(q.type)) {
+    if (['multiple','radio'].includes(q.type)) {
       base.options = q.options ?? q.choices ?? [];
     } else if (q.type === 'slider') {
       base.min = Number(q.min ?? 0);
@@ -172,20 +164,12 @@ export class SurveyBuilderComponent implements OnInit {
       base.placeholderText = q.placeholderText ?? '';
     } else if (q.type === 'star') {
       base.maxStars = Number(q.maxStars ?? 5);
-    } else if (q.type === 'date') {
-      base.startPlaceholder = q.startPlaceholder ?? '';
-      base.endPlaceholder   = q.endPlaceholder   ?? '';
-      base.startLabel = q.startLabel ?? 'Start';
-      base.endLabel   = q.endLabel   ?? 'Ende';
-    } else if (q.type === 'dragdrop') {
-      base.items = Array.isArray(q.items) ? q.items : (q.items ? [q.items] : []);
     }
     return base;
   };
 
   // ------------------ Speichern (Draft/Publish) ------------------
   async saveAs(status: SurveyStatus) {
-    // console.log('SAVE survey', status, this.startDate, this.endDate);
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
       alert('Bitte Titel, Zeitraum und mindestens eine Frage angeben.');
@@ -227,22 +211,11 @@ export class SurveyBuilderComponent implements OnInit {
   }
 
   saveDraft() { return this.saveAs('draft'); }
-  async saveAll() { return this.saveAs('draft'); }
 
   // ------------------ Getter fürs Template ------------------
   get titleCtrl() { return this.infoForm.controls.title; }
   get startCtrl() { return this.infoForm.controls.startDate; }
   get endCtrl()   { return this.infoForm.controls.endDate; }
-
-  get surveyTitle(): string    { return this.titleCtrl.value; }
-  get startDateValue(): Date | null {
-    const val = this.startCtrl.value;
-    return val instanceof Date ? val : (val ? new Date(val) : null);
-  }
-  get endDateValue(): Date | null {
-    const val = this.endCtrl.value;
-    return val instanceof Date ? val : (val ? new Date(val) : null);
-  }
 
   // ------------------ Validatoren ------------------
   private dateRangeValidator = (group: AbstractControl): ValidationErrors | null => {
@@ -252,25 +225,17 @@ export class SurveyBuilderComponent implements OnInit {
     return e >= s ? null : { dateInvalid: true };
   };
 
-  dateFilter = (d: Date | null): boolean => {
-    if (!d) return false;
-    const today = new Date(); today.setHours(0,0,0,0);
-    const x = new Date(d);    x.setHours(0,0,0,0);
-    return x >= today;
-  };
-
   // ------------------ Drag & Drop ------------------
-  drop(event: CdkDragDrop<any[]>) {
+  onDrop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(this.canvasQuestions, event.previousIndex, event.currentIndex);
       this.questionsChange.emit(this.canvasQuestions);
       return;
     }
     const draggedItem = event.item.data;
-    if (draggedItem.type === 'yesno')    return this.openYesNoModal(draggedItem);
+
+    // Nur noch erlaubte Typen
     if (draggedItem.type === 'multiple') return this.openMultipleChoiceModal(draggedItem);
-    if (draggedItem.type === 'date')     return this.openDateTimeModal(draggedItem);
-    if (draggedItem.type === 'dragdrop') return this.openDragDropModal(draggedItem);
     if (draggedItem.type === 'freitext') return this.openFreitextModal(draggedItem);
     if (draggedItem.type === 'star')     return this.openStarRatingModal(draggedItem);
     if (draggedItem.type === 'slider')   return this.openSliderModal(draggedItem);
@@ -282,20 +247,8 @@ export class SurveyBuilderComponent implements OnInit {
   }
 
   // ------------------ Modals: Neue Fragen ------------------
-  openYesNoModal(q: any) {
-    const ref = this.dialog.open(YesNoModalComponent, { data: { ...q, options: ['Ja','Nein'] }, disableClose: true, panelClass: 'pol-dialog' });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }});
-  }
   openMultipleChoiceModal(q: any) {
     const ref = this.dialog.open(MultipleChoiceModalComponent, { data: { ...q, options: ['', ''] }, disableClose: true, panelClass: 'pol-dialog' });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }});
-  }
-  openDateTimeModal(q: any) {
-    const ref = this.dialog.open(DateTimeModalComponent, { data: { ...q }, disableClose: true, panelClass: 'pol-dialog' });
-    ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push({ ...q, ...r }); this.questionsChange.emit(this.canvasQuestions); }});
-  }
-  openDragDropModal(q: any) {
-    const ref = this.dialog.open(DragDropModalComponent, { data: { ...q, items: ['Element 1','Element 2'] }, disableClose: true, panelClass: 'pol-dialog' });
     ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }});
   }
   openFreitextModal(q: any) {
@@ -316,36 +269,48 @@ export class SurveyBuilderComponent implements OnInit {
   }
 
   // ------------------ Frage bearbeiten ------------------
-  private openDialogSame<T, D = any>(component: any, data: D) {
-    return this.dialog.open<T>(component, { data, disableClose: true, panelClass: 'pol-dialog', width: 'min(92vw, 550px)' });
-  }
-  editQuestion(index: number) {
+  onEdit(index: number) {
     const q = this.canvasQuestions[index];
-    const component = q.type === 'yesno' ? YesNoModalComponent :
+    const component: ComponentType<any> =
       q.type === 'multiple' ? MultipleChoiceModalComponent :
-        q.type === 'date' ? DateTimeModalComponent :
-          q.type === 'dragdrop' ? DragDropModalComponent :
-            q.type === 'freitext' ? FreitextModalComponent :
-              q.type === 'star' ? StarRatingModalComponent :
-                q.type === 'slider' ? SkalaSliderModalComponent :
-                  RadioModalComponent;
+        q.type === 'freitext' ? FreitextModalComponent :
+          q.type === 'star'     ? StarRatingModalComponent :
+            q.type === 'slider'   ? SkalaSliderModalComponent :
+              RadioModalComponent;
 
-    this.openDialogSame(component, { ...q }).afterClosed().subscribe(r => {
-      if (r) { this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r }; this.questionsChange.emit(this.canvasQuestions); }
+    this.dialog.open(component, {
+      data: { ...q },
+      disableClose: true,
+      panelClass: 'pol-dialog'
+    }).afterClosed().subscribe(r => {
+      if (r) {
+        this.canvasQuestions[index] = { ...this.canvasQuestions[index], ...r };
+        this.questionsChange.emit(this.canvasQuestions);
+      }
     });
+
+    }
+
+  // ------------------ Date-Filter für Datepicker ------------------
+  dateFilter: (d: Date | null) => boolean = (d: Date | null) => {
+    if (!d) return false;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const x = new Date(d);    x.setHours(0,0,0,0);
+    return x >= today; // Nur heutiges oder zukünftiges Datum erlaubt
+  };
+
+  get startDateValue(): Date | null {
+    const val = this.startCtrl.value;
+    return val instanceof Date ? val : (val ? new Date(val) : null);
   }
+
+  get endDateValue(): Date | null {
+    const val = this.endCtrl.value;
+    return val instanceof Date ? val : (val ? new Date(val) : null);
+  }
+
 
   // ------------------ Löschen ------------------
-  async onDeleteSurvey(id: string): Promise<void> {
-    try {
-      await this.surveyService.deleteSurvey(id);
-      this.goToDashboard();
-    } catch (err) {
-      console.error('Fehler beim Löschen:', err);
-    }
-  }
-  onDrop(event: CdkDragDrop<any[]>) { this.drop(event); }
-  onEdit(index: number) { this.editQuestion(index); }
   onDelete(index: number) {
     this.canvasQuestions.splice(index, 1);
     this.questionsChange.emit(this.canvasQuestions);

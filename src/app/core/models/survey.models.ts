@@ -14,23 +14,18 @@ export interface Survey {
 
 export interface Question {
   id: string;
-  type: 'yesno' | 'multiple' | 'slider' | 'star' | 'date' | 'dragdrop' | 'freitext' | 'radio';
+  type: 'multiple' | 'slider' | 'star' | 'freitext' | 'radio';
   title: string;
   text?: string;
-  options?: string[];
-  min?: number;
-  max?: number;
-  step?: number;
-  placeholderText?: string;
-  maxStars?: number;
-  items?: string[];
-  startPlaceholder?: string;
-  endPlaceholder?: string;
-  thumbLabel?: boolean;
+  options?: string[];        // für multiple / radio
+  min?: number;              // für slider
+  max?: number;              // für slider
+  step?: number;             // für slider
+  placeholderText?: string;  // für freitext behalten
+  maxStars?: number;         // für star
+  thumbLabel?: boolean;      // für slider
   createdAt?: Date;
   updatedAt?: Date;
-  startLabel?: string;
-  endLabel?: string;
 }
 
 export interface Answer {
@@ -38,9 +33,8 @@ export interface Answer {
   questionId: string;
   answeredAt: Date;
 
-  // verschiedene mögliche Werte
-  textValue?: string;       // Freitext, Radio, Yes/No
-  numberValue?: number;     // Slider, Star
-  listValue?: string[];     // Multiple, DragDrop
-  dateRangeValue?: { start: string; end: string }; // Date
+  // mögliche Antwort-Werte
+  textValue?: string;      // Freitext, Radio
+  numberValue?: number;    // Slider, Star
+  listValue?: string[];    // Multiple Choice
 }

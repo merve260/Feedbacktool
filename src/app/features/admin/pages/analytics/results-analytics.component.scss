@@ -1,2 +1,79 @@
-.card { background:#fff; border:1px solid #ece8ff; border-radius:14px; padding:20px; }
-h2 { margin-top:0; color:#2e236d; }
+.card {
+  background: #fff;
+  border: 1px solid #ece8ff;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+h2 {
+  margin-top: 0;
+  color: #2e236d;
+}
+
+/* Hinweis-Box */
+.hinweis {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px 16px;
+  border: 1px solid #ffeeba;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Liste */
+.survey-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0edff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #f6f4ff;
+    }
+
+    .survey-title {
+      font-weight: 600;
+      color: #2e236d;
+    }
+
+    .survey-description {
+      font-size: 14px;
+      color: #666;
+      margin: 4px 0;
+    }
+
+    .survey-meta {
+      font-size: 13px;
+      color: #6d63a8;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+
+      .status {
+        padding: 2px 8px;
+        border-radius: 8px;
+        text-transform: capitalize;
+        font-weight: 500;
+      }
+
+      .draft {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .published {
+        background: #d4edda;
+        color: #155724;
+      }
+      .closed {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    }
+  }
+}

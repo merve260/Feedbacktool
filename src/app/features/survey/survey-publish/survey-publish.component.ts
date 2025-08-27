@@ -39,16 +39,12 @@ export class SurveyPublishComponent {
   @Output() questionsChange = new EventEmitter<Question[]>();
 
   // ===== Zustände (States) =====
-  busy = false;
-  publishing = false;
-  errorMsg = '';
-  copied = false;
-  linkVisible = false;
+  busy = false;          // allgemein blockiert (Draft/Publish läuft)
+  publishing = false;    // aktuell "Veröffentlichen" läuft
+  errorMsg = '';         // Fehlermeldung
+  copied = false;        // Link wurde in Zwischenablage kopiert
+  linkVisible = false;   // Soll der fertige Link angezeigt werden?
   surveyId: string | null = null;
-
-  constructor() {
-    // console.log('SurveyPublishComponent CONSTRUCTOR', { showActions: this.showActions });
-  }
 
   // ===== Services =====
   private surveyService = inject(SurveyService);
@@ -85,8 +81,6 @@ export class SurveyPublishComponent {
     const hasDates = !!this.startDate && !!this.endDate;
     const hasQuestions = this.canvasQuestions?.length > 0;
 
-    // console.log('READY CHECK', { title: this.surveyTitle, start: this.startDate, end: this.endDate });
-
     return hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart;
   }
 
@@ -114,7 +108,6 @@ export class SurveyPublishComponent {
   // ------------------ Fragen-Mapping ------------------
   private mapToQuestion(q: any, index: number): Question {
     const opts = Array.isArray(q.options) ? q.options.filter((x: any) => x != null) : undefined;
-    const items = Array.isArray(q.items) ? q.items.filter((x: any) => x != null) : undefined;
 
     return {
       type: q.type,
@@ -126,17 +119,12 @@ export class SurveyPublishComponent {
       step: q.step ?? null,
       placeholderText: q.placeholderText ?? null,
       maxStars: q.maxStars ?? null,
-      items: items && items.length ? items : undefined,
-      startPlaceholder: q.startPlaceholder ?? null,
-      endPlaceholder: q.endPlaceholder ?? null,
       thumbLabel: q.thumbLabel ?? null,
     } as Question;
   }
 
   // ------------------ Entwurf speichern ------------------
   async onDraft(): Promise<void> {
-    // console.log('PUBLISH INPUTS', this.startDate, this.endDate, this.surveyTitle);
-
     if (!this.isReady() || this.busy) return;
 
     this.errorMsg = '';
@@ -187,6 +175,7 @@ export class SurveyPublishComponent {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) throw new Error('Nicht angemeldet.');
 
+      // Umfrage anlegen
       const id = await this.surveyService.createDraft({
         ownerId: u.uid,
         title: this.surveyTitle.trim(),
@@ -202,11 +191,13 @@ export class SurveyPublishComponent {
       );
       await Promise.all(writes);
 
+      // Status auf "published" setzen
       await this.surveyService.publish(id, this.startDate!, this.endDate!);
 
       this.linkVisible = true;
       this.publishRequested.emit(id);
 
+      // Automatisch nach unten scrollen → Link sichtbar machen
       setTimeout(() => {
         document.getElementById('linkSection')
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
