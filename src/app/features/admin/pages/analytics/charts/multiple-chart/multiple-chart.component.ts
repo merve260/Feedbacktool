@@ -39,7 +39,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
     this.answers$ = collectionData(answersCol, { idField: 'id' }).pipe(
       map((docs: any[]) => {
-        if (!this.question) return [];   // ✅ guard eklendi
+        if (!this.question) return [];
 
         const counts: Record<string, number> = {};
         this.question.options?.forEach(opt => counts[opt] = 0);
@@ -55,14 +55,12 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
         });
 
         const results = Object.entries(counts).map(([option, count]) => ({ option, count }));
-
         if (results.length > 0) {
           const maxCount = Math.max(...results.map(r => r.count));
           this.mostChosenOptions = results.filter(r => r.count === maxCount && maxCount > 0);
         } else {
           this.mostChosenOptions = [];
         }
-
         return results;
       })
     );
@@ -74,22 +72,19 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit() {
-    this.updateChart();
+    // dialog açıldığında boyutu ayarlaması için
+    setTimeout(() => this.updateChart(), 100);
   }
-
 
   private updateChart() {
     if (!this.chartCanvas || this.chartData.length === 0) return;
-
     if (this.chart) this.chart.destroy();
 
     const ctx = this.chartCanvas.nativeElement;
     const colors = this.generateColors(this.chartData.length);
 
     const allZero = this.chartData.every(r => r.count === 0);
-    const values = allZero
-      ? this.chartData.map(() => 0.0001)   // dummy slice
-      : this.chartData.map(r => r.count);
+    const values = allZero ? this.chartData.map(() => 0.0001) : this.chartData.map(r => r.count);
 
     const data: ChartConfiguration<'pie'>['data'] = {
       labels: this.chartData.map(r => r.option),
@@ -109,6 +104,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       data,
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'top' }
         }
@@ -120,15 +116,12 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     const palette = [
       '#ff6384', '#4cc9f0',
       '#e377c2', '#4bc0c0',
-       '#9966ff', '#ff9f40',
+      '#9966ff', '#ff9f40',
       '#c9cbcf', '#8dd17e',
       '#17becf', '#ffb703',
     ];
-
     return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
-
   }
-
 
   ngOnDestroy() {
     if (this.chart) this.chart.destroy();

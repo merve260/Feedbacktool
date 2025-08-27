@@ -10,6 +10,8 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Survey, Question } from '../../../../../core/models/survey.models';
 import { MultipleChartComponent } from '../charts/multiple-chart/multiple-chart.component';
+import { MultipleChartDialogComponent } from '../charts/chart-dialogs/multiple-chart-dialog.component';
+
 
 @Component({
   selector: 'app-survey-analytics-detail',
@@ -134,13 +136,12 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   }
 
   openChartDialog(question: Question) {
-    this.dialog.open(MultipleChartComponent, {
+    this.dialog.open(MultipleChartDialogComponent, {
       width: '750px',
       height: '600px',
       data: {
         surveyId: this.survey?.id!,
-        question,
-        fullscreen: true
+        question
       }
     });
   }
