@@ -1,0 +1,15 @@
+<div class="multiple-chart">
+  <h3>{{ question.title }}</h3>
+  <p *ngIf="question.text">{{ question.text }}</p>
+
+  <!-- Chart -->
+  <canvas #chartCanvas></canvas>
+
+  <!-- Kleine Zusammenfassung -->
+  <div class="summary" *ngIf="mostChosenOption">
+    <p>
+      <strong>Beliebteste Antwort:</strong>
+      {{ mostChosenOption.option }} ({{ mostChosenOption.count }} Stimmen)
+    </p>
+  </div>
+</div>

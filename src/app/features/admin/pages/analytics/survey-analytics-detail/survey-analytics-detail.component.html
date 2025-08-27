@@ -1,19 +1,35 @@
 <div class="card" *ngIf="survey; else loading">
+  <!-- Titel -->
   <h2>Analyse – {{ survey.title }}</h2>
   <p *ngIf="survey.description">{{ survey.description }}</p>
 
+  <!-- Meta-Daten -->
   <div class="meta">
     <span><strong>Status:</strong> {{ survey.status }}</span>
     <span><strong>Start:</strong> {{ survey.startAt | date:'dd.MM.yyyy' }}</span>
     <span><strong>Ende:</strong> {{ survey.endAt | date:'dd.MM.yyyy' }}</span>
     <span><strong>Anzahl Antworten:</strong> {{ answers.length }}</span>
 
-    <button class="export-btn" (click)="exportToExcel()"> Excel Export</button>
+    <button class="export-btn" (click)="exportToExcel()">Excel Export</button>
   </div>
 
-  <!-- Später: Tabellen / Charts -->
+  <!-- Charts Grid -->
+  <div class="charts-grid">
+    <ng-container *ngFor="let q of questions">
+      <div class="chart-card" (click)="openChartDialog(q)">
+        <!-- Nur Multiple-Choice-Fragen werden als Chart angezeigt -->
+        <app-multiple-chart
+          *ngIf="q.type === 'multiple'"
+          [surveyId]="survey.id!"
+          [question]="q"
+          [fullscreen]="false">
+        </app-multiple-chart>
+      </div>
+    </ng-container>
+  </div>
 </div>
 
+<!-- Loading Template -->
 <ng-template #loading>
   <div class="card">
     <p>Lade Daten...</p>

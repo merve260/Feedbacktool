@@ -1,0 +1,36 @@
+.multiple-chart {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #fef6ff;
+  border: 1px solid #e2cdea;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+  h3 {
+    margin-bottom: 0.3rem;
+    color: #4e2d9a;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0.2rem 0 1rem;
+    color: #555;
+  }
+
+  canvas {
+    max-width: 450px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .summary {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #333;
+
+    strong {
+      color: #7b4683;
+    }
+  }
+}
