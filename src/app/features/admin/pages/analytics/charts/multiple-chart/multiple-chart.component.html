@@ -1,15 +1,17 @@
-<div class="multiple-chart">
+<div class="multiple-chart" *ngIf="question">
   <h3>{{ question.title }}</h3>
   <p *ngIf="question.text">{{ question.text }}</p>
 
   <!-- Chart -->
   <canvas #chartCanvas></canvas>
 
-  <!-- Kleine Zusammenfassung -->
-  <div class="summary" *ngIf="mostChosenOption">
-    <p>
-      <strong>Beliebteste Antwort:</strong>
-      {{ mostChosenOption.option }} ({{ mostChosenOption.count }} Stimmen)
-    </p>
+  <!-- Zusammenfassung -->
+  <div class="summary" *ngIf="mostChosenOptions.length > 0">
+    <p><strong>Beliebteste Antwort(en):</strong></p>
+    <ul>
+      <li *ngFor="let opt of mostChosenOptions">
+        {{ opt.option }} ({{ opt.count }} Stimmen)
+      </li>
+    </ul>
   </div>
 </div>

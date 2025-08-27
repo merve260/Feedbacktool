@@ -1,4 +1,3 @@
-// src/app/features/admin/pages/analytics/charts/multiple-chart/multiple-chart.component.ts
 import {
   Component, Input, OnInit, OnDestroy, AfterViewInit,
   inject, ViewChild, ElementRef
@@ -6,7 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { map, Observable, Subscription } from 'rxjs';
-import { Question, Answer } from '../../../../../../core/models/survey.models';
+import { Question } from '../../../../../../core/models/survey.models';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -24,31 +23,30 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
   private sub!: Subscription;
 
   @Input() surveyId!: string;
-  @Input() question!: Question;
+  @Input() question?: Question;
   @Input() fullscreen = false;
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   answers$!: Observable<{ option: string; count: number }[]>;
-  mostChosenOption: { option: string; count: number } | null = null;
+  mostChosenOptions: { option: string; count: number }[] = [];
 
   private chartData: { option: string; count: number }[] = [];
 
-  // ----------------------------------------------------
-  // Init
-  // ----------------------------------------------------
   ngOnInit() {
     if (!this.surveyId || !this.question) return;
 
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
     this.answers$ = collectionData(answersCol, { idField: 'id' }).pipe(
       map((docs: any[]) => {
+        if (!this.question) return [];   // ✅ guard eklendi
+
         const counts: Record<string, number> = {};
         this.question.options?.forEach(opt => counts[opt] = 0);
 
         docs.forEach((doc: any) => {
           (doc.answers || []).forEach((ans: any) => {
-            if (ans.questionId === this.question.id && ans.listValue) {
+            if (ans.questionId === this.question!.id && ans.listValue) {
               ans.listValue.forEach((opt: string) => {
                 if (counts[opt] !== undefined) counts[opt]++;
               });
@@ -58,14 +56,16 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
 
         const results = Object.entries(counts).map(([option, count]) => ({ option, count }));
 
-        this.mostChosenOption = results.length > 0
-          ? results.reduce((max, curr) => curr.count > max.count ? curr : max, results[0])
-          : null;
+        if (results.length > 0) {
+          const maxCount = Math.max(...results.map(r => r.count));
+          this.mostChosenOptions = results.filter(r => r.count === maxCount && maxCount > 0);
+        } else {
+          this.mostChosenOptions = [];
+        }
 
         return results;
       })
     );
-
 
     this.sub = this.answers$.subscribe(results => {
       this.chartData = results;
@@ -77,9 +77,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     this.updateChart();
   }
 
-  // ----------------------------------------------------
-  // Chart render
-  // ----------------------------------------------------
   private updateChart() {
     if (!this.chartCanvas || this.chartData.length === 0) return;
 
@@ -88,10 +85,9 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     const ctx = this.chartCanvas.nativeElement;
     const colors = this.generateColors(this.chartData.length);
 
-    // 🔹 Eğer tüm değerler 0 ise dummy slice ekle (aksi halde Chart.js boş çizer)
     const allZero = this.chartData.every(r => r.count === 0);
     const values = allZero
-      ? this.chartData.map(() => 0.0001)   // dummy slice
+      ? this.chartData.map(() => 0.0001)
       : this.chartData.map(r => r.count);
 
     const data: ChartConfiguration<'pie'>['data'] = {
@@ -111,16 +107,11 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       data,
       options: {
         responsive: true,
-        plugins: {
-          legend: { position: 'top' }
-        }
+        plugins: { legend: { position: 'top' } }
       }
     });
   }
 
-  // ----------------------------------------------------
-  // Colors
-  // ----------------------------------------------------
   private generateColors(count: number): string[] {
     const palette = [
       '#ff6384', '#36a2eb', '#ffcd56',
@@ -131,9 +122,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
   }
 
-  // ----------------------------------------------------
-  // Cleanup
-  // ----------------------------------------------------
   ngOnDestroy() {
     if (this.chart) this.chart.destroy();
     if (this.sub) this.sub.unsubscribe();

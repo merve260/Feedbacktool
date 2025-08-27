@@ -25,12 +25,24 @@
 
   .summary {
     margin-top: 1rem;
-    text-align: center;
     font-size: 0.95rem;
     color: #333;
+    text-align: left;   /* 🔹 artık sola yaslanacak */
 
     strong {
       color: #7b4683;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    ul {
+      list-style-type: disc;
+      margin: 0;
+      padding-left: 1.2rem; /* 🔹 liste sola boşluk */
+    }
+
+    li {
+      margin: 0.2rem 0;
     }
   }
 }
