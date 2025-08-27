@@ -1,13 +1,19 @@
 // src/app/shared/modals/survey-preview-modal/survey-preview-modal.ts
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle
+} from '@angular/material/dialog';
 
 import { CommonModule, NgIf, NgFor, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MatSlider } from '@angular/material/slider';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -31,8 +37,12 @@ import { Question } from '../../../core/models/survey.models';
     MatRadioButton,
     MatCheckbox,
     MatSlider,
+    MatSliderThumb,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDialogActions
   ]
 })
 export class SurveyPreviewModalComponent {
