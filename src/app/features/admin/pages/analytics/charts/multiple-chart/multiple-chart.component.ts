@@ -77,6 +77,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     this.updateChart();
   }
 
+
   private updateChart() {
     if (!this.chartCanvas || this.chartData.length === 0) return;
 
@@ -87,7 +88,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
 
     const allZero = this.chartData.every(r => r.count === 0);
     const values = allZero
-      ? this.chartData.map(() => 0.0001)
+      ? this.chartData.map(() => 0.0001)   // dummy slice
       : this.chartData.map(r => r.count);
 
     const data: ChartConfiguration<'pie'>['data'] = {
@@ -98,7 +99,8 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
         backgroundColor: colors,
         borderColor: '#fff',
         borderWidth: 2,
-        hoverOffset: 8
+        hoverOffset: 12,
+        hoverBorderColor: '#2e236d',
       }]
     };
 
@@ -107,20 +109,26 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       data,
       options: {
         responsive: true,
-        plugins: { legend: { position: 'top' } }
+        plugins: {
+          legend: { position: 'top' }
+        }
       }
     });
   }
 
   private generateColors(count: number): string[] {
     const palette = [
-      '#ff6384', '#36a2eb', '#ffcd56',
-      '#4bc0c0', '#9966ff', '#ff9f40',
-      '#c9cbcf', '#8dd17e', '#e377c2',
-      '#17becf', '#bcbd22'
+      '#ff6384', '#4cc9f0',
+      '#e377c2', '#4bc0c0',
+       '#9966ff', '#ff9f40',
+      '#c9cbcf', '#8dd17e',
+      '#17becf', '#ffb703',
     ];
+
     return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
+
   }
+
 
   ngOnDestroy() {
     if (this.chart) this.chart.destroy();
