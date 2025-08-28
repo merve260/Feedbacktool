@@ -24,7 +24,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input() surveyId!: string;
   @Input() question?: Question;
-
+  @Input() inDialog = false;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   answers$!: Observable<{ option: string; count: number }[]>;

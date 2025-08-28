@@ -1,5 +1,5 @@
 <div class="skala-chart" *ngIf="question">
-  <h3>{{ question.title }}</h3>
+  <h3 *ngIf="!inDialog">{{ question.title }}</h3>
   <canvas #chartCanvas></canvas>
 
   <!-- Zusammenfassung unten -->

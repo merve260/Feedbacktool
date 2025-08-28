@@ -47,17 +47,29 @@ $background-light: #fef6ff;
   font-size: 1.1rem;
 }
 
+/* Einheitlicher Hinweis-Stil für alle Hinweis-Boxen */
 .hint-box {
-  background:  #f8f5ff;
-  border: 1px solid #E6DBFB;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
   border-radius: 10px;
-  padding: 12px 14px;
-  margin-bottom: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #856404;
+  p {
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  ul {
+    margin: 0;
+    padding-left: 20px;
 
-  p { margin: 0 0 6px; }
-  ul { margin: 0; padding-left: 18px; }
-  li { margin: 4px 0; }
+    li {
+      margin: 4px 0;
+    }
+  }
 }
+
 
 .info-form .full { width: 100%; }
 .range-row { display: flex; }

@@ -41,7 +41,7 @@ export class AdminLayoutComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // 🔹 Flag für Responsive Sidebar (true = Mobile)
+  // Flag für Responsive Sidebar (true = Mobile)
   isMobile = window.innerWidth <= 768;
 
   // Fenstergröße überwachen

@@ -17,6 +17,7 @@ export class StarRatingChartComponent implements OnInit {
 
   @Input() surveyId!: string;
   @Input() question?: Question;
+  @Input() inDialog = false;
 
   counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
   total: number = 0;

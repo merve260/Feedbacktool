@@ -17,7 +17,7 @@
   canvas {
     width: 100% !important;
     max-width: 100%;
-    height: 392px !important; /* groß genug für mehrere Teilnehmer */
+    max-height: 600px;
   }
 
   .summary {
@@ -27,3 +27,8 @@
     font-size: 14px;
   }
 }
+:host-context(.dialog-wrapper) canvas {
+  max-width: 500px !important;
+  height: auto !important;
+}
+

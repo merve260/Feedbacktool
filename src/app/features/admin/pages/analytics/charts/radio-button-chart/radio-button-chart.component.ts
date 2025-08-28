@@ -24,6 +24,7 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
 
   @Input() surveyId!: string;
   @Input() question?: Question;
+  @Input() inDialog = false;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   answerCount: number = 0;
@@ -92,7 +93,8 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
         hoverBackgroundColor: hoverColors,
         borderColor: borderColors,
         borderWidth: 2,
-        barThickness: 40
+        barThickness: Math.max(30, 200 / this.optionCounts.length)
+
       }]
     };
 
@@ -102,6 +104,10 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'x',
+          intersect: false
+        },
         scales: {
           x: { ticks: { font: { size: 12 } } },
           y: { beginAtZero: true, ticks: { stepSize: 1 } }

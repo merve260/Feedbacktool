@@ -63,6 +63,11 @@ $side-w:      260px;
 .bottom { display: flex; flex-direction: column; gap: 2px; padding: 20px 8px; }
 .spacer { flex: 1 1 auto; }
 
+button[mat-menu-item],
+a[mat-list-item] {
+  cursor: pointer !important;
+}
+
 /* Menü-Einträge */
 .side a[mat-list-item] {
   text-decoration: none;

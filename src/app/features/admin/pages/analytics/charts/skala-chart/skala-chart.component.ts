@@ -24,6 +24,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() surveyId!: string;
   @Input() question?: Question;
+  @Input() inDialog = false;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   averageValue: number = 0;
@@ -74,7 +75,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
     const labels = this.answers.map(a => a.name);
     const values = this.answers.map(a => a.value);
 
-    // 🔹 Pastellfarben
+    // Pastellfarben
     const pastelColors = [
       'rgba(54, 162, 235, 0.3)',   // blau
       'rgba(153, 102, 255, 0.3)',  // lila
@@ -108,8 +109,9 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
       options: {
         indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: false,interaction: {
-          mode: 'index',
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'y',
           intersect: false
         },
         scales: {

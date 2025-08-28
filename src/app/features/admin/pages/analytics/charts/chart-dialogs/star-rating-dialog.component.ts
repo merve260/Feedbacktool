@@ -15,7 +15,8 @@ import { Question } from '../../../../../../core/models/survey.models';
     <mat-dialog-content class="dialog-wrapper">
       <app-star-rating-chart
         [surveyId]="data.surveyId"
-        [question]="data.question">
+        [question]="data.question"
+        [inDialog]="true">
       </app-star-rating-chart>
     </mat-dialog-content>
     <p></p>

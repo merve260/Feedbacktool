@@ -9,12 +9,13 @@ import { Question } from '../../../../../../core/models/survey.models';
   standalone: true,
   imports: [CommonModule, MatDialogModule, RadioButtonChartComponent],
   template: `
-    <h2 mat-dialog-title></h2>
+    <h2 mat-dialog-title>{{ data.question.title }}</h2>
     <p></p>
     <mat-dialog-content class="dialog-wrapper">
       <app-radio-button-chart
         [surveyId]="data.surveyId"
-        [question]="data.question">
+        [question]="data.question"
+        [inDialog]="true">
       </app-radio-button-chart>
     </mat-dialog-content>
   `,

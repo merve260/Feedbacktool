@@ -9,11 +9,12 @@ import { Question } from '../../../../../../core/models/survey.models';
   standalone: true,
   imports: [CommonModule, MatDialogModule, MultipleChartComponent],
   template: `
-    <h2 mat-dialog-title></h2>
+    <h2 mat-dialog-title>{{ data.question.title }}</h2>
     <mat-dialog-content class="dialog-wrapper">
       <app-multiple-chart
         [surveyId]="data.surveyId"
-        [question]="data.question">
+        [question]="data.question"
+        [inDialog]="true">
       </app-multiple-chart>
     </mat-dialog-content>
   `,
