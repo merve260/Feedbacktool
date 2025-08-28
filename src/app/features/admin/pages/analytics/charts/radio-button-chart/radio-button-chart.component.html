@@ -1,0 +1,15 @@
+<div class="radio-button-chart" *ngIf="question">
+  <h3>{{ question.title }}</h3>
+  <canvas #chartCanvas></canvas>
+
+  <!-- Alt Liste: Asıl metinler -->
+  <ul class="option-list">
+    <li *ngFor="let opt of optionCounts; let i = index">
+      <strong>{{ i + 1 }}.</strong> {{ opt.option }} ({{ opt.count }} Stimmen)
+    </li>
+  </ul>
+
+  <div class="summary" *ngIf="answerCount > 0">
+    <p><strong>Antworten insgesamt:</strong> {{ answerCount }}</p>
+  </div>
+</div>

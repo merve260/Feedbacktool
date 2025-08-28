@@ -1,9 +1,9 @@
 <div class="card" *ngIf="survey; else loading">
-  <!-- Titel -->
+  <!-- 🔹 Titel -->
   <h2>Analyse – {{ survey.title }}</h2>
   <p *ngIf="survey.description">{{ survey.description }}</p>
 
-  <!-- Meta-Daten -->
+  <!-- 🔹 Meta-Daten -->
   <div class="meta">
     <span><strong>Status:</strong> {{ survey.status }}</span>
     <span><strong>Start:</strong> {{ survey.startAt | date:'dd.MM.yyyy' }}</span>
@@ -13,22 +13,57 @@
     <button class="export-btn" (click)="exportToExcel()">Excel Export</button>
   </div>
 
-  <!-- Charts Grid -->
+  <!-- 🔹 Charts Grid -->
   <div class="charts-grid">
     <ng-container *ngFor="let q of questions">
-      <div class="chart-card" (click)="openChartDialog(q)">
+      <div class="chart-card"
+           [ngClass]="{ 'wide': q.type === 'slider' || q.type === 'star' }">
+
+        <!-- Multiple Choice -->
         <app-multiple-chart
           *ngIf="q.type === 'multiple'"
           [surveyId]="survey.id!"
           [question]="q"
-          [fullscreen]="false">
+          (click)="openChartDialog(q)">
         </app-multiple-chart>
+
+        <!-- Skala -->
+        <app-skala-chart
+          *ngIf="q.type === 'slider'"
+          [surveyId]="survey.id!"
+          [question]="q"
+          (click)="openChartDialog(q)">
+        </app-skala-chart>
+
+        <!-- Radio Buttons -->
+        <app-radio-button-chart
+          *ngIf="q.type === 'radio'"
+          [surveyId]="survey.id!"
+          [question]="q"
+          (click)="openChartDialog(q)">
+        </app-radio-button-chart>
+
+        <!-- Sterne-Bewertung -->
+        <app-star-rating-chart
+          *ngIf="q.type === 'star'"
+          [surveyId]="survey.id!"
+          [question]="q"
+          (click)="openChartDialog(q)">
+        </app-star-rating-chart>
+
+        <!-- Freitext -->
+        <app-freitext-list
+          *ngIf="q.type === 'freitext'"
+          [surveyId]="survey.id!"
+          [question]="q"
+          (click)="openChartDialog(q)">
+        </app-freitext-list>
       </div>
     </ng-container>
   </div>
 </div>
 
-<!-- Loading Template -->
+<!-- Lade-Template -->
 <ng-template #loading>
   <div class="card">
     <p>Lade Daten...</p>

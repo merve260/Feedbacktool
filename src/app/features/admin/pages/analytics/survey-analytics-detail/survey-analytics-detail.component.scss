@@ -1,25 +1,25 @@
+/* Hauptkarte */
 .card {
   background: #fff;
   border: 1px solid #ece8ff;
   border-radius: 14px;
   padding: 24px;
-  width: 80%;
+  width: 100%;
   max-width: 1200px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
 }
 
-
+/* 🔹 Titel */
 h2 {
   margin: 0 0 0.5rem 0;
   color: #2e236d;
-  text-align: left;
   font-size: 1.6rem;
   font-weight: 600;
 }
 
-
+/* 🔹 Meta-Daten */
 .meta {
   margin-top: 10px;
   font-size: 14px;
@@ -28,13 +28,12 @@ h2 {
   flex-wrap: wrap;
   gap: 20px;
   align-items: center;
-  justify-content: flex-start;
   border-bottom: 1px solid #ece8ff;
   padding-bottom: 0.8rem;
   margin-bottom: 1.5rem;
 }
 
-
+/* 🔹 Export Button */
 .export-btn {
   margin-left: auto;
   background: #6b4cff;
@@ -45,9 +44,6 @@ h2 {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   transition: background 0.2s ease, transform 0.1s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 
@@ -61,34 +57,42 @@ h2 {
   }
 }
 
+/* 🔹 Charts Grid */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
   justify-items: stretch;
+  align-items: stretch; /* Höhe angleichen */
 }
 
-
-.charts-grid app-multiple-chart {
-  background: #fef6ff;
+/* 🔹 Jede Karte */
+.chart-card {
+  background: #fff;
   border: 1px solid #e2cdea;
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 350px;
-}
-.chart-card {
+  min-height: 360px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.wide {
+    grid-column: span 2;
   }
 }
 
-
-
+/* 🔹 Responsive Optimierung */
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}

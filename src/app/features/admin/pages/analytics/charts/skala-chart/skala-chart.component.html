@@ -1,0 +1,10 @@
+<div class="skala-chart" *ngIf="question">
+  <h3>{{ question.title }}</h3>
+  <canvas #chartCanvas></canvas>
+
+  <!-- Zusammenfassung unten -->
+  <div class="summary" *ngIf="answerCount > 0">
+    <p><strong>Durchschnitt:</strong> {{ averageValue | number:'1.1-1' }} / {{ question.max || 10 }}</p>
+    <p><strong>Antworten:</strong> {{ answerCount }}</p>
+  </div>
+</div>

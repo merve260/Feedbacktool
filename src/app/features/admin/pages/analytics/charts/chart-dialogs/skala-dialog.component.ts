@@ -1,21 +1,22 @@
 import {Component, inject, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { MultipleChartComponent } from '../multiple-chart/multiple-chart.component';
+import { SkalaChartComponent } from '../skala-chart/skala-chart.component';
 import { Question } from '../../../../../../core/models/survey.models';
 
 @Component({
-  selector: 'app-multiple-chart-dialog',
+  selector: 'app-skala-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MultipleChartComponent],
+  imports: [CommonModule, MatDialogModule, SkalaChartComponent],
   template: `
     <h2 mat-dialog-title></h2>
     <mat-dialog-content class="dialog-wrapper">
-      <app-multiple-chart
+      <app-skala-chart
         [surveyId]="data.surveyId"
         [question]="data.question">
-      </app-multiple-chart>
+      </app-skala-chart>
     </mat-dialog-content>
+    <p></p>
   `,
   styles: [`
     .dialog-wrapper {
@@ -26,13 +27,8 @@ import { Question } from '../../../../../../core/models/survey.models';
       width: 100%;
       box-sizing: border-box;
     }
-
-
-    .dialog-wrapper app-multiple-chart .chart-wrapper canvas {
-      max-width: 500px !important;
-    }
   `]
 })
-export class MultipleChartDialogComponent {
+export class SkalaDialogComponent {
   data = inject<{ surveyId: string; question: Question }>(MAT_DIALOG_DATA);
 }

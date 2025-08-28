@@ -1,7 +1,6 @@
 <div class="multiple-chart" *ngIf="question">
-  <!-- sadece kart görünümünde başlık -->
-  <h3 *ngIf="!fullscreen">{{ question.title }}</h3>
-  <p *ngIf="!fullscreen && question.text">{{ question.text }}</p>
+  <h3 >{{ question.title }}</h3>
+  <p *ngIf=" question.text">{{ question.text }}</p>
 
   <div class="chart-wrapper">
     <canvas #chartCanvas></canvas>

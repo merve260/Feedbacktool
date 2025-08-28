@@ -1,20 +1,21 @@
 import {Component, inject, Inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { MultipleChartComponent } from '../multiple-chart/multiple-chart.component';
+import { RadioButtonChartComponent } from '../radio-button-chart/radio-button-chart.component';
 import { Question } from '../../../../../../core/models/survey.models';
 
 @Component({
-  selector: 'app-multiple-chart-dialog',
+  selector: 'app-radio-button-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MultipleChartComponent],
+  imports: [CommonModule, MatDialogModule, RadioButtonChartComponent],
   template: `
     <h2 mat-dialog-title></h2>
+    <p></p>
     <mat-dialog-content class="dialog-wrapper">
-      <app-multiple-chart
+      <app-radio-button-chart
         [surveyId]="data.surveyId"
         [question]="data.question">
-      </app-multiple-chart>
+      </app-radio-button-chart>
     </mat-dialog-content>
   `,
   styles: [`
@@ -26,13 +27,8 @@ import { Question } from '../../../../../../core/models/survey.models';
       width: 100%;
       box-sizing: border-box;
     }
-
-
-    .dialog-wrapper app-multiple-chart .chart-wrapper canvas {
-      max-width: 500px !important;
-    }
   `]
 })
-export class MultipleChartDialogComponent {
+export class RadioButtonDialogComponent {
   data = inject<{ surveyId: string; question: Question }>(MAT_DIALOG_DATA);
 }

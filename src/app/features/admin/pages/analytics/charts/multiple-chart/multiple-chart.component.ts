@@ -24,7 +24,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input() surveyId!: string;
   @Input() question?: Question;
-  @Input() fullscreen = false;
 
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
@@ -72,7 +71,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit() {
-    // dialog açıldığında boyutu ayarlaması için
     setTimeout(() => this.updateChart(), 100);
   }
 
@@ -91,44 +89,56 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       datasets: [{
         label: 'Stimmen',
         data: values,
-        backgroundColor: colors,                      // normal renk (saydam)
-        hoverBackgroundColor: colors,                 // hover da aynı kalsın
-        borderColor: colors.map(c => c.replace('0.6', '1')), // daha koyu kenar
-        borderWidth: 1,
-        hoverOffset: 12
+        backgroundColor: colors.backgrounds,
+        borderColor: colors.borders,
+        borderWidth: 2,
+        hoverBackgroundColor: colors.borders,
+        hoverOffset: 16,
+        offset: 8
       }]
     };
-
 
     this.chart = new Chart(ctx, {
       type: 'pie',
       data,
       options: {
         responsive: true,
-        maintainAspectRatio: true,  // 🔹 burada sorun çıkıyorsa
-        aspectRatio: 1,             // 🔹 kare tutmak için ekle
+        aspectRatio: 1,
+
         plugins: {
-          legend: { position: 'top' }
+          legend: { position: 'top' },
+          tooltip: {
+            bodyFont: { size: 18, family: 'Arial' },
+            titleFont: { size: 16, family: 'Arial' },
+            padding: 12},
         },
         layout: {
           padding: 10
         }
       }
     });
-
   }
 
-  private generateColors(count: number): string[] {
-    const pastelPalette = [
-      'rgba(255, 99, 132, 0.6)',   // Soft pink
-      'rgba(54, 162, 235, 0.6)',   // Soft blue
-      'rgba(153, 102, 255, 0.6)',  // Soft purple
-      'rgba(75, 192, 192, 0.6)',   // Soft teal
-      'rgba(201, 203, 207, 0.6)',  // Soft grey
-      'rgba(255, 159, 64, 0.6)',   // Soft orange
+  private generateColors(count: number) {
+    const base = [
+      [255, 99, 132],   // pink
+      [54, 162, 235],   // blue
+      [153, 102, 255],  // purple
+      [75, 192, 192],   // teal
+      [201, 203, 207],  // grey
+      [255, 159, 64],   // orange
     ];
 
-    return Array.from({ length: count }, (_, i) => pastelPalette[i % pastelPalette.length]);
+    const backgrounds: string[] = [];
+    const borders: string[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const rgb = base[i % base.length];
+      backgrounds.push(`rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.3)`);
+      borders.push(`rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`);
+    }
+
+    return { backgrounds, borders };
   }
 
   ngOnDestroy() {

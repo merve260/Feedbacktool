@@ -2,20 +2,32 @@
   margin: 0 auto;
   padding: 1rem;
   border-radius: 12px;
-  background: #fef6ff;
+  background: #fafafa;
   border: 1px solid #e2cdea;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  canvas {
-    display: block;
-    margin: 0 auto;          /* ortalama */
+  .chart-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    max-width: 280px;        /* 🔹 biraz küçülttüm */
-    height: auto !important;
-    aspect-ratio: 1 / 1;     /* daireyi koru */
+    margin: 0 auto;
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1;
+      max-width: 280px;   /* 🔹 kart görünümü */
+    }
+
+    &.fullscreen canvas {
+      max-width: 500px;   /* 🔹 dialog (fullscreen) görünümü */
+    }
   }
 
   .summary {
@@ -37,6 +49,8 @@
     }
   }
 }
+
+
 .chart-wrapper {
   display: flex;
   justify-content: center;

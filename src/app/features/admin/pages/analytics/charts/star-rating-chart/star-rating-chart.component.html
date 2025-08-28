@@ -1,0 +1,27 @@
+<div class="star-rating-chart" *ngIf="question">
+  <h3>{{ question.title }}</h3>
+
+  <!-- Durchschnitt -->
+  <div class="average">
+    <span class="avg-number">{{ average | number:'1.1-1' }}</span>
+    <span class="stars">
+      <ng-container *ngFor="let star of [1,2,3,4,5]">
+        <i class="star"
+           [class.filled]="star <= Math.round(average)">
+          ★
+        </i>
+      </ng-container>
+    </span>
+    <span class="reviews">({{ total }} Antworten)</span>
+  </div>
+
+  <!-- Verteilung -->
+  <div class="distribution" *ngFor="let star of [5,4,3,2,1]">
+    <span class="label">{{ star }} ★</span>
+    <div class="bar">
+      <div class="fill"
+           [style.width.%]="total > 0 ? (counts[star] / total) * 100 : 0"></div>
+    </div>
+    <span class="count">{{ counts[star] }}</span>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+.frei-text-card {
+  padding: 1rem;
+  border-radius: 12px;
+  background: #fefefe;
+  border: 1px solid #e2cdea;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 535px;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2e236d;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      background: #fef6ff;
+      border: 1px solid #e2cdea;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+      color: #333;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      .name {
+        font-weight: 600;
+        color: #6b4cff;
+      }
+
+      .text {
+        flex: 1;
+      }
+    }
+  }
+
+  .mehr-btn {
+    align-self: flex-start;
+    background: #6b4cff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #5940d4;
+    }
+  }
+}

@@ -11,12 +11,20 @@ import { saveAs } from 'file-saver';
 import { Survey, Question } from '../../../../../core/models/survey.models';
 import { MultipleChartComponent } from '../charts/multiple-chart/multiple-chart.component';
 import { MultipleChartDialogComponent } from '../charts/chart-dialogs/multiple-chart-dialog.component';
+import {SkalaChartComponent} from '../charts/skala-chart/skala-chart.component';
+import {RadioButtonChartComponent} from '../charts/radio-button-chart/radio-button-chart.component';
+import {StarRatingChartComponent} from '../charts/star-rating-chart/star-rating-chart.component';
+import {FreiTextListComponent} from '../charts/freitext-list/freitext-list.component';
+import {FreiTextDialogComponent} from '../charts/chart-dialogs/frei-text-dialog.component';
+import {RadioButtonDialogComponent} from '../charts/chart-dialogs/radio-button-dialog.component';
+import {StarRatingDialogComponent} from '../charts/chart-dialogs/star-rating-dialog.component';
+import {SkalaDialogComponent} from '../charts/chart-dialogs/skala-dialog.component';
 
 
 @Component({
   selector: 'app-survey-analytics-detail',
   standalone: true,
-  imports: [CommonModule, MultipleChartComponent],
+  imports: [CommonModule, MultipleChartComponent, SkalaChartComponent, RadioButtonChartComponent, StarRatingChartComponent, FreiTextListComponent],
   templateUrl: './survey-analytics-detail.component.html',
   styleUrls: ['./survey-analytics-detail.component.scss'],
 })
@@ -136,14 +144,66 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   }
 
   openChartDialog(question: Question) {
-    this.dialog.open(MultipleChartDialogComponent, {
-      maxWidth: '600px',
-      width: '90%',
-      panelClass: 'chart-dialog',
-      data: {
-        surveyId: this.survey?.id!,
-        question
-      }
-    });
+    // Multiple Choice → Chart öffnen
+    if (question.type === 'multiple') {
+      this.dialog.open(MultipleChartDialogComponent, {
+        maxWidth: '600px',
+        width: '90%',
+        height: '600px',
+        panelClass: 'chart-dialog',
+        data: {
+          surveyId: this.survey?.id!,
+          question
+        }
+      });
+    }
+
+    // Freitext → Textliste öffnen
+    if (question.type === 'freitext') {
+      this.dialog.open(FreiTextDialogComponent, {
+        width: '90%',
+        data: {
+          title: question.title || 'Antworten',
+          answers: this.answers
+            .flatMap((entry: any) =>
+              (entry.answers || [])
+                .filter((ans: any) => ans.questionId === question.id && ans.textValue)
+                .map((ans: any) => ({
+                  name: entry.name || 'Anonym',
+                  text: ans.textValue
+                }))
+            )
+        }
+      });
+    }
+      // Radio Buttons
+    if (question.type === 'radio') {
+      this.dialog.open(RadioButtonDialogComponent, {
+        maxWidth: '600px',
+        width: '90%',
+        height: '90%',
+        panelClass: 'chart-dialog',
+        data: {surveyId: this.survey?.id!, question}
+      });
+    }
+    //Star
+    if (question.type === 'star') {
+      this.dialog.open(StarRatingDialogComponent, {
+        maxWidth: '600px',
+        width: '90%',
+        panelClass: 'chart-dialog',
+        data: { surveyId: this.survey?.id!, question }
+      });
+    }
+    //Skala
+    if (question.type === 'slider') {
+      this.dialog.open(SkalaDialogComponent, {
+        maxWidth: '800px',
+        width: '90%',
+        panelClass: 'chart-dialog',
+        data: { surveyId: this.survey?.id!, question }
+      });
+    }
   }
+
 }
