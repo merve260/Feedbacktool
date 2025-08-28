@@ -26,8 +26,6 @@ import { Question } from '../../../../../../core/models/survey.models';
       width: 100%;
       box-sizing: border-box;
     }
-
-
     .dialog-wrapper app-multiple-chart .chart-wrapper canvas {
       max-width: 500px !important;
     }

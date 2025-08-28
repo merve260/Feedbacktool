@@ -12,15 +12,12 @@ export class SurveyService {
   // -----------------------------
   // Surveys
   // -----------------------------
-
   createDraft(s: Partial<Survey>): Promise<string> {
     return this.backend.createDraft(s);
   }
-
   getById(id: string): Promise<Survey | null> {
     return this.backend.getById(id);
   }
-
   listByOwner(ownerId: string): Promise<Survey[]> {
     return this.backend.listByOwner(ownerId);
   }
@@ -28,7 +25,6 @@ export class SurveyService {
   publish(surveyId: string, startAt: Date, endAt: Date): Promise<void> {
     return this.backend.publish(surveyId, startAt, endAt);
   }
-
   updateSurveyWithQuestions(
     surveyId: string,
     survey: Omit<Survey, 'id'>,
@@ -36,27 +32,21 @@ export class SurveyService {
   ): Promise<void> {
     return this.backend.updateSurveyWithQuestions(surveyId, survey, questions);
   }
-
   getSurveyWithQuestions(id: string) {
     return this.backend.getSurveyWithQuestions(id);
   }
-
   createSurveyWithQuestions(
     survey: Omit<Survey, 'id'>,
     questions: Omit<Question, 'id'>[]
   ) {
     return this.backend.createSurveyWithQuestions(survey, questions);
   }
-
-
   deleteSurvey(id: string): Promise<void> {
     return this.backend.deleteSurvey(id);
   }
-
   // -----------------------------
   // Questions
   // -----------------------------
-
   addQuestion(surveyId: string, q: Question): Promise<string> {
     return this.backend.addQuestion(surveyId, q);
   }
@@ -68,12 +58,9 @@ export class SurveyService {
   setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {
     return this.backend.setSurveyWithId(id, s);
   }
-
-
   // -----------------------------
   // Responses
   // -----------------------------
-
   submitResponse(
     surveyId: string,
     payload: { name?: string; answers: any[] }

@@ -1,12 +1,11 @@
 /* =========================================================
-   Admin-Layout (ohne Collapse) – Plazz-ähnliche Optik
-   - Saubere Sidebar mit "Button"-artigen Einträgen
-   - Untere Optionen (Profil/Ausloggen) fest am Fuß, linksbündig
-   - Obere Toolbar sticky
+   Admin-Layout mit responsive Sidebar
+   - Desktop: Sidebar fix links
+   - Mobil: Sidebar als Overlay mit Hamburger-Menü
    ========================================================= */
 
 /* ---------- Design-Tokens ---------- */
-$primary:     #6b4cff;
+$primary: #523ac3;
 $ink-900:     #2e236d;
 $ink-700:     #6d63a8;
 $line:        rgba(0,0,0,.06);
@@ -27,46 +26,44 @@ $side-w:      260px;
 }
 
 .topbar { position: sticky; top: 0; z-index: 10; padding: 0 12px; }
-.page-title { font-size: 1.1rem; font-weight: 600; color: $white; }
+.page-title { font-size: 1.2rem; font-weight: 600; color: $ink-900; }
 .flex-spacer { flex: 1 1 auto; }
 
-/* Avatar-Bild im Menüknopf */
+/* Avatar-Bild */
 .avatar-btn img { width: 28px; height: 28px; border-radius: 50%; display: block; }
 
 /* Inhaltsabstände */
 .route-slot { padding: 20px 24px 32px 24px; }
 
-/* ===== Sidenav ===== */
+/* ===== Sidebar ===== */
 .side {
   width: $side-w;
   border-right: 1px solid $line;
   padding: 8px 0;
-  display: flex;                /* Flex-Kolonne im Inneren */
+  display: flex;
   background: #fbfbff;
 }
 
-/* Flex-Kolonne auf volle Höhe */
 .side-shell {
   display: flex; flex-direction: column;
   height: 100%; width: 100%;
 }
 
-/* Kopf (Logo/Marke) */
+/* Kopfbereich */
 .side-header {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 16px 8px 16px;
   color: $primary; font-weight: 600;
 }
 .side-header .brand { display: flex; align-items: center; gap: 8px; }
-.side-header .brand-text { letter-spacing: .2px; white-space: nowrap; }
+.side-header .brand-text { white-space: nowrap; font-size: 1.2rem; }
 
-/* Navigationsbereiche */
-.nav    { display: flex; flex-direction: column; gap: 30px; padding: 20px 8px; font-size: 18px}
+/* Navigation */
+.nav    { display: flex; flex-direction: column; gap: 30px; padding: 20px 8px; font-size: 18px; }
 .bottom { display: flex; flex-direction: column; gap: 2px; padding: 20px 8px; }
-.spacer { flex: 1 1 auto; }   /* drückt .bottom an den Rand */
+.spacer { flex: 1 1 auto; }
 
-
-/* ===== Einträge: wie Buttons, nicht wie Links ===== */
+/* Menü-Einträge */
 .side a[mat-list-item] {
   text-decoration: none;
   height: 44px;
@@ -78,51 +75,21 @@ $side-w:      260px;
   font-weight: 500;
 }
 
-/* Icon + Label harmonisch anordnen */
+
 .side a[mat-list-item] .mdc-list-item__content,
 .side a[mat-list-item] .mdc-list-item__primary-text {
   display: flex; align-items: center; gap: 12px;
 }
 
-/* Material-Icon im Listeneintrag */
+/* Icons */
 .side .mat-icon[matListIcon] { font-size: 22px; line-height: 1; opacity: .95; margin-left: 2px; }
 
-/* Hover/Active-Zustände */
+/* Hover + Active */
 .side a[mat-list-item]:hover  { background: $soft; }
 .side a[mat-list-item].active { background: $soft-strong; }
 
-/* Lange Labels mit Ellipsis kürzen */
-.label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Untere Optionen linksbündig */
-.bottom a[mat-list-item] { justify-content: flex-start; }
-
-/* ===== Feinheiten für Menü-Panel ===== */
-:host ::ng-deep .mat-mdc-menu-panel,
-:host ::ng-deep .mat-mdc-menu-content {
-  background-color: $white !important;
-  border-radius: 12px;
-}
-
-/* ===== Sidenav-Container – Layout-Sicherheit ===== */
-/* Höhe und Layer sicherstellen; Overflow unverändert lassen */
-:host ::ng-deep .mat-sidenav-container,
-:host ::ng-deep .mat-drawer-container {
-  height: 100vh;
-  background: transparent;
-}
-
-:host ::ng-deep .mat-sidenav-content {
-  display: block;
-  width: 100%;
-  position: relative;
-  z-index: 1;           /* Inhalt oben */
-  background: $white;
-}
-
-/* Sidebar selbst unter dem Inhalt-Layer (aber ist links, daher ok) */
-.side { z-index: 0; }
-.page-title{
-  color: $ink-900;
-  font-size: 23px;
+/* ===== Responsive Sidebar ===== */
+@media (max-width: 768px) {
+  .side { width: 240px !important; }
+  .page-title { font-size: 1rem;}
 }

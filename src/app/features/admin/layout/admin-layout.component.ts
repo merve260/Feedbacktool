@@ -1,5 +1,4 @@
-
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import {
   Router, ActivatedRoute, NavigationEnd,
   RouterOutlet, RouterLink, RouterLinkActive,
@@ -36,13 +35,22 @@ import { AuthService } from '../../../core/auth/auth.service';
   styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent {
-  // AuthService öffentlich, damit das Template auf user$ zugreifen kann
+  // AuthService → für User-Infos im Template
   public auth = inject(AuthService);
 
   private router = inject(Router);
-  private route  = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
 
-  // Seitentitel aus der tiefsten aktiven Child-Route lesen
+  // 🔹 Flag für Responsive Sidebar (true = Mobile)
+  isMobile = window.innerWidth <= 768;
+
+  // Fenstergröße überwachen
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
+  // Seitentitel aus den Routen-Data
   pageTitle$: Observable<string> = this.router.events.pipe(
     filter(e => e instanceof NavigationEnd),
     map(() => {
@@ -53,7 +61,7 @@ export class AdminLayoutComponent {
     startWith(this.route.snapshot.firstChild?.data?.['title'] ?? 'Meine Umfragen')
   );
 
-  // Logout und zur Login-Seite
+  // Logout → zurück zur Login-Seite
   async logout(): Promise<void> {
     await this.auth.logout();
     await this.router.navigateByUrl('/login');

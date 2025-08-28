@@ -90,9 +90,36 @@ h2 {
   }
 }
 
-/* 🔹 Responsive Optimierung */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .charts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .card {
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .chart-card {
+    min-height: auto; /* kleinere Höhe erlaubt */
+    padding: 0.8rem;
+  }
+}
+

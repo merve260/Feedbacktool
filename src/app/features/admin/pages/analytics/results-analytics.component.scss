@@ -3,6 +3,7 @@
   border: 1px solid #ece8ff;
   border-radius: 14px;
   padding: 20px;
+  width: 80%;
 }
 
 h2 {
@@ -54,6 +55,7 @@ h2 {
       display: flex;
       justify-content: space-between;
       margin-top: 6px;
+      flex-wrap: wrap;
 
       .status {
         padding: 2px 8px;
@@ -77,3 +79,28 @@ h2 {
     }
   }
 }
+@media (max-width: 768px) {
+  .card {
+    width: 95%;
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .survey-list li {
+    padding: 12px;
+  }
+
+  .survey-list .survey-description {
+    font-size: 13px;
+  }
+
+  .survey-list .survey-meta {
+    font-size: 12px;
+    flex-direction: column; // meta bilgileri alt alta göster
+    align-items: flex-start;
+  }
+}
+
