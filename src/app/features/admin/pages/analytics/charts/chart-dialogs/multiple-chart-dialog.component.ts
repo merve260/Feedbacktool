@@ -9,22 +9,23 @@ import { Question } from '../../../../../../core/models/survey.models';
   standalone: true,
   imports: [CommonModule, MatDialogModule, MultipleChartComponent],
   template: `
-    <app-multiple-chart
-      [surveyId]="data.surveyId"
-      [question]="data.question"
-      [fullscreen]="true">
-    </app-multiple-chart>
+    <h2 mat-dialog-title>{{ data.question.title }}</h2>
+    <mat-dialog-content class="dialog-wrapper">
+      <app-multiple-chart
+        [surveyId]="data.surveyId"
+        [question]="data.question"
+        [fullscreen]="true">
+      </app-multiple-chart>
+    </mat-dialog-content>
   `,
   styles: [`
-    :host {
-      display: block;
+    .dialog-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
       width: 100%;
-      height: 100%;
-    }
-    app-multiple-chart {
-      width: 100%;
-      height: 100%;
-      display: block;
+      box-sizing: border-box;
     }
   `]
 })

@@ -91,36 +91,44 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       datasets: [{
         label: 'Stimmen',
         data: values,
-        backgroundColor: colors,
-        borderColor: '#fff',
-        borderWidth: 2,
-        hoverOffset: 12,
-        hoverBorderColor: '#2e236d',
+        backgroundColor: colors,                      // normal renk (saydam)
+        hoverBackgroundColor: colors,                 // hover da aynı kalsın
+        borderColor: colors.map(c => c.replace('0.6', '1')), // daha koyu kenar
+        borderWidth: 1,
+        hoverOffset: 12
       }]
     };
+
 
     this.chart = new Chart(ctx, {
       type: 'pie',
       data,
       options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,  // 🔹 burada sorun çıkıyorsa
+        aspectRatio: 1,             // 🔹 kare tutmak için ekle
         plugins: {
           legend: { position: 'top' }
+        },
+        layout: {
+          padding: 10
         }
       }
     });
+
   }
 
   private generateColors(count: number): string[] {
-    const palette = [
-      '#ff6384', '#4cc9f0',
-      '#e377c2', '#4bc0c0',
-      '#9966ff', '#ff9f40',
-      '#c9cbcf', '#8dd17e',
-      '#17becf', '#ffb703',
+    const pastelPalette = [
+      'rgba(255, 99, 132, 0.6)',   // Soft pink
+      'rgba(54, 162, 235, 0.6)',   // Soft blue
+      'rgba(153, 102, 255, 0.6)',  // Soft purple
+      'rgba(75, 192, 192, 0.6)',   // Soft teal
+      'rgba(201, 203, 207, 0.6)',  // Soft grey
+      'rgba(255, 159, 64, 0.6)',   // Soft orange
     ];
-    return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
+
+    return Array.from({ length: count }, (_, i) => pastelPalette[i % pastelPalette.length]);
   }
 
   ngOnDestroy() {

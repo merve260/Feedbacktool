@@ -1,33 +1,27 @@
 .multiple-chart {
-  margin: 1rem 0;
+  margin: 0 auto;
   padding: 1rem;
   border-radius: 12px;
   background: #fef6ff;
   border: 1px solid #e2cdea;
-
-  h3 {
-    margin-bottom: 0.3rem;
-    color: #4e2d9a;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0.2rem 0 1rem;
-    color: #555;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   canvas {
-    width: 100% !important;
-    height: 400px !important;
-
-    /* fullscreen modunda daha büyük */
-    .cdk-overlay-pane & {
-      height: 500px !important;
-    }
+    display: block;
+    margin: 0 auto;          /* ortalama */
+    width: 100%;
+    max-width: 280px;        /* 🔹 biraz küçülttüm */
+    height: auto !important;
+    aspect-ratio: 1 / 1;     /* daireyi koru */
   }
 
   .summary {
     margin-top: 1rem;
+    width: 100%;
+    max-width: 400px;
     text-align: left;
 
     strong {
@@ -41,9 +35,19 @@
       margin: 0;
       padding-left: 1.2rem;
     }
-
-    li {
-      margin: 0.2rem 0;
-    }
   }
+}
+.chart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
 }

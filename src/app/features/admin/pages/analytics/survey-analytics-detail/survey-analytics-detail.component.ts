@@ -137,8 +137,9 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
 
   openChartDialog(question: Question) {
     this.dialog.open(MultipleChartDialogComponent, {
-      width: '750px',
-      height: '600px',
+      maxWidth: '600px',
+      width: '90%',
+      panelClass: 'chart-dialog',
       data: {
         surveyId: this.survey?.id!,
         question

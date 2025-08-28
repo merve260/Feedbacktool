@@ -3,7 +3,9 @@
   <h3 *ngIf="!fullscreen">{{ question.title }}</h3>
   <p *ngIf="!fullscreen && question.text">{{ question.text }}</p>
 
-  <canvas #chartCanvas></canvas>
+  <div class="chart-wrapper">
+    <canvas #chartCanvas></canvas>
+  </div>
 
   <div class="summary" *ngIf="mostChosenOptions.length > 0">
     <p><strong>Beliebteste Antwort(en):</strong></p>
