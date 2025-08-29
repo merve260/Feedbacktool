@@ -1,10 +1,8 @@
 import {
   Component, Input, OnInit, OnDestroy, AfterViewInit,
-  ViewChild, ElementRef, inject
+  ViewChild, ElementRef, OnChanges, SimpleChanges
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { Subscription, map } from 'rxjs';
 import { Question } from '../../../../../../core/models/survey.models';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
@@ -17,68 +15,68 @@ Chart.register(...registerables);
   templateUrl: './radio-button-chart.component.html',
   styleUrls: ['./radio-button-chart.component.scss'],
 })
-export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestroy {
-  private firestore = inject(Firestore);
+export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private chart!: Chart;
-  private sub!: Subscription;
 
-  @Input() surveyId!: string;   // ID der Umfrage
-  @Input() question?: Question; // aktuelle Frage
-  @Input() inDialog = false;    // Flag: im Dialog oder in Karte
+  @Input() surveyId!: string;   // 🔹 ID der Umfrage
+  @Input() question?: Question; // 🔹 Aktuelle Frage
+  @Input() inDialog = false;    // 🔹 Flag: wird im Dialog angezeigt?
+  @Input() answers: any[] = []; // 🔹 Antworten (vom Parent übergeben)
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  answerCount: number = 0;  // Anzahl aller Antworten
+  answerCount: number = 0; // Gesamtanzahl Antworten
   optionCounts: { option: string; count: number }[] = []; // Stimmen pro Option
 
   ngOnInit() {
-    if (!this.surveyId || !this.question) return;
+    this.calculateResults();
+  }
 
-    // Firestore → Antworten dieser Umfrage sammeln
-    const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
-    this.sub = collectionData(answersCol, { idField: 'id' })
-      .pipe(
-        map((docs: any[]) => {
-          // Zähler für jede Option initialisieren
-          const counts: Record<string, number> = {};
-          this.question?.options?.forEach(opt => counts[opt] = 0);
-
-          // Alle Dokumente durchgehen und Stimmen zählen
-          docs.forEach((doc) => {
-            (doc.answers || []).forEach((ans: any) => {
-              if (ans.questionId === this.question?.id && ans.textValue) {
-                if (counts[ans.textValue] !== undefined) {
-                  counts[ans.textValue]++;
-                }
-              }
-            });
-          });
-
-          // Ergebnis als Array
-          const results = Object.entries(counts).map(([option, count]) => ({ option, count }));
-          this.optionCounts = results;
-          this.answerCount = results.reduce((sum, r) => sum + r.count, 0);
-          return results;
-        })
-      )
-      .subscribe(() => this.updateChart());
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['answers'] || changes['question']) {
+      this.calculateResults();
+      this.updateChart();
+    }
   }
 
   ngAfterViewInit() {
-    // Chart erst nach View-Init rendern
+    // Chart erst nach Rendern aufbauen
     setTimeout(() => this.updateChart(), 100);
   }
 
+  /** Berechnet die Ergebnisse aus den Antworten */
+  private calculateResults() {
+    if (!this.question) return;
+
+    // Zähler initialisieren
+    const counts: Record<string, number> = {};
+    this.question.options?.forEach(opt => counts[opt] = 0);
+
+    // Antworten durchgehen
+    this.answers.forEach((doc: any) => {
+      (doc.answers || []).forEach((ans: any) => {
+        if (ans.questionId === this.question?.id && ans.textValue) {
+          if (counts[ans.textValue] !== undefined) {
+            counts[ans.textValue]++;
+          }
+        }
+      });
+    });
+
+    // Ergebnisse speichern
+    this.optionCounts = Object.entries(counts).map(([option, count]) => ({ option, count }));
+    this.answerCount = this.optionCounts.reduce((sum, r) => sum + r.count, 0);
+  }
+
+  /** Baut das Chart.js Diagramm auf */
   private updateChart() {
-    if (!this.chartCanvas) return;
+    if (!this.chartCanvas || this.optionCounts.length === 0) return;
     if (this.chart) this.chart.destroy();
 
     const ctx = this.chartCanvas.nativeElement;
-
-    // Labels = 1,2,3,... / Werte = Anzahl Stimmen
-    const labels = this.optionCounts.map((_, i) => `${i + 1}`);
+    const labels = this.optionCounts.map(o => o.option);
     const values = this.optionCounts.map(o => o.count);
 
-    // Farben (Pastell)
+    // Farben
     const pastelColors = [
       'rgba(54, 162, 235, 0.3)',
       'rgba(153, 102, 255, 0.3)',
@@ -87,51 +85,41 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
       'rgba(255, 206, 86, 0.3)',
       'rgba(255, 159, 64, 0.3)'
     ];
-
     const backgroundColors = values.map((_, i) => pastelColors[i % pastelColors.length]);
     const borderColors = backgroundColors.map(c => c.replace('0.3', '1'));
-    const hoverColors = backgroundColors.map(c => c.replace('0.3', '0.8'));
 
+    // Daten für Chart.js
     const data: ChartConfiguration<'bar'>['data'] = {
       labels,
       datasets: [{
         data: values,
         backgroundColor: backgroundColors,
-        hoverBackgroundColor: hoverColors,
         borderColor: borderColors,
         borderWidth: 2,
-        barThickness: Math.max(30, 200 / this.optionCounts.length) // Balkenbreite dynamisch
       }]
     };
 
-    // Chart.js erzeugen
+    // Chart.js Config: Horizontal Bar Chart
     this.chart = new Chart(ctx, {
       type: 'bar',
       data,
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          mode: 'x',
-          intersect: false
-        },
         scales: {
-          x: { ticks: { font: { size: 12 } } },
-          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+          x: { beginAtZero: true, ticks: { stepSize: 1 } },
+          y: { ticks: { font: { size: 14 } } }
         },
         plugins: {
           legend: { display: false }, // keine Legende
           tooltip: {
-            bodyFont: { size: 18, family: 'Arial' },
-            titleFont: { size: 16, family: 'Arial' },
-            padding: 12,
             callbacks: {
-              // Tooltip-Label: Stimmenanzahl
               label: (ctx) => {
                 const index = ctx.dataIndex;
                 const opt = this.optionCounts[index]?.option || '';
                 const value = ctx.dataset.data[index] as number;
-                return `${value} Stimmen`;
+                return `${opt}: ${value} Stimmen`;
               }
             }
           }
@@ -141,8 +129,6 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnDestroy() {
-    // Speicher freigeben
     if (this.chart) this.chart.destroy();
-    if (this.sub) this.sub.unsubscribe();
   }
 }

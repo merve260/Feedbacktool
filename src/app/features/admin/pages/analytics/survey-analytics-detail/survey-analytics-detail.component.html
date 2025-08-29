@@ -17,13 +17,14 @@
   <div class="charts-grid">
     <ng-container *ngFor="let q of questions">
       <div class="chart-card"
-           [ngClass]="{ 'wide': q.type === 'slider' || q.type === 'star' }">
+           [ngClass]="{ 'wide': q.type === 'slider' || q.type === 'star' || q.type === 'radio'|| q.type === 'freitext' }">
 
         <!-- Multiple Choice Diagramm -->
         <app-multiple-chart
           *ngIf="q.type === 'multiple'"
           [surveyId]="survey.id!"
           [question]="q"
+          [answers]="answers"
           (click)="openChartDialog(q)">
         </app-multiple-chart>
 
@@ -32,6 +33,7 @@
           *ngIf="q.type === 'slider'"
           [surveyId]="survey.id!"
           [question]="q"
+          [answers]="answers"
           (click)="openChartDialog(q)">
         </app-skala-chart>
 
@@ -40,6 +42,7 @@
           *ngIf="q.type === 'radio'"
           [surveyId]="survey.id!"
           [question]="q"
+          [answers]="answers"
           (click)="openChartDialog(q)">
         </app-radio-button-chart>
 
@@ -48,6 +51,7 @@
           *ngIf="q.type === 'star'"
           [surveyId]="survey.id!"
           [question]="q"
+          [answers]="answers"
           (click)="openChartDialog(q)">
         </app-star-rating-chart>
 
@@ -56,6 +60,7 @@
           *ngIf="q.type === 'freitext'"
           [surveyId]="survey.id!"
           [question]="q"
+          [answers]="answers"
           (click)="openChartDialog(q)">
         </app-freitext-list>
       </div>

@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { Subscription, map } from 'rxjs';
 import { Question } from '../../../../../../core/models/survey.models';
 
 @Component({
@@ -11,57 +9,47 @@ import { Question } from '../../../../../../core/models/survey.models';
   templateUrl: './star-rating-chart.component.html',
   styleUrls: ['./star-rating-chart.component.scss'],
 })
-export class StarRatingChartComponent implements OnInit {
-  private firestore = inject(Firestore);
-  private sub!: Subscription;
-
+export class StarRatingChartComponent implements OnChanges {
   @Input() surveyId!: string;
   @Input() question?: Question;
   @Input() inDialog = false;
+  @Input() answers: any[] = []; // ✨ Antworten kommen von außen
 
-  // Anzahl pro Stern (1-5)
   counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
-  // Gesamtanzahl Antworten
   total: number = 0;
-  // Durchschnittswert
   average: number = 0;
 
-  ngOnInit() {
-    if (!this.surveyId || !this.question) return;
-
-    // Firestore: Antworten sammeln
-    const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
-    this.sub = collectionData(answersCol, { idField: 'id' })
-      .pipe(
-        map((docs: any[]) => {
-          const counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
-          let sum = 0;
-          let count = 0;
-
-          // Antworten durchgehen
-          docs.forEach(doc => {
-            (doc.answers || []).forEach((ans: any) => {
-              // Nur für diese Frage (ID prüfen)
-              if (ans.questionId === this.question?.id && ans.numberValue !== undefined) {
-                const val = ans.numberValue;
-                if (counts[val] !== undefined) {
-                  counts[val]++;
-                  sum += val;
-                  count++;
-                }
-              }
-            });
-          });
-
-          // Zustand updaten
-          this.counts = counts;
-          this.total = count;
-          this.average = count > 0 ? sum / count : 0;
-        })
-      )
-      .subscribe();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['answers'] || changes['question']) {
+      this.calculateResults();
+    }
   }
 
-  // Math-Objekt im Template nutzbar machen
+  private calculateResults() {
+    if (!this.question) return;
+
+    const counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
+    let sum = 0;
+    let count = 0;
+
+    this.answers.forEach(doc => {
+      (doc.answers || []).forEach((ans: any) => {
+        if (ans.questionId === this.question?.id && ans.numberValue !== undefined) {
+          const val = ans.numberValue;
+          if (counts[val] !== undefined) {
+            counts[val]++;
+            sum += val;
+            count++;
+          }
+        }
+      });
+    });
+
+    this.counts = counts;
+    this.total = count;
+    this.average = count > 0 ? sum / count : 0;
+  }
+
+  // Math für Template
   protected readonly Math = Math;
 }

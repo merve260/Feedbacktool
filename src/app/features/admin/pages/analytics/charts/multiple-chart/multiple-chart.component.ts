@@ -1,10 +1,9 @@
 import {
   Component, Input, OnInit, OnDestroy, AfterViewInit,
-  inject, ViewChild, ElementRef
+  OnChanges, SimpleChanges,
+  ViewChild, ElementRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { map, Observable, Subscription } from 'rxjs';
 import { Question } from '../../../../../../core/models/survey.models';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
@@ -17,83 +16,89 @@ Chart.register(...registerables);
   templateUrl: './multiple-chart.component.html',
   styleUrls: ['./multiple-chart.component.scss'],
 })
-export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy {
-  private firestore = inject(Firestore);
+export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private chart!: Chart;
-  private sub!: Subscription;
 
-  @Input() surveyId!: string;
-  @Input() question?: Question;
-  @Input() inDialog = false;
+  @Input() surveyId!: string;       // ID der aktuellen Umfrage
+  @Input() question?: Question;     // Aktuelle Frage (Multiple Choice)
+  @Input() inDialog = false;        // Flag: wird im Dialog angezeigt?
+  @Input() answers: any[] = [];     // ✨ Alle Antworten (vom Parent übergeben)
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  answers$!: Observable<{ option: string; count: number }[]>;
+  // Speichert meistgewählte Optionen
   mostChosenOptions: { option: string; count: number }[] = [];
-
+  // Interne Datenstruktur für Chart
   private chartData: { option: string; count: number }[] = [];
 
   ngOnInit() {
-    if (!this.surveyId || !this.question) return;
+    // Initialisierung: Logik passiert über ngOnChanges
+  }
 
-    // Firestore Collection mit Antworten
-    const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
-    this.answers$ = collectionData(answersCol, { idField: 'id' }).pipe(
-      map((docs: any[]) => {
-        if (!this.question) return [];
-
-        // Zähler initialisieren
-        const counts: Record<string, number> = {};
-        this.question.options?.forEach(opt => counts[opt] = 0);
-
-        // Antworten auswerten
-        docs.forEach((doc: any) => {
-          (doc.answers || []).forEach((ans: any) => {
-            if (ans.questionId === this.question!.id && ans.listValue) {
-              ans.listValue.forEach((opt: string) => {
-                if (counts[opt] !== undefined) counts[opt]++;
-              });
-            }
-          });
-        });
-
-        // Ergebnisse berechnen
-        const results = Object.entries(counts).map(([option, count]) => ({ option, count }));
-
-        // Meistgewählte Option merken
-        if (results.length > 0) {
-          const maxCount = Math.max(...results.map(r => r.count));
-          this.mostChosenOptions = results.filter(r => r.count === maxCount && maxCount > 0);
-        } else {
-          this.mostChosenOptions = [];
-        }
-        return results;
-      })
-    );
-
-    // Subscription starten → Chart aktualisieren
-    this.sub = this.answers$.subscribe(results => {
-      this.chartData = results;
-      this.updateChart();
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    // Wird aufgerufen, wenn sich Antworten oder Frage ändern
+    if (changes['answers'] || changes['question']) {
+      if (this.answers && this.question) {
+        this.processAnswers(this.answers);
+      }
+    }
   }
 
   ngAfterViewInit() {
-    // kleine Verzögerung, um Canvas sicher zu rendern
+    // Canvas erst nach Rendern verfügbar → dann Chart aufbauen
     setTimeout(() => this.updateChart(), 100);
   }
 
+  /**
+   * Verarbeitet alle Antworten und zählt die Auswahl pro Option
+   */
+  private processAnswers(docs: any[]) {
+   // console.log("Dialog Question ID:", this.question?.id);
+   // console.log("All answers (raw):", docs);
+
+    if (!this.question) return;
+
+    // Zähler initialisieren (alle Optionen = 0)
+    const counts: Record<string, number> = {};
+    this.question.options?.forEach(opt => counts[opt] = 0);
+
+    // Alle Antwort-Dokumente durchlaufen
+    docs.forEach((entry: any) => {
+      // Jede Antwort im Dokument prüfen
+      (entry.answers || []).forEach((ans: any) => {
+        // Nur Antworten zur aktuellen Frage berücksichtigen
+        if (ans.questionId === this.question!.id && ans.listValue) {
+          ans.listValue.forEach((opt: string) => {
+            if (counts[opt] !== undefined) counts[opt]++; // Zähler erhöhen
+          });
+        }
+      });
+    });
+
+    // Ergebnisse in Array umwandeln → für Chart.js
+    this.chartData = Object.entries(counts).map(([option, count]) => ({ option, count }));
+
+    // Meistgewählte Optionen berechnen
+    const maxCount = this.chartData.length > 0 ? Math.max(...this.chartData.map(r => r.count)) : 0;
+    this.mostChosenOptions = this.chartData.filter(r => r.count === maxCount && maxCount > 0);
+
+    // Chart aktualisieren
+    this.updateChart();
+  }
+
+  /**
+   * Erstellt oder aktualisiert das Chart
+   */
   private updateChart() {
     if (!this.chartCanvas || this.chartData.length === 0) return;
-    if (this.chart) this.chart.destroy();
+    if (this.chart) this.chart.destroy(); // Vorheriges Chart löschen
 
     const ctx = this.chartCanvas.nativeElement;
     const colors = this.generateColors(this.chartData.length);
 
-    // Wenn alle Werte = 0, dann kleine Zahl eintragen (Chart.js Bugfix)
+    // Verhindern, dass Chart komplett leer ist
     const allZero = this.chartData.every(r => r.count === 0);
     const values = allZero ? this.chartData.map(() => 0.0001) : this.chartData.map(r => r.count);
 
-    // Daten für Chart.js
     const data: ChartConfiguration<'pie'>['data'] = {
       labels: this.chartData.map(r => r.option),
       datasets: [{
@@ -108,7 +113,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       }]
     };
 
-    // Chart initialisieren
+    // Neues Chart erstellen
     this.chart = new Chart(ctx, {
       type: 'pie',
       data,
@@ -128,7 +133,9 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
-  // Hilfsfunktion: Farben für Optionen
+  /**
+   * Generiert Farben für die Optionen
+   */
   private generateColors(count: number) {
     const base = [
       [255, 99, 132],   // pink
@@ -151,7 +158,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnDestroy() {
+    // Chart beim Zerstören der Komponente bereinigen
     if (this.chart) this.chart.destroy();
-    if (this.sub) this.sub.unsubscribe();
   }
 }

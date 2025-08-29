@@ -205,6 +205,8 @@ export class SurveyViewerComponent implements OnInit {
 
         return answer;
       });
+      console.log("🚀 Final responses:", responses);
+      console.log("Antworten die gespeichert werden:", JSON.stringify(responses, null, 2));
 
       await this.surveyService.submitResponse(this.surveyId, {
         name: this.respondentName?.trim() || 'Anonym',

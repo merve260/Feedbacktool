@@ -152,13 +152,14 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
 
   // Öffnet verschiedene Diagramm-Dialoge je nach Fragetyp
   openChartDialog(question: Question) {
+    //console.log('openChartDialog → answers:', this.answers);
     if (question.type === 'multiple') {
       this.dialog.open(MultipleChartDialogComponent, {
         maxWidth: '600px',
         width: '90%',
         height: '600px',
         panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question }
+        data: { surveyId: this.survey?.id!, question, answers: this.answers }
       });
     }
 
@@ -186,7 +187,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         width: '90%',
         height: '90%',
         panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question }
+        data: { surveyId: this.survey?.id!, question,answers: this.answers }
       });
     }
 
@@ -195,7 +196,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         maxWidth: '600px',
         width: '90%',
         panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question }
+        data: { surveyId: this.survey?.id!, question,answers: this.answers }
       });
     }
 
@@ -204,7 +205,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         maxWidth: '800px',
         width: '90%',
         panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question }
+        data: { surveyId: this.survey?.id!, question,answers: this.answers }
       });
     }
   }

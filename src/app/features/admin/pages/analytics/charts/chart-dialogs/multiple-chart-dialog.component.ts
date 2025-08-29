@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MultipleChartComponent } from '../multiple-chart/multiple-chart.component';
@@ -9,21 +9,20 @@ import { Question } from '../../../../../../core/models/survey.models';
   standalone: true,
   imports: [CommonModule, MatDialogModule, MultipleChartComponent],
   template: `
-    <!-- Titel = Frage -->
     <h2 mat-dialog-title>{{ data.question.title }}</h2>
 
-    <!-- Inhalt = Chart für diese Frage -->
     <mat-dialog-content class="dialog-wrapper">
       <app-multiple-chart
         [surveyId]="data.surveyId"
         [question]="data.question"
+        [answers]="data.answers"
         [inDialog]="true">
       </app-multiple-chart>
     </mat-dialog-content>
   `,
   styles: [`
     .dialog-wrapper {
-      display: flex;              /* Inhalt mittig */
+      display: flex;
       justify-content: center;
       align-items: center;
       padding: 1rem;
@@ -31,11 +30,10 @@ import { Question } from '../../../../../../core/models/survey.models';
       box-sizing: border-box;
     }
     .dialog-wrapper app-multiple-chart .chart-wrapper canvas {
-      max-width: 500px !important; /* Chart nicht größer als 500px */
+      max-width: 500px !important;
     }
   `]
 })
 export class MultipleChartDialogComponent {
-  // Daten vom Dialog: Umfrage-ID + aktuelle Frage
-  data = inject<{ surveyId: string; question: Question }>(MAT_DIALOG_DATA);
+  data = inject<{ surveyId: string; question: Question; answers: any[] }>(MAT_DIALOG_DATA);
 }

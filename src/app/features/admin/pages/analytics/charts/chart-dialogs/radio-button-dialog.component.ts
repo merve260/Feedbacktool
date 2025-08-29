@@ -17,13 +17,14 @@ import { Question } from '../../../../../../core/models/survey.models';
       <app-radio-button-chart
         [surveyId]="data.surveyId"
         [question]="data.question"
+        [answers]="data.answers"
         [inDialog]="true">
       </app-radio-button-chart>
     </mat-dialog-content>
   `,
   styles: [`
     .dialog-wrapper {
-      display: flex;              /* Inhalt mittig */
+      display: flex;
       justify-content: center;
       align-items: center;
       padding: 1rem;
@@ -33,6 +34,6 @@ import { Question } from '../../../../../../core/models/survey.models';
   `]
 })
 export class RadioButtonDialogComponent {
-  // Daten vom Dialog: Umfrage-ID + aktuelle Frage
-  data = inject<{ surveyId: string; question: Question }>(MAT_DIALOG_DATA);
+  // 🔹 Daten vom Dialog: aktuelle Umfrage-ID + Frage + Antworten
+  data = inject<{ surveyId: string; question: Question; answers: any[] }>(MAT_DIALOG_DATA);
 }

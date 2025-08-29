@@ -1,9 +1,7 @@
 import {
-  Component, Input, OnInit, OnDestroy, inject
+  Component, Input, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
 import { Question } from '../../../../../../core/models/survey.models';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FreiTextDialogComponent } from '../chart-dialogs/frei-text-dialog.component';
@@ -15,42 +13,12 @@ import { FreiTextDialogComponent } from '../chart-dialogs/frei-text-dialog.compo
   templateUrl: './freitext-list.component.html',
   styleUrls: ['./freitext-list.component.scss'],
 })
-export class FreiTextListComponent implements OnInit, OnDestroy {
-  private firestore = inject(Firestore);
-  private sub!: Subscription;
+export class FreiTextListComponent {
   private dialog = inject(MatDialog);
 
   @Input() surveyId!: string;       // ID der aktuellen Umfrage
   @Input() question?: Question;     // Aktuelle Frage (vom Typ Freitext)
-
-  answers: { name: string; text: string }[] = [];  // Gesammelte Antworten
-
-  ngOnInit() {
-    if (!this.surveyId || !this.question) return;
-
-    // Firestore Collection "antworten" für die Umfrage
-    const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
-
-    // Live-Subscription: hört auf alle neuen Antworten
-    this.sub = collectionData(answersCol, { idField: 'id' }).subscribe((docs: any[]) => {
-      const all: { name: string; text: string }[] = [];
-
-      // Durch alle Dokumente gehen
-      docs.forEach(doc => {
-        const userName = doc.name || 'Anonym';
-
-        // Nur Antworten für die aktuelle Frage sammeln
-        (doc.answers || []).forEach((ans: any) => {
-          if (ans.questionId === this.question?.id && ans.textValue) {
-            all.push({ name: userName, text: ans.textValue });
-          }
-        });
-      });
-
-      // Ergebnisse ins Array speichern → UI zeigt Vorschau
-      this.answers = all;
-    });
-  }
+  @Input() answers: { name: string; text: string }[] = []; // Antworten kommen vom Parent
 
   // Öffnet den Dialog mit allen Antworten
   openDialog() {
@@ -58,10 +26,5 @@ export class FreiTextListComponent implements OnInit, OnDestroy {
       width: '90%',
       data: { title: this.question?.title, answers: this.answers }
     });
-  }
-
-  // Subscription sauber beenden
-  ngOnDestroy() {
-    if (this.sub) this.sub.unsubscribe();
   }
 }
