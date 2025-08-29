@@ -21,13 +21,6 @@
       <input matInput [(ngModel)]="data.text" placeholder="z.B. Bewerten Sie unsere Dienstleistung." />
     </mat-form-field>
 
-    <!-- Auswahl: Anzahl Sterne -->
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Maximale Sterne</mat-label>
-      <mat-select [(ngModel)]="data.maxStars">
-        <mat-option *ngFor="let star of [3, 5, 7, 10]" [value]="star">{{ star }} Sterne</mat-option>
-      </mat-select>
-    </mat-form-field>
 
     <!-- Vorschau -->
     <p class="preview-label-titel">Vorschau:</p>
@@ -39,7 +32,7 @@
       <p class="frage-text">{{ data.text }}</p>
 
       <div class="stars">
-        <ng-container *ngFor="let star of [].constructor(data.maxStars)">
+        <ng-container *ngFor="let star of [].constructor(5)">
           <mat-icon>star</mat-icon>
         </ng-container>
       </div>

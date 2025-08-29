@@ -15,12 +15,13 @@ import {
   CollectionReference,
   DocumentReference,
   writeBatch,
-  updateDoc,
+  updateDoc, collectionData,
 } from '@angular/fire/firestore';
 
 import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question, SurveyStatus } from '../../core/models/survey.models';
 import { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore';
+import {Observable} from 'rxjs';
 
 // Hilfsfunktion: entfernt alle Felder, die undefined sind
 function omitUndefined<T extends object>(obj: T): Partial<T> {
@@ -278,4 +279,10 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     );
     await setDoc(respRef, { ...payload, createdAt: serverTimestamp() });
   }
+
+  listenToAnswers(surveyId: string): Observable<any[]> {
+    const ref = collection(this.firestore, `umfragen/${surveyId}/antworten`);
+    return collectionData(ref, { idField: 'id' });
+  }
+
 }

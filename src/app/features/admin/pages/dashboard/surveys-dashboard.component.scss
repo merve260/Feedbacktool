@@ -121,7 +121,7 @@
 /* Hinweis-Box für Status-Erklärung */
 .status-hinweis {
   display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 12px; padding: 16px; width: 78%;
+  gap: 12px; padding: 16px; width: 80%;
   border: 1px solid #ffe58f; border-radius: 10px;
   background: #fffbea; font-size: 0.95rem; color: #3b2a45;
 
@@ -134,20 +134,85 @@
   .close-btn { margin-left: auto; color: #666; }
   .close-btn:hover { color: #000; }
 }
+/* Empty State Card */
+.empty-card {
+  background: #fdfbff;
+  border: 2px dashed #d8caff;
+  border-radius: 14px;
+  padding: 32px 24px;
+  text-align: center;
+  width: 80%;
+  box-shadow: 0 6px 16px rgba(107, 76, 255, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #6b4cff;
+    box-shadow: 0 8px 20px rgba(107, 76, 255, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .empty-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #2e236d;
+    margin-bottom: 20px;
+  }
+
+  .btn-cta {
+    background: linear-gradient(135deg, #6b4cff, #9b6dff);
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: 'Poppins','Roboto',sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(107, 76, 255, 0.3);
+    letter-spacing: 0.3px;
+  }
+
+  .btn-cta mat-icon {
+    font-size: 22px;
+  }
+
+  .btn-cta:hover {
+    background: linear-gradient(135deg, #5a3edc, #8558e6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(107, 76, 255, 0.35);
+  }
+
+  .btn-cta:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(107, 76, 255, 0.25);
+  }
+}
+
+
 
 /* Menü-Anpassung */
 ::ng-deep .mat-mdc-menu-panel {
   background: #fff !important; border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-::ng-deep .mat-mdc-menu-item.warn .mdc-list-item__primary-text,
-::ng-deep .mat-mdc-menu-item.warn .mat-icon {
-  color: #c30d0d !important; font-weight: 600;
+/* Warn-Item (Löschen) */
+/* Löschen rot machen (Text + Icon) */
+::ng-deep .mat-mdc-menu-item.warn .mat-icon,
+::ng-deep .mat-mdc-menu-item.warn .mat-mdc-menu-item-text,
+::ng-deep .mat-mdc-menu-item.warn .mdc-list-item__primary-text {
+  color: #c30d0d !important;
+  font-weight: 500;
 }
 ::ng-deep .mat-mdc-menu-item.warn:hover {
   background: rgba(195, 13, 13, 0.08) !important;
 }
-::ng-deep .mat-mdc-menu-item .mdc-list-item__primary-text {
-  font-size: 14px; font-weight: 500; color: #333;
+/* Menü-Icons */
+::ng-deep .mat-mdc-menu-item .mat-icon {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #555;
 }
-::ng-deep .mat-mdc-menu-item .mat-icon { font-size: 20px; }

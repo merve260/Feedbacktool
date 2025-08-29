@@ -1,7 +1,11 @@
 <!-- src/app/shared/dialogs/confirm-dialog.component.html -->
 
 <!-- Nachricht -->
-<p class="confirm-msg">{{ data.message }}</p>
+<mat-dialog-content class="confirm-root">
+  <p class="confirm-msg">
+    {{ data.message }}
+  </p>
+</mat-dialog-content>
 
 <!-- Aktionen -->
 <mat-dialog-actions class="confirm-actions" align="center">

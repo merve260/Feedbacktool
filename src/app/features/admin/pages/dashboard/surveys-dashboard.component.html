@@ -19,10 +19,14 @@
 <div *ngIf="loading" class="loading">Lade…</div>
 
 <!-- Wenn keine Umfragen existieren -->
-<div *ngIf="!loading && items.length === 0" class="empty">
-  <p>Es gibt noch keine Umfrage.</p>
-  <button class="btn" (click)="create()">Jetzt Erstellen!</button>
+<div *ngIf="!loading && items.length === 0" class="empty-card">
+  <p class="empty-text">Es gibt noch keine Umfrage.</p>
+  <button class="btn-cta" (click)="create()">
+    <mat-icon>add_circle</mat-icon>
+    Jetzt Erstellen!
+  </button>
 </div>
+
 
 <!-- Liste mit Umfragen -->
 <div *ngIf="!loading && items.length > 0" class="list">
@@ -65,13 +69,37 @@
       </button>
 
       <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="edit(s)">Bearbeiten</button>
-        <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">Veröffentlichen</button>
-        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='closed'" (click)="unpublish(s)">Zurückziehen</button>
-        <button mat-menu-item *ngIf="s.status==='published' || s.status==='draft'" (click)="close(s)">Schließen</button>
-        <button mat-menu-item *ngIf="s.status==='published'" (click)="openLinkDialog(s)">Link anzeigen</button>
-        <button mat-menu-item (click)="remove(s)" class="warn">Löschen</button>
+        <button mat-menu-item (click)="edit(s)">
+          <mat-icon>edit</mat-icon>
+          <span>Bearbeiten</span>
+        </button>
+
+        <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">
+          <mat-icon>publish</mat-icon>
+          <span>Veröffentlichen</span>
+        </button>
+
+        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='closed'" (click)="unpublish(s)">
+          <mat-icon>undo</mat-icon>
+          <span>Zurückziehen</span>
+        </button>
+
+        <button mat-menu-item *ngIf="s.status==='published' || s.status==='draft'" (click)="close(s)">
+          <mat-icon>block</mat-icon>
+          <span>Schließen</span>
+        </button>
+
+        <button mat-menu-item *ngIf="s.status==='published'" (click)="openLinkDialog(s)">
+          <mat-icon>link</mat-icon>
+          <span>Link anzeigen</span>
+        </button>
+
+        <button mat-menu-item (click)="remove(s)" class="warn">
+          <mat-icon>delete</mat-icon>
+          <span>Löschen</span>
+        </button>
       </mat-menu>
+
     </div>
   </div>
 </div>

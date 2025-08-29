@@ -39,8 +39,7 @@ import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-
     FormsModule,
     MatMenuModule,
     MatIconModule,
-    MatButtonModule,
-    MatTooltip
+    MatButtonModule
   ],
   templateUrl: './surveys-dashboard.component.html',
   styleUrls: ['./surveys-dashboard.component.scss'],

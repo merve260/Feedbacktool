@@ -23,29 +23,33 @@
       <!-- Navigation -->
       <nav class="nav">
         <a mat-list-item routerLink="/admin/umfragen" routerLinkActive="active">
+          <mat-icon matListIcon>assignment</mat-icon>
           <span class="label">Meine Umfragen</span>
         </a>
 
         <a mat-list-item routerLink="/admin/ergebnisse" routerLinkActive="active">
+          <mat-icon matListIcon>bar_chart</mat-icon>
           <span class="label">Umfrage Ergebnisse & Analytics</span>
         </a>
       </nav>
 
-      <!-- Platzhalter für unteres Menü -->
       <div class="spacer"></div>
 
       <!-- Unteres Menü -->
       <nav class="bottom">
         <a mat-list-item routerLink="/admin/profil" routerLinkActive="active">
+          <mat-icon matListIcon>person</mat-icon>
           <span class="label">Profil bearbeiten</span>
         </a>
 
         <a mat-list-item (click)="logout()">
+          <mat-icon matListIcon>logout</mat-icon>
           <span class="label">Ausloggen</span>
         </a>
       </nav>
     </div>
   </mat-sidenav>
+
 
   <!-- Hauptinhalt -->
   <mat-sidenav-content class="content">

@@ -25,7 +25,6 @@
   <div class="builder-actions" *ngIf="showActions">
     <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
     <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
-    <div class="note" *ngIf="canvasQuestions.length === 0">Mindestens eine Frage hinzufügen.</div>
 
     <!-- Allgemeine Fehlermeldung -->
     <div *ngIf="errorMsg" class="error-message">
