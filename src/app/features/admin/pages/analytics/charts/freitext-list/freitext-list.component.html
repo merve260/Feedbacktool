@@ -1,8 +1,8 @@
 <div class="frei-text-card" *ngIf="question">
-  <!-- Titel -->
+  <!-- Fragetitel -->
   <h3>{{ question.title }}</h3>
 
-  <!-- Vorschau: nur erste 3 Antworten -->
+  <!-- Vorschau: zeigt nur die ersten 3 Antworten -->
   <ul class="preview-list">
     <li *ngFor="let ans of answers | slice:0:3">
       <span class="name">{{ ans.name }}:</span>
@@ -10,7 +10,7 @@
     </li>
   </ul>
 
-  <!-- Button zum Öffnen des Dialogs -->
+  <!-- Button: öffnet Dialog mit allen Antworten -->
   <button *ngIf="answers.length > 3"
           class="mehr-btn"
           (click)="openDialog()">

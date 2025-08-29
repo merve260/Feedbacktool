@@ -19,13 +19,17 @@ export class StarRatingChartComponent implements OnInit {
   @Input() question?: Question;
   @Input() inDialog = false;
 
+  // Anzahl pro Stern (1-5)
   counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
+  // Gesamtanzahl Antworten
   total: number = 0;
+  // Durchschnittswert
   average: number = 0;
 
   ngOnInit() {
     if (!this.surveyId || !this.question) return;
 
+    // Firestore: Antworten sammeln
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
     this.sub = collectionData(answersCol, { idField: 'id' })
       .pipe(
@@ -34,8 +38,10 @@ export class StarRatingChartComponent implements OnInit {
           let sum = 0;
           let count = 0;
 
+          // Antworten durchgehen
           docs.forEach(doc => {
             (doc.answers || []).forEach((ans: any) => {
+              // Nur für diese Frage (ID prüfen)
               if (ans.questionId === this.question?.id && ans.numberValue !== undefined) {
                 const val = ans.numberValue;
                 if (counts[val] !== undefined) {
@@ -47,6 +53,7 @@ export class StarRatingChartComponent implements OnInit {
             });
           });
 
+          // Zustand updaten
           this.counts = counts;
           this.total = count;
           this.average = count > 0 ? sum / count : 0;
@@ -55,5 +62,6 @@ export class StarRatingChartComponent implements OnInit {
       .subscribe();
   }
 
+  // Math-Objekt im Template nutzbar machen
   protected readonly Math = Math;
 }

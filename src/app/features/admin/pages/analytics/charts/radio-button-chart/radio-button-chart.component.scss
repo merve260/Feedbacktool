@@ -1,4 +1,5 @@
 .radio-button-chart {
+  /* Container für Radio-Button-Diagramm */
   padding: 1rem;
   border-radius: 12px;
   background: #fefefe;
@@ -8,6 +9,7 @@
   align-items: center;
 
   h3 {
+    /* Titel der Frage */
     margin-bottom: 0.5rem;
     color: #2e236d;
     font-size: 1rem;
@@ -15,6 +17,7 @@
   }
 
   canvas {
+    /* Bereich für Chart.js */
     width: 100% !important;
     max-width: 100%;
     height: 280px !important;
@@ -23,6 +26,7 @@
   }
 
   .option-list {
+    /* Liste der Optionen unter dem Diagramm */
     margin: 1rem 0 0 0;
     padding: 0;
     list-style: none;
@@ -32,6 +36,7 @@
     color: #444;
 
     li {
+      /* Einzelne Option mit Stimmen */
       margin: 4px 0;
       padding: 4px 6px;
       border-left: 3px solid #e2cdea;
@@ -39,6 +44,7 @@
   }
 
   .summary {
+    /* Zusammenfassung: Anzahl Antworten */
     margin-top: 0.5rem;
     text-align: center;
     color: #6d63a8;

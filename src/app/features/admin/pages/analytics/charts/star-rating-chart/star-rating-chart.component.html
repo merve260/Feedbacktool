@@ -1,9 +1,13 @@
 <div class="star-rating-chart" *ngIf="question">
+  <!-- Titel der Frage -->
   <h3 *ngIf="!inDialog">{{ question.title }}</h3>
 
-  <!-- Durchschnitt -->
+  <!-- Durchschnittsbewertung -->
   <div class="average">
+    <!-- Durchschnittszahl mit einer Nachkommastelle -->
     <span class="avg-number">{{ average | number:'1.1-1' }}</span>
+
+    <!-- Sterne (gefüllt je nach Durchschnitt) -->
     <span class="stars">
       <ng-container *ngFor="let star of [1,2,3,4,5]">
         <i class="star"
@@ -12,16 +16,24 @@
         </i>
       </ng-container>
     </span>
+
+    <!-- Anzahl aller abgegebenen Antworten -->
     <span class="reviews">({{ total }} Antworten)</span>
   </div>
 
-  <!-- Verteilung -->
+  <!-- Verteilung aller Bewertungen (5 bis 1 Sterne) -->
   <div class="distribution" *ngFor="let star of [5,4,3,2,1]">
+    <!-- Sternlabel -->
     <span class="label">{{ star }} ★</span>
+
+    <!-- Balkenanzeige -->
     <div class="bar">
+      <!-- Dynamische Breite in % je nach Anteil -->
       <div class="fill"
            [style.width.%]="total > 0 ? (counts[star] / total) * 100 : 0"></div>
     </div>
+
+    <!-- Anzahl Bewertungen für diesen Stern -->
     <span class="count">{{ counts[star] }}</span>
   </div>
 </div>

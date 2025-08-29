@@ -1,10 +1,6 @@
-/* =========================================================
-   Admin-Layout mit responsive Sidebar
-   - Desktop: Sidebar fix links
-   - Mobil: Sidebar als Overlay mit Hamburger-Menü
-   ========================================================= */
+/* Admin-Layout mit responsiver Sidebar */
 
-/* ---------- Design-Tokens ---------- */
+/* Design-Tokens */
 $primary: #523ac3;
 $ink-900:     #2e236d;
 $ink-700:     #6d63a8;
@@ -15,7 +11,7 @@ $bg:          #fafafa;
 $white:       #fff;
 $side-w:      260px;
 
-/* ===== Shell & Content ===== */
+/* Shell & Content */
 .shell { height: 100vh; background: $bg; }
 
 .content {
@@ -29,13 +25,13 @@ $side-w:      260px;
 .page-title { font-size: 1.2rem; font-weight: 600; color: $ink-900; }
 .flex-spacer { flex: 1 1 auto; }
 
-/* Avatar-Bild */
+/* Avatar */
 .avatar-btn img { width: 28px; height: 28px; border-radius: 50%; display: block; }
 
-/* Inhaltsabstände */
+/* Inhalt */
 .route-slot { padding: 20px 24px 32px 24px; }
 
-/* ===== Sidebar ===== */
+/* Sidebar */
 .side {
   width: $side-w;
   border-right: 1px solid $line;
@@ -80,7 +76,6 @@ a[mat-list-item] {
   font-weight: 500;
 }
 
-
 .side a[mat-list-item] .mdc-list-item__content,
 .side a[mat-list-item] .mdc-list-item__primary-text {
   display: flex; align-items: center; gap: 12px;
@@ -93,7 +88,7 @@ a[mat-list-item] {
 .side a[mat-list-item]:hover  { background: $soft; }
 .side a[mat-list-item].active { background: $soft-strong; }
 
-/* ===== Responsive Sidebar ===== */
+/* Responsive Sidebar */
 @media (max-width: 768px) {
   .side { width: 240px !important; }
   .page-title { font-size: 1rem;}

@@ -1,4 +1,5 @@
 .frei-text-card {
+  /* Container für Frei-Text Antworten */
   padding: 1rem;
   border-radius: 12px;
   background: #fefefe;
@@ -10,6 +11,7 @@
   box-sizing: border-box;
   min-height: 535px;
 
+  /* Fragetitel */
   h3 {
     margin: 0 0 0.5rem 0;
     color: #2e236d;
@@ -17,6 +19,7 @@
     font-weight: 600;
   }
 
+  /* Vorschau-Liste mit max. 3 Antworten */
   .preview-list {
     list-style: none;
     padding: 0;
@@ -36,15 +39,16 @@
 
       .name {
         font-weight: 600;
-        color: #6b4cff;
+        color: #6b4cff; /* Highlight für Namen */
       }
 
       .text {
-        flex: 1;
+        flex: 1; /* Antwort füllt restliche Breite */
       }
     }
   }
 
+  /* Button „Alle Antworten anzeigen“ */
   .mehr-btn {
     align-self: flex-start;
     background: #6b4cff;

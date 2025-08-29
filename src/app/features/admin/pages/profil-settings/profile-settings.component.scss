@@ -1,62 +1,75 @@
 .card {
-  background:#fff;
-  border:1px solid #ece8ff;
-  border-radius:14px;
-  padding:20px;
-  max-width:600px;
+  background: #fff;
+  border: 1px solid #ece8ff;
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 600px;
 }
 
-h2 { margin-top:0; color:#2e236d; }
+/* Überschrift */
+h2 {
+  margin-top: 0;
+  color: #2e236d;
+}
 
+/* Formular-Zeilen */
 .row {
-  display:flex;
+  display: flex;
   align-items: center;
-  gap:16px;
-  padding:10px 0;
-  border-bottom:1px solid #f2efff;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f2efff;
 }
-.row:last-child { border-bottom:none; }
+.row:last-child { border-bottom: none; }
 
+/* Label-Spalte */
 .label {
-  min-width:140px;
-  color:#6d63a8;
+  min-width: 140px;
+  color: #6d63a8;
   font-weight: 500;
 }
 
+/* Eingabefeld */
 input {
-  flex:1;
-  border:1px solid #ece8ff;
-  border-radius:8px;
-  padding:6px 10px;
-  font-size:14px;
+  flex: 1;
+  border: 1px solid #ece8ff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
 }
 
+/* Button-Bereich */
 .actions {
-  margin-top:16px;
-  display:flex;
-  gap:12px;
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
 }
 
+/* Basis-Button */
 .btn {
-  padding:8px 14px;
-  border-radius:10px;
-  cursor:pointer;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
+/* Primärer Button (Speichern) */
 .btn-primary {
-  background:#6b4cff;
-  color:#fff;
-  border:1px solid #6b4cff;
+  background: #6b4cff;
+  color: #fff;
+  border: 1px solid #6b4cff;
 }
 .btn-primary:disabled {
-  background:#ccc;
-  border-color:#ccc;
-  cursor:not-allowed;
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
 }
 
+/* Gefahr-Button (Logout) */
 .btn-danger {
-  border:1px solid #ffd7de;
-  background:#fff;
-  color:#b1142c;
+  border: 1px solid #ffd7de;
+  background: #fff;
+  color: #b1142c;
 }
-.btn-danger:hover { background:#f6f4ff; }
+.btn-danger:hover {
+  background: #f6f4ff;
+}

@@ -7,7 +7,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { take, switchMap } from 'rxjs/operators';
 
-
 import { AuthDialogComponent } from '../../../shared/dialogs/auth-dialog/auth-dialog.component';
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -19,6 +18,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   imports: [CommonModule, MatButtonModule, MatIconModule, MatDialogModule],
 })
 export class LoginComponent implements OnInit {
+  // Services
   private dialog = inject(MatDialog);
   private router = inject(Router);
   private route  = inject(ActivatedRoute);
@@ -27,13 +27,15 @@ export class LoginComponent implements OnInit {
   currentYear = new Date().getFullYear();
 
   ngOnInit(): void {
-    // Eğer zaten login ise /admin/umfragen'a gönder
+    // Prüfen: ist der User schon eingeloggt?
+    // → wenn ja, sofort zum Dashboard (/admin/umfragen)
     this.auth.isAuthenticated$.pipe(take(1)).subscribe(ok => {
       if (ok) this.router.navigateByUrl('/admin/umfragen');
     });
   }
 
   openAuth(initial: 'login' | 'register' = 'login') {
+    // Auth-Dialog öffnen (Login oder Register Tab)
     const ref = this.dialog.open(AuthDialogComponent, {
       width: '720px',
       maxWidth: '92vw',
@@ -43,7 +45,8 @@ export class LoginComponent implements OnInit {
       disableClose: true
     });
 
-    // Dialog kapandığında; kullanıcı giriş yapmışsa dashboard'a yönlendir
+    // Nach dem Schließen prüfen:
+    // wenn eingeloggt → weiterleiten zum Dashboard
     ref.afterClosed().pipe(
       switchMap(() => this.auth.isAuthenticated$.pipe(take(1)))
     ).subscribe(ok => {

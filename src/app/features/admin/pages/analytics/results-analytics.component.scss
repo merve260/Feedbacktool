@@ -6,12 +6,13 @@
   width: 80%;
 }
 
+/* Titel */
 h2 {
   margin-top: 0;
   color: #2e236d;
 }
 
-/* Hinweis-Box */
+/* Hinweis-Box für Infos */
 .hinweis {
   background: #fff3cd;
   color: #856404;
@@ -22,7 +23,7 @@ h2 {
   font-size: 14px;
 }
 
-/* Liste */
+/* Liste der Umfragen */
 .survey-list {
   list-style: none;
   padding: 0;
@@ -34,21 +35,25 @@ h2 {
     cursor: pointer;
     transition: background 0.2s ease;
 
+    /* Hover-Effekt */
     &:hover {
       background: #f6f4ff;
     }
 
+    /* Titel der Umfrage */
     .survey-title {
       font-weight: 600;
       color: #2e236d;
     }
 
+    /* optionale Beschreibung */
     .survey-description {
       font-size: 14px;
       color: #666;
       margin: 4px 0;
     }
 
+    /* Metadaten: Datum + Status */
     .survey-meta {
       font-size: 13px;
       color: #6d63a8;
@@ -64,6 +69,7 @@ h2 {
         font-weight: 500;
       }
 
+      /* verschiedene Status-Farben */
       .draft {
         background: #fff3cd;
         color: #856404;
@@ -79,6 +85,8 @@ h2 {
     }
   }
 }
+
+/* Responsive Design für kleine Bildschirme */
 @media (max-width: 768px) {
   .card {
     width: 95%;
@@ -99,8 +107,7 @@ h2 {
 
   .survey-list .survey-meta {
     font-size: 12px;
-    flex-direction: column; // meta bilgileri alt alta göster
+    flex-direction: column; /* Metadaten untereinander */
     align-items: flex-start;
   }
 }
-

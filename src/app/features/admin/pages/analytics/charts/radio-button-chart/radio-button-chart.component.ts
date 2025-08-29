@@ -22,24 +22,27 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
   private chart!: Chart;
   private sub!: Subscription;
 
-  @Input() surveyId!: string;
-  @Input() question?: Question;
-  @Input() inDialog = false;
+  @Input() surveyId!: string;   // ID der Umfrage
+  @Input() question?: Question; // aktuelle Frage
+  @Input() inDialog = false;    // Flag: im Dialog oder in Karte
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  answerCount: number = 0;
-  optionCounts: { option: string; count: number }[] = [];
+  answerCount: number = 0;  // Anzahl aller Antworten
+  optionCounts: { option: string; count: number }[] = []; // Stimmen pro Option
 
   ngOnInit() {
     if (!this.surveyId || !this.question) return;
 
+    // Firestore → Antworten dieser Umfrage sammeln
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
     this.sub = collectionData(answersCol, { idField: 'id' })
       .pipe(
         map((docs: any[]) => {
+          // Zähler für jede Option initialisieren
           const counts: Record<string, number> = {};
           this.question?.options?.forEach(opt => counts[opt] = 0);
 
+          // Alle Dokumente durchgehen und Stimmen zählen
           docs.forEach((doc) => {
             (doc.answers || []).forEach((ans: any) => {
               if (ans.questionId === this.question?.id && ans.textValue) {
@@ -50,6 +53,7 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
             });
           });
 
+          // Ergebnis als Array
           const results = Object.entries(counts).map(([option, count]) => ({ option, count }));
           this.optionCounts = results;
           this.answerCount = results.reduce((sum, r) => sum + r.count, 0);
@@ -60,6 +64,7 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit() {
+    // Chart erst nach View-Init rendern
     setTimeout(() => this.updateChart(), 100);
   }
 
@@ -69,9 +74,11 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
 
     const ctx = this.chartCanvas.nativeElement;
 
+    // Labels = 1,2,3,... / Werte = Anzahl Stimmen
     const labels = this.optionCounts.map((_, i) => `${i + 1}`);
     const values = this.optionCounts.map(o => o.count);
 
+    // Farben (Pastell)
     const pastelColors = [
       'rgba(54, 162, 235, 0.3)',
       'rgba(153, 102, 255, 0.3)',
@@ -93,11 +100,11 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
         hoverBackgroundColor: hoverColors,
         borderColor: borderColors,
         borderWidth: 2,
-        barThickness: Math.max(30, 200 / this.optionCounts.length)
-
+        barThickness: Math.max(30, 200 / this.optionCounts.length) // Balkenbreite dynamisch
       }]
     };
 
+    // Chart.js erzeugen
     this.chart = new Chart(ctx, {
       type: 'bar',
       data,
@@ -113,13 +120,13 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
           y: { beginAtZero: true, ticks: { stepSize: 1 } }
         },
         plugins: {
-          legend: { display: false },
+          legend: { display: false }, // keine Legende
           tooltip: {
             bodyFont: { size: 18, family: 'Arial' },
             titleFont: { size: 16, family: 'Arial' },
             padding: 12,
             callbacks: {
-              // Tooltip
+              // Tooltip-Label: Stimmenanzahl
               label: (ctx) => {
                 const index = ctx.dataIndex;
                 const opt = this.optionCounts[index]?.option || '';
@@ -133,8 +140,8 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
     });
   }
 
-
   ngOnDestroy() {
+    // Speicher freigeben
     if (this.chart) this.chart.destroy();
     if (this.sub) this.sub.unsubscribe();
   }

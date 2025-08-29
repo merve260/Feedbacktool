@@ -1,24 +1,30 @@
 <div class="card" *ngIf="user$ | async as u">
   <h2>Profil</h2>
 
+  <!-- Formular für Profil-Daten -->
   <form [formGroup]="form" class="profile-form">
     <div class="row">
       <span class="label">E-Mail</span>
+      <!-- nur Anzeige, keine Bearbeitung -->
       <span>{{ u.email }}</span>
     </div>
 
     <div class="row">
       <span class="label">Name</span>
+      <!-- Eingabefeld für Display-Name -->
       <input formControlName="displayName" placeholder="Name eingeben" />
     </div>
   </form>
 
+  <!-- Aktionen -->
   <div class="actions">
+    <!-- Speichern nur aktiv, wenn Änderungen -->
     <button class="btn btn-primary"
             [disabled]="!form.dirty"
             (click)="saveProfile()">
       Speichern
     </button>
+    <!-- Abmelden -->
     <button class="btn btn-danger" (click)="logout()">
       Ausloggen
     </button>

@@ -1,4 +1,4 @@
-/* Hauptkarte */
+/* Hauptkarte für Analyse */
 .card {
   background: #fff;
   border: 1px solid #ece8ff;
@@ -11,7 +11,7 @@
   flex-direction: column;
 }
 
-/* 🔹 Titel */
+/* Titel der Analyse */
 h2 {
   margin: 0 0 0.5rem 0;
   color: #2e236d;
@@ -19,7 +19,7 @@ h2 {
   font-weight: 600;
 }
 
-/* 🔹 Meta-Daten */
+/* Meta-Daten (Status, Start, Ende, Anzahl) */
 .meta {
   margin-top: 10px;
   font-size: 14px;
@@ -33,7 +33,7 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-/* 🔹 Export Button */
+/* Export-Button für Excel */
 .export-btn {
   margin-left: auto;
   background: #6b4cff;
@@ -57,16 +57,16 @@ h2 {
   }
 }
 
-/* 🔹 Charts Grid */
+/* Grid für Diagramme */
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 24px;
   justify-items: stretch;
-  align-items: stretch; /* Höhe angleichen */
+  align-items: stretch; /* gleiche Höhe */
 }
 
-/* 🔹 Jede Karte */
+/* Karte für ein einzelnes Diagramm */
 .chart-card {
   background: #fff;
   border: 1px solid #e2cdea;
@@ -86,16 +86,18 @@ h2 {
   }
 
   &.wide {
-    grid-column: span 2;
+    grid-column: span 2; /* breite Karten (Slider, Sterne) */
   }
 }
 
+/* Responsive Anpassung: Tablet */
 @media (max-width: 1024px) {
   .charts-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
+/* Responsive Anpassung: Mobile */
 @media (max-width: 768px) {
   .card {
     padding: 16px;
@@ -118,8 +120,7 @@ h2 {
   }
 
   .chart-card {
-    min-height: auto; /* kleinere Höhe erlaubt */
+    min-height: auto; /* kleine Kartenhöhe */
     padding: 0.8rem;
   }
 }
-

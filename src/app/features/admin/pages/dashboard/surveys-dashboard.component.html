@@ -1,5 +1,5 @@
 <div class="toolbar">
-  <!-- Suchen -->
+  <!-- Suchfeld + Button -->
   <div class="search">
     <mat-icon>search</mat-icon>
     <input
@@ -15,19 +15,23 @@
   <button class="btn btn-primary" (click)="create()">+ Erstellen</button>
 </div>
 
+<!-- Lade-Status -->
 <div *ngIf="loading" class="loading">Lade…</div>
 
+<!-- Wenn keine Umfragen existieren -->
 <div *ngIf="!loading && items.length === 0" class="empty">
   <p>Es gibt noch keine Umfrage.</p>
   <button class="btn" (click)="create()">Jetzt Erstellen!</button>
 </div>
 
+<!-- Liste mit Umfragen -->
 <div *ngIf="!loading && items.length > 0" class="list">
   <div class="row head">
     <div>Titel</div>
     <div>Zeitraum</div>
     <div>Status</div>
 
+    <!-- Sortierung nach Erstellungsdatum -->
     <div class="th-sort"
          role="button" tabindex="0"
          (click)="toggleCreatedSort()"
@@ -40,6 +44,7 @@
     <div class="actions">Aktionen</div>
   </div>
 
+  <!-- Jede Umfrage in einer Reihe -->
   <div class="row" *ngFor="let s of items">
     <div class="title">{{ s.title }}</div>
     <div class="range">
@@ -53,56 +58,36 @@
       <span *ngIf="!s.createdAt">–</span>
     </div>
 
+    <!-- Menü für Bearbeiten, Veröffentlichen usw. -->
     <div class="actions">
       <button mat-icon-button [matMenuTriggerFor]="menu" matMenuPositionX="before" aria-label="Aktionen">
         <mat-icon>more_vert</mat-icon>
       </button>
 
       <mat-menu #menu="matMenu">
-        <button
-          mat-menu-item
-          (click)="edit(s)"
-          matTooltip="Umfrage bearbeiten">
-          <mat-icon>edit</mat-icon>
-          <span>Bearbeiten</span>
-        </button>
-        <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">
-          <mat-icon>publish</mat-icon>
-          <span>Veröffentlichen</span>
-        </button>
-        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='closed'" (click)="unpublish(s)">
-          <mat-icon>undo</mat-icon>
-          <span>Zurückziehen</span>
-        </button>
-        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='draft' " (click)="close(s)">
-          <mat-icon>lock</mat-icon>
-          <span>Schließen</span>
-        </button>
-        <button mat-menu-item *ngIf="s.status==='published'" (click)="openLinkDialog(s)">
-          <mat-icon>link</mat-icon>
-          <span>Link anzeigen</span>
-        </button>
-        <button mat-menu-item (click)="remove(s)" class="warn">
-          <mat-icon class="warn">delete</mat-icon>
-          <span>Löschen</span>
-        </button>
+        <button mat-menu-item (click)="edit(s)">Bearbeiten</button>
+        <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">Veröffentlichen</button>
+        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='closed'" (click)="unpublish(s)">Zurückziehen</button>
+        <button mat-menu-item *ngIf="s.status==='published' || s.status==='draft'" (click)="close(s)">Schließen</button>
+        <button mat-menu-item *ngIf="s.status==='published'" (click)="openLinkDialog(s)">Link anzeigen</button>
+        <button mat-menu-item (click)="remove(s)" class="warn">Löschen</button>
       </mat-menu>
     </div>
   </div>
 </div>
+
+<!-- Erklärung der Status-Werte -->
 <div class="status-hinweis" *ngIf="showStatusHinweis">
   <mat-icon class="info-icon">info</mat-icon>
   <div class="content">
     <strong>Status-Erklärung:</strong>
     <ul>
-      <li><span class="chip chip--pub">published</span> – Die Umfrage ist aktiv und über den Teilnehmer-Link erreichbar.</li>
-      <li><span class="chip chip--closed">closed</span> – Die Umfrage ist beendet. Der Link ist nicht mehr verfügbar.</li>
-      <li><span class="chip chip--draft">draft</span> – Die Umfrage ist im Entwurf. Sie wurde noch nicht veröffentlicht.</li>
+      <li><span class="chip chip--pub">published</span> – Umfrage aktiv, Link erreichbar.</li>
+      <li><span class="chip chip--closed">closed</span> – Umfrage beendet, Link nicht mehr verfügbar.</li>
+      <li><span class="chip chip--draft">draft</span> – Umfrage noch im Entwurf.</li>
     </ul>
   </div>
   <button mat-icon-button class="close-btn" (click)="showStatusHinweis = false">
     <mat-icon>close</mat-icon>
   </button>
 </div>
-
-

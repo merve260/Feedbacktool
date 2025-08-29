@@ -1,11 +1,16 @@
 <div class="multiple-chart" *ngIf="question">
+  <!-- Titel der Frage (nur außerhalb vom Dialog) -->
   <h3 *ngIf="!inDialog">{{ question.title }}</h3>
-  <p *ngIf=" question.text">{{ question.text }}</p>
 
+  <!-- Beschreibungstext, falls vorhanden -->
+  <p *ngIf="question.text">{{ question.text }}</p>
+
+  <!-- Chart-Bereich -->
   <div class="chart-wrapper">
     <canvas #chartCanvas></canvas>
   </div>
 
+  <!-- Zusammenfassung: meistgewählte Optionen -->
   <div class="summary" *ngIf="mostChosenOptions.length > 0">
     <p><strong>Beliebteste Antwort(en):</strong></p>
     <ul>

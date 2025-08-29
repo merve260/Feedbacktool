@@ -1,4 +1,5 @@
-// src/app/features/admin/pages/analytics/survey-analytics-detail/survey-analytics-detail.component.ts
+// Komponente: Detail-Analyse einer Umfrage
+// Zeigt Charts und ermöglicht Excel-Export
 
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -9,22 +10,31 @@ import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Survey, Question } from '../../../../../core/models/survey.models';
+
+// Import der Chart-Komponenten
 import { MultipleChartComponent } from '../charts/multiple-chart/multiple-chart.component';
 import { MultipleChartDialogComponent } from '../charts/chart-dialogs/multiple-chart-dialog.component';
-import {SkalaChartComponent} from '../charts/skala-chart/skala-chart.component';
-import {RadioButtonChartComponent} from '../charts/radio-button-chart/radio-button-chart.component';
-import {StarRatingChartComponent} from '../charts/star-rating-chart/star-rating-chart.component';
-import {FreiTextListComponent} from '../charts/freitext-list/freitext-list.component';
-import {FreiTextDialogComponent} from '../charts/chart-dialogs/frei-text-dialog.component';
-import {RadioButtonDialogComponent} from '../charts/chart-dialogs/radio-button-dialog.component';
-import {StarRatingDialogComponent} from '../charts/chart-dialogs/star-rating-dialog.component';
-import {SkalaDialogComponent} from '../charts/chart-dialogs/skala-dialog.component';
+import { SkalaChartComponent } from '../charts/skala-chart/skala-chart.component';
+import { RadioButtonChartComponent } from '../charts/radio-button-chart/radio-button-chart.component';
+import { StarRatingChartComponent } from '../charts/star-rating-chart/star-rating-chart.component';
+import { FreiTextListComponent } from '../charts/freitext-list/freitext-list.component';
+import { FreiTextDialogComponent } from '../charts/chart-dialogs/frei-text-dialog.component';
+import { RadioButtonDialogComponent } from '../charts/chart-dialogs/radio-button-dialog.component';
+import { StarRatingDialogComponent } from '../charts/chart-dialogs/star-rating-dialog.component';
+import { SkalaDialogComponent } from '../charts/chart-dialogs/skala-dialog.component';
 
 
 @Component({
   selector: 'app-survey-analytics-detail',
   standalone: true,
-  imports: [CommonModule, MultipleChartComponent, SkalaChartComponent, RadioButtonChartComponent, StarRatingChartComponent, FreiTextListComponent],
+  imports: [
+    CommonModule,
+    MultipleChartComponent,
+    SkalaChartComponent,
+    RadioButtonChartComponent,
+    StarRatingChartComponent,
+    FreiTextListComponent
+  ],
   templateUrl: './survey-analytics-detail.component.html',
   styleUrls: ['./survey-analytics-detail.component.scss'],
 })
@@ -42,7 +52,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
-    // --- Umfrage-Dokument laden ---
+    // Umfrage-Dokument laden
     const docRef = doc(this.firestore, 'umfragen', id);
     const snap = await getDoc(docRef);
     if (snap.exists()) {
@@ -53,29 +63,25 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         startAt: data.startAt instanceof Timestamp ? data.startAt.toDate() : data.startAt,
         endAt: data.endAt instanceof Timestamp ? data.endAt.toDate() : data.endAt,
       } as Survey;
-      console.log(' Survey geladen:', this.survey);
     }
 
-    // --- Fragen laden ---
+    // Fragen laden
     const fragenCol = collection(this.firestore, `umfragen/${id}/fragen`);
     collectionData(fragenCol, { idField: 'id' }).subscribe((fragen: any[]) => {
       this.questions = fragen;
-      console.log(' Fragen geladen:', this.questions);
-
       fragen.forEach((q) => {
         this.questionsMap[q.id] = q.title || q.text || q.id;
       });
     });
 
-    // --- Antworten laden ---
+    // Antworten laden
     const answersCol = collection(this.firestore, `umfragen/${id}/antworten`);
     collectionData(answersCol, { idField: 'id' }).subscribe((ans: any[]) => {
       this.answers = ans;
-      console.log(' Antworten geladen:', this.answers);
     });
   }
 
-  // ---------------- Excel-Export ----------------
+  // Export der Antworten nach Excel
   exportToExcel() {
     if (!this.answers || this.answers.length === 0) {
       alert('Keine Antworten vorhanden!');
@@ -90,6 +96,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
       (entry.answers || []).forEach((ans: any) => {
         let value = '';
 
+        // verschiedene Antworttypen prüfen
         if (ans.textValue) {
           value = ans.textValue;
         } else if (ans.numberValue !== undefined) {
@@ -143,22 +150,18 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     saveAs(data, `umfrage-${this.survey?.title || 'antworten'}.xlsx`);
   }
 
+  // Öffnet verschiedene Diagramm-Dialoge je nach Fragetyp
   openChartDialog(question: Question) {
-    // Multiple Choice → Chart öffnen
     if (question.type === 'multiple') {
       this.dialog.open(MultipleChartDialogComponent, {
         maxWidth: '600px',
         width: '90%',
         height: '600px',
         panelClass: 'chart-dialog',
-        data: {
-          surveyId: this.survey?.id!,
-          question
-        }
+        data: { surveyId: this.survey?.id!, question }
       });
     }
 
-    // Freitext → Textliste öffnen
     if (question.type === 'freitext') {
       this.dialog.open(FreiTextDialogComponent, {
         width: '90%',
@@ -176,17 +179,17 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         }
       });
     }
-      // Radio Buttons
+
     if (question.type === 'radio') {
       this.dialog.open(RadioButtonDialogComponent, {
         maxWidth: '600px',
         width: '90%',
         height: '90%',
         panelClass: 'chart-dialog',
-        data: {surveyId: this.survey?.id!, question}
+        data: { surveyId: this.survey?.id!, question }
       });
     }
-    //Star
+
     if (question.type === 'star') {
       this.dialog.open(StarRatingDialogComponent, {
         maxWidth: '600px',
@@ -195,7 +198,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         data: { surveyId: this.survey?.id!, question }
       });
     }
-    //Skala
+
     if (question.type === 'slider') {
       this.dialog.open(SkalaDialogComponent, {
         maxWidth: '800px',
@@ -205,5 +208,4 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
       });
     }
   }
-
 }

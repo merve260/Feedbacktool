@@ -27,13 +27,14 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() inDialog = false;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  averageValue: number = 0;
-  answerCount: number = 0;
-  private answers: { name: string; value: number }[] = [];
+  averageValue: number = 0;   // Durchschnitt aller Antworten
+  answerCount: number = 0;    // Anzahl der Antworten
+  private answers: { name: string; value: number }[] = []; // Einzelne Antworten
 
   ngOnInit() {
     if (!this.surveyId || !this.question) return;
 
+    // Firestore → Collection mit Antworten laden
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
     this.sub = collectionData(answersCol, { idField: 'id' })
       .pipe(
@@ -42,9 +43,11 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
           let count = 0;
           const all: { name: string; value: number }[] = [];
 
+          // Alle Dokumente durchgehen
           docs.forEach((doc) => {
             const userName = doc.name || 'Anonym';
             (doc.answers || []).forEach((ans: any) => {
+              // Nur Antworten für diese Frage (numberValue)
               if (ans.questionId === this.question?.id && ans.numberValue !== undefined) {
                 all.push({ name: userName, value: ans.numberValue });
                 sum += ans.numberValue;
@@ -53,6 +56,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           });
 
+          // Ergebnisse berechnen
           this.answers = all;
           this.answerCount = count;
           this.averageValue = count > 0 ? sum / count : 0;
@@ -63,6 +67,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    // Chart erst nach Render starten
     setTimeout(() => this.updateChart(), 100);
   }
 
@@ -72,10 +77,10 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const ctx = this.chartCanvas.nativeElement;
 
-    const labels = this.answers.map(a => a.name);
-    const values = this.answers.map(a => a.value);
+    const labels = this.answers.map(a => a.name);   // Namen der Teilnehmer
+    const values = this.answers.map(a => a.value);  // Werte (Zahlen)
 
-    // Pastellfarben
+    // Farben für Balken
     const pastelColors = [
       'rgba(54, 162, 235, 0.3)',   // blau
       'rgba(153, 102, 255, 0.3)',  // lila
@@ -91,6 +96,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
       pastelColors[i % pastelColors.length].replace('0.3', '0.8')
     );
 
+    // Chart-Daten
     const data: ChartConfiguration<'bar'>['data'] = {
       labels,
       datasets: [{
@@ -103,35 +109,31 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
       }]
     };
 
+    // Chart initialisieren
     this.chart = new Chart(ctx, {
       type: 'bar',
       data,
       options: {
-        indexAxis: 'y',
+        indexAxis: 'y',  // horizontale Balken
         responsive: true,
         maintainAspectRatio: false,
-        interaction: {
-          mode: 'y',
-          intersect: false
-        },
+        interaction: { mode: 'y', intersect: false },
         scales: {
           x: {
             min: 0,
-            max: this.question?.max || 10,
+            max: this.question?.max || 10, // max aus der Frage
             ticks: { stepSize: 1 }
           },
-          y: {
-            ticks: { font: { size: 12 } }
-          }
+          y: { ticks: { font: { size: 12 } } }
         },
         plugins: {
-          legend: { display: false },
+          legend: { display: false }, // keine Legende
           tooltip: {
             bodyFont: { size: 18, family: 'Arial' },
             titleFont: { size: 16, family: 'Arial' },
             padding: 12,
             callbacks: {
-              // Tooltip robust mit Namen + Wert
+              // Tooltip: zeigt Name + Wert
               label: (ctx) => {
                 const name = ctx.label || 'Anonym';
                 const value = ctx.dataset.data[ctx.dataIndex] as number;
@@ -145,7 +147,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.chart) this.chart.destroy();
-    if (this.sub) this.sub.unsubscribe();
+    if (this.chart) this.chart.destroy(); // Chart aufräumen
+    if (this.sub) this.sub.unsubscribe(); // Firestore-Subscription beenden
   }
 }

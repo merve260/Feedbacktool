@@ -26,10 +26,11 @@ export class ResultsAnalyticsComponent implements OnInit {
   surveys$!: Observable<Survey[]>;
 
   ngOnInit() {
-    // Nur veröffentlichte oder geschlossene Umfragen laden
+    // Nur Umfragen mit Status "published" oder "closed" laden
     const surveysCol = collection(this.firestore, 'umfragen');
     const q = query(surveysCol, where('status', 'in', ['published', 'closed']));
 
+    // Daten aus Firestore lesen + Zeitfelder umwandeln
     this.surveys$ = collectionData(q, { idField: 'id' }).pipe(
       map((docs: any[]) =>
         docs.map((doc) => ({
@@ -40,10 +41,12 @@ export class ResultsAnalyticsComponent implements OnInit {
           updatedAt: doc.updatedAt instanceof Timestamp ? doc.updatedAt.toDate() : doc.updatedAt,
         }))
       ),
+      // shareReplay → sorgt für nur eine Datenabfrage
       shareReplay(1)
     ) as Observable<Survey[]>;
   }
 
+  // Detailseite der ausgewählten Umfrage öffnen
   openAnalytics(survey: Survey) {
     this.router.navigate(['/admin/ergebnisse', survey.id]);
   }

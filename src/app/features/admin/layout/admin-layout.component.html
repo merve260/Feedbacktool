@@ -1,10 +1,10 @@
 <!--
-  Admin-Shell Layout (responsive mit Hamburger-Menü)
+  Admin-Shell Layout (responsive)
   - Desktop: Sidebar dauerhaft sichtbar (mode="side")
-  - Mobil: Sidebar überlagert, via Hamburger-Menü ein/ausblendbar (mode="over")
+  - Mobil: Sidebar überlagert, via Hamburger-Menü (mode="over")
 -->
 <mat-sidenav-container class="shell">
-  <!--  Linke Sidebar -->
+  <!-- Linke Sidebar -->
   <mat-sidenav
     #sidenav
     class="side"
@@ -13,47 +13,41 @@
     [opened]="!isMobile"
   >
     <div class="side-shell">
-      <!-- Kopfbereich / Marke -->
+      <!-- Kopfbereich -->
       <div class="side-header">
         <div class="brand">
           <span class="brand-text">Umfrage-Tool</span>
         </div>
       </div>
 
-      <!-- Hauptnavigation -->
+      <!-- Navigation -->
       <nav class="nav">
         <a mat-list-item routerLink="/admin/umfragen" routerLinkActive="active">
-          <mat-icon matListIcon>assignment</mat-icon>
           <span class="label">Meine Umfragen</span>
         </a>
 
         <a mat-list-item routerLink="/admin/ergebnisse" routerLinkActive="active">
-          <span class="label">
-            <mat-icon matListIcon>insights</mat-icon>
-            Umfrage Ergebnisse &<br />Analytics
-          </span>
+          <span class="label">Umfrage Ergebnisse & Analytics</span>
         </a>
       </nav>
 
-      <!-- Spacer drückt das untere Menü nach unten -->
+      <!-- Platzhalter für unteres Menü -->
       <div class="spacer"></div>
 
       <!-- Unteres Menü -->
       <nav class="bottom">
         <a mat-list-item routerLink="/admin/profil" routerLinkActive="active">
-          <mat-icon matListIcon>person</mat-icon>
           <span class="label">Profil bearbeiten</span>
         </a>
 
         <a mat-list-item (click)="logout()">
-          <mat-icon matListIcon>logout</mat-icon>
           <span class="label">Ausloggen</span>
         </a>
       </nav>
     </div>
   </mat-sidenav>
 
-  <!-- Rechte Inhaltsfläche -->
+  <!-- Hauptinhalt -->
   <mat-sidenav-content class="content">
     <mat-toolbar color="primary" class="topbar">
       <!-- Hamburger-Menü nur auf Mobilgeräten -->
@@ -66,12 +60,12 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <!-- Seitentitel aus den Routen-Data -->
-         <div class="page-title">{{ pageTitle$ | async }}</div>
+      <!-- Titel aus den Routen -->
+      <div class="page-title">{{ pageTitle$ | async }}</div>
 
       <span class="flex-spacer"></span>
 
-      <!-- Benutzer-Avatar + Menü -->
+      <!-- Benutzer-Menü -->
       <button
         mat-icon-button
         [matMenuTriggerFor]="userMenu"
@@ -88,17 +82,15 @@
 
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item routerLink="/admin/profil">
-          <mat-icon>person</mat-icon>
           <span>Profil bearbeiten</span>
         </button>
         <button mat-menu-item (click)="logout()">
-          <mat-icon>logout</mat-icon>
           <span>Ausloggen</span>
         </button>
       </mat-menu>
     </mat-toolbar>
 
-    <!-- Router-Outlet rendert die Unterseiten -->
+    <!-- Unterseiten -->
     <div class="route-slot">
       <router-outlet></router-outlet>
     </div>

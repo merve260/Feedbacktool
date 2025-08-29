@@ -1,5 +1,5 @@
 :host {
-  /* ===== Toolbar ===== */
+  /* Toolbar mit Suchfeld und Button */
   .toolbar {
     display: flex;
     align-items: center;
@@ -10,7 +10,7 @@
     flex-wrap: wrap;
   }
 
-  /* Suche */
+  /* Sucheingabe */
   .toolbar .search {
     flex: 1;
     display: flex;
@@ -23,108 +23,74 @@
     transition: all 0.2s ease;
     min-width: 200px;
   }
-
   .toolbar .search:focus-within {
     border-color: var(--brand-primary);
     box-shadow: 0 0 0 3px rgba(130,76,255,.14);
   }
-
-  .toolbar .search mat-icon {
-    color: var(--brand-primary);
-    font-size: 20px;
-  }
-
+  .toolbar .search mat-icon { color: var(--brand-primary); font-size: 20px; }
   .toolbar .search input {
-    border: none;
-    outline: none;
-    flex: 1;
-    font-size: 1.1rem;
-    color: #2e236d;
+    border: none; outline: none; flex: 1;
+    font-size: 1.1rem; color: #2e236d;
   }
-
   .toolbar .search .clear {
-    background: transparent;
-    border: none;
-    border-radius: 6px;
-    padding: 4px;
-    cursor: pointer;
+    background: transparent; border: none; border-radius: 6px;
+    padding: 4px; cursor: pointer;
   }
-  .toolbar .search .clear:hover {
-    background: #f6f4ff;
-  }
+  .toolbar .search .clear:hover { background: #f6f4ff; }
 
-  /* Erstellen Button */
+  /* Button zum Erstellen */
   .toolbar .btn-primary {
-    background: var(--brand-primary);
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    white-space: nowrap;
+    background: var(--brand-primary); color: #fff; border: none;
+    padding: 10px 18px; border-radius: 8px; font-size: 1rem;
+    font-weight: 500; cursor: pointer;
+    transition: background 0.2s ease; white-space: nowrap;
     align-self: flex-start;
   }
-  .toolbar .btn-primary:hover {
-    background: #5e38b8;
-  }
+  .toolbar .btn-primary:hover { background: #5e38b8; }
 
-  /* ===== Liste (Table) ===== */
+  /* Liste mit Umfragen */
   .list {
-    background: #fff;
-    border: 1px solid #ece8ff;
-    border-radius: 14px;
-    overflow: auto;
-    width: 80%;
-    font-size: 1.1rem;
-    box-sizing: border-box;
+    background: #fff; border: 1px solid #ece8ff;
+    border-radius: 14px; overflow: auto;
+    width: 80%; font-size: 1.1rem; box-sizing: border-box;
   }
 
+  /* Tabellenzeilen */
   .row {
     display: grid;
     grid-template-columns:
-    minmax(220px, 2fr)
-    minmax(120px, 1.2fr)
-    minmax(80px, 0.8fr)
-    minmax(140px, 1fr)
-    50px;
+      minmax(220px, 2fr)
+      minmax(120px, 1.2fr)
+      minmax(80px, 0.8fr)
+      minmax(140px, 1fr)
+      50px;
     gap: 8px;
     align-items: center;
     padding: 12px 10px;
     border-top: 1px solid #f2efff;
   }
-
   .row.head {
     background: #f7f5ff;
     font-weight: 700;
     color: #2e236d;
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    position: sticky; top: 0; z-index: 1;
     padding: 10px;
   }
 
   .title { font-weight: 600; color: #2e236d; }
   .actions { display: flex; justify-content: flex-end; min-width: 50px; }
 
-  .chip {
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.1;
-  }
+  /* Status-Chips */
+  .chip { padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
   .chip--draft  { background: #fff6d8; color: #8a6b00; }
   .chip--pub    { background: #e8fff1; color: #0c7b37; }
   .chip--closed { background: #ffe8e8; color: #9a1b1b; }
 
-  /* ===== Responsive ===== */
+  /* Responsive Layout */
   @media (max-width: 1024px) {
     .toolbar { flex-direction: column; align-items: stretch; }
     .list { width: 100%; }
-    .row { grid-template-columns: 1.5fr 1fr 0.6fr 1fr 40px; gap: 8px; }
+    .row { grid-template-columns: 1.5fr 1fr 0.6fr 1fr 40px; }
   }
 
   @media (max-width: 768px) {
@@ -152,76 +118,36 @@
   }
 }
 
+/* Hinweis-Box für Status-Erklärung */
 .status-hinweis {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px;
-  width: 78%;
-  border: 1px solid #ffe58f;
-  border-radius: 10px;
-  background: #fffbea;
-  font-size: 0.95rem;
-  color: #3b2a45;
-  position: relative;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; padding: 16px; width: 78%;
+  border: 1px solid #ffe58f; border-radius: 10px;
+  background: #fffbea; font-size: 0.95rem; color: #3b2a45;
 
-  .info-icon {
-    color: #faad14;
-    font-size: 28px;
-    flex-shrink: 0;
-  }
+  .info-icon { color: #faad14; font-size: 28px; flex-shrink: 0; }
+  .content { flex: 1; }
 
-  .content {
-    flex: 1;
-  }
+  ul { margin: 8px 0 0; padding-left: 20px; }
+  li { margin-bottom: 4px; }
 
-  ul {
-    margin: 8px 0 0 0;
-    padding-left: 20px;
-  }
-
-  li {
-    margin-bottom: 4px;
-  }
-
-  .close-btn {
-    margin-left: auto;
-    color: #666;
-    &:hover {
-      color: #000;
-    }
-  }
+  .close-btn { margin-left: auto; color: #666; }
+  .close-btn:hover { color: #000; }
 }
 
-
-
-
+/* Menü-Anpassung */
 ::ng-deep .mat-mdc-menu-panel {
-  background: #fff !important;
-  border-radius: 12px;
+  background: #fff !important; border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 ::ng-deep .mat-mdc-menu-item.warn .mdc-list-item__primary-text,
 ::ng-deep .mat-mdc-menu-item.warn .mat-icon {
-  color: #c30d0d !important;
-  font-weight: 600;
+  color: #c30d0d !important; font-weight: 600;
 }
 ::ng-deep .mat-mdc-menu-item.warn:hover {
   background: rgba(195, 13, 13, 0.08) !important;
 }
 ::ng-deep .mat-mdc-menu-item .mdc-list-item__primary-text {
-  font-size: 40px;
-  font-weight: 500;
-  color: #333;
+  font-size: 14px; font-weight: 500; color: #333;
 }
-
-::ng-deep .mat-mdc-menu-item .mat-icon {
-  font-size: 20px;
-}
-
-
-::ng-deep .mat-mdc-menu-item.warn:hover {
-  background: rgba(195, 13, 13, 0.08) !important;
-}
-
+::ng-deep .mat-mdc-menu-item .mat-icon { font-size: 20px; }

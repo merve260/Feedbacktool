@@ -1,4 +1,4 @@
-import {Component, inject, Inject} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { StarRatingChartComponent } from '../star-rating-chart/star-rating-chart.component';
@@ -9,9 +9,10 @@ import { Question } from '../../../../../../core/models/survey.models';
   standalone: true,
   imports: [CommonModule, MatDialogModule, StarRatingChartComponent],
   template: `
-    <p></p>
-    <p></p>
+    <!-- Titel = Frage -->
     <h2 mat-dialog-title>{{ data.question.title }}</h2>
+
+    <!-- Inhalt = Sternebewertung-Chart -->
     <mat-dialog-content class="dialog-wrapper">
       <app-star-rating-chart
         [surveyId]="data.surveyId"
@@ -19,12 +20,10 @@ import { Question } from '../../../../../../core/models/survey.models';
         [inDialog]="true">
       </app-star-rating-chart>
     </mat-dialog-content>
-    <p></p>
-    <p></p>
   `,
   styles: [`
     .dialog-wrapper {
-      display: flex;
+      display: flex;              /* Inhalt mittig ausgerichtet */
       justify-content: center;
       align-items: center;
       padding: 1rem;
@@ -34,5 +33,6 @@ import { Question } from '../../../../../../core/models/survey.models';
   `]
 })
 export class StarRatingDialogComponent {
+  // Eingabedaten vom Dialog: Umfrage-ID + aktuelle Frage
   data = inject<{ surveyId: string; question: Question }>(MAT_DIALOG_DATA);
 }

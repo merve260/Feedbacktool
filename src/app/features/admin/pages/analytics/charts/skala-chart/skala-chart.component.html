@@ -1,10 +1,15 @@
 <div class="skala-chart" *ngIf="question">
+  <!-- Titel der Frage -->
   <h3 *ngIf="!inDialog">{{ question.title }}</h3>
+
+  <!-- Chart-Fläche (Canvas für Chart.js) -->
   <canvas #chartCanvas></canvas>
 
-  <!-- Zusammenfassung unten -->
+  <!-- Zusammenfassung: nur anzeigen, wenn es Antworten gibt -->
   <div class="summary" *ngIf="answerCount > 0">
+    <!-- Durchschnittswert der Antworten -->
     <p><strong>Durchschnitt:</strong> {{ averageValue | number:'1.1-1' }} / {{ question.max || 10 }}</p>
+    <!-- Anzahl aller Antworten -->
     <p><strong>Antworten:</strong> {{ answerCount }}</p>
   </div>
 </div>

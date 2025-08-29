@@ -1,10 +1,11 @@
-<!-- Tam ekran landing -->
+<!-- Startseite (Landing) im Vollbild -->
 <div class="landing">
-  <!-- Animasyonlu arka plan katmanları -->
+
+  <!-- Hintergrund-Ebenen -->
   <div class="bg bg-gradient"></div>
   <div class="bg bg-stars"></div>
 
-  <!-- Orta içerik -->
+  <!-- Hauptbereich (Hero) -->
   <main class="hero">
     <h1>
       Umfragen in Minuten
@@ -15,6 +16,7 @@
       Drag & Drop Builder · Datum-Range · Teilnehmer-Link · Auswertung
     </p>
 
+    <!-- Buttons für Login / Registrierung -->
     <div class="actions">
       <button mat-raised-button color="primary" class="btn primary" (click)="openAuth('login')">
         <mat-icon>login</mat-icon> Login
@@ -25,8 +27,7 @@
     </div>
   </main>
 
-
-  <!-- Footer -->
+  <!-- Fußzeile -->
   <footer class="site-footer">
     <div class="wrap">
       <span>© {{ currentYear }} Umfrage Tool</span>

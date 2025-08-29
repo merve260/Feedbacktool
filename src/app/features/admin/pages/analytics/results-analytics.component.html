@@ -1,7 +1,7 @@
 <div class="card">
   <h2>Ergebnisse & Analytics</h2>
 
-  <!-- Hinweis-Kasten -->
+  <!-- Hinweis-Box: erklärt, welche Umfragen sichtbar sind -->
   <div class="hinweis">
     <strong>Hinweis:</strong>
     <p>In dieser Übersicht sehen Sie nur veröffentlichte oder geschlossene Umfragen,
@@ -9,16 +9,19 @@
     <p>Entwürfe (Drafts) erscheinen hier nicht.</p>
   </div>
 
-  <!-- Liste -->
+  <!-- Liste aller passenden Umfragen -->
   <ul class="survey-list">
+    <!-- Jede Umfrage als Listeneintrag -->
     <li *ngFor="let survey of surveys$ | async" (click)="openAnalytics(survey)">
+      <!-- Titel der Umfrage -->
       <div class="survey-title">{{ survey.title }}</div>
 
-      <!-- optional description -->
+      <!-- optionale Beschreibung -->
       <div class="survey-description" *ngIf="survey.description">
         {{ survey.description }}
       </div>
 
+      <!-- Metadaten: Zeitraum + Status -->
       <div class="survey-meta">
         <span class="dates">
           {{ survey.startAt | date:'dd.MM.yyyy' }} –

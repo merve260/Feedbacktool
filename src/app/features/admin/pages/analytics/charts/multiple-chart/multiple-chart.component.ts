@@ -35,14 +35,17 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnInit() {
     if (!this.surveyId || !this.question) return;
 
+    // Firestore Collection mit Antworten
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
     this.answers$ = collectionData(answersCol, { idField: 'id' }).pipe(
       map((docs: any[]) => {
         if (!this.question) return [];
 
+        // Zähler initialisieren
         const counts: Record<string, number> = {};
         this.question.options?.forEach(opt => counts[opt] = 0);
 
+        // Antworten auswerten
         docs.forEach((doc: any) => {
           (doc.answers || []).forEach((ans: any) => {
             if (ans.questionId === this.question!.id && ans.listValue) {
@@ -53,7 +56,10 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
           });
         });
 
+        // Ergebnisse berechnen
         const results = Object.entries(counts).map(([option, count]) => ({ option, count }));
+
+        // Meistgewählte Option merken
         if (results.length > 0) {
           const maxCount = Math.max(...results.map(r => r.count));
           this.mostChosenOptions = results.filter(r => r.count === maxCount && maxCount > 0);
@@ -64,6 +70,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       })
     );
 
+    // Subscription starten → Chart aktualisieren
     this.sub = this.answers$.subscribe(results => {
       this.chartData = results;
       this.updateChart();
@@ -71,6 +78,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit() {
+    // kleine Verzögerung, um Canvas sicher zu rendern
     setTimeout(() => this.updateChart(), 100);
   }
 
@@ -81,9 +89,11 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
     const ctx = this.chartCanvas.nativeElement;
     const colors = this.generateColors(this.chartData.length);
 
+    // Wenn alle Werte = 0, dann kleine Zahl eintragen (Chart.js Bugfix)
     const allZero = this.chartData.every(r => r.count === 0);
     const values = allZero ? this.chartData.map(() => 0.0001) : this.chartData.map(r => r.count);
 
+    // Daten für Chart.js
     const data: ChartConfiguration<'pie'>['data'] = {
       labels: this.chartData.map(r => r.option),
       datasets: [{
@@ -98,34 +108,34 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       }]
     };
 
+    // Chart initialisieren
     this.chart = new Chart(ctx, {
       type: 'pie',
       data,
       options: {
         responsive: true,
         aspectRatio: 1,
-
         plugins: {
           legend: { position: 'top' },
           tooltip: {
             bodyFont: { size: 18, family: 'Arial' },
             titleFont: { size: 16, family: 'Arial' },
-            padding: 12},
+            padding: 12
+          },
         },
-        layout: {
-          padding: 10
-        }
+        layout: { padding: 10 }
       }
     });
   }
 
+  // Hilfsfunktion: Farben für Optionen
   private generateColors(count: number) {
     const base = [
       [255, 99, 132],   // pink
-      [54, 162, 235],   // blue
-      [153, 102, 255],  // purple
-      [75, 192, 192],   // teal
-      [201, 203, 207],  // grey
+      [54, 162, 235],   // blau
+      [153, 102, 255],  // lila
+      [75, 192, 192],   // türkis
+      [201, 203, 207],  // grau
       [255, 159, 64],   // orange
     ];
 
@@ -137,7 +147,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy 
       backgrounds.push(`rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.3)`);
       borders.push(`rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`);
     }
-
     return { backgrounds, borders };
   }
 

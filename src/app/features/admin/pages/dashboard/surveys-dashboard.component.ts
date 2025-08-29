@@ -47,69 +47,43 @@ import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-
 })
 export class SurveysDashboardComponent {
 
-  // =========================================================
-  // Services injizieren (Firestore, Adapter, Auth, Router, Dialog)
-  // =========================================================
+  // Dienste: Firestore, Adapter, Auth, Router, Dialog
   private afs    = inject(Firestore);
   private fbSvc  = inject(FirebaseSurveyAdapter);
   public  auth   = inject(AuthService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  // =========================================================
   // Zustände für UI
-  // =========================================================
-  loading = true;   // Ladeindikator
-
-  // Alle geladenen Umfragen (Rohdaten)
+  loading = true;
   private allItems: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
-
-  // Gefilterte + sortierte Umfragen für die Anzeige
   items: Array<Survey & { createdAt?: Date; updatedAt?: Date }> = [];
-
-  // Suchtext für Filter
   search = '';
-
   showStatusHinweis = true;
-
-  // Sortierrichtung: desc = neueste oben, asc = älteste oben
   sortDir: 'desc' | 'asc' = 'desc';
 
-  // =========================================================
-  // Lifecycle – Initiales Laden
-  // =========================================================
+  // Initiales Laden aller Umfragen
   async ngOnInit(): Promise<void> {
     try {
-      // 1) Aktuellen Benutzer laden
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
-      if (!u) {
-        this.loading = false;
-        return;
-      }
+      if (!u) { this.loading = false; return; }
 
-      // 2) Firestore-Referenz holen (hier ohne Converter!)
       const colRef = collection(this.afs, 'umfragen');
-
       let snap;
       try {
-        // Versuche mit Sortierung nach "createdAt"
-        snap = await getDocs(
-          query(colRef, where('ownerId', '==', u.uid), orderBy('createdAt', 'desc'))
-        );
+        snap = await getDocs(query(colRef, where('ownerId', '==', u.uid), orderBy('createdAt', 'desc')));
       } catch {
-        // Fallback: nur Filter ohne orderBy
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid)));
       }
 
-      // 3) Hilfsfunktion: Timestamp → Date umwandeln
       const toDate = (x: any): Date | undefined => {
         if (!x) return undefined;
-        if (x.toDate) return x.toDate();     // Firestore Timestamp
-        if (x instanceof Date) return x;     // Bereits Date
-        return new Date(x);                  // String oder Zahl
+        if (x.toDate) return x.toDate();
+        if (x instanceof Date) return x;
+        return new Date(x);
       };
 
-      // 4) Mapping: Firestore-Dokumente → Survey-Objekte
+      // Firestore-Daten mappen
       this.allItems = snap.docs.map(d => {
         const data: any = d.data();
         return {
@@ -119,32 +93,24 @@ export class SurveysDashboardComponent {
           description: data.description ?? undefined,
           startAt: toDate(data.startAt),
           endAt:   toDate(data.endAt),
-
           status:  data.status,
           createdAt: toDate(data.createdAt ?? null),
           updatedAt: toDate(data.updatedAt ?? null),
         } as Survey & { createdAt?: Date; updatedAt?: Date };
       });
 
-      // 5) Erste Ansicht anwenden (Filter + Sortierung)
       this.applyView();
-
     } finally {
       this.loading = false;
     }
   }
 
-  // =========================================================
-  // Hilfsmethoden für Filter / Sortierung
-  // =========================================================
+  // Filter und Sortierung anwenden
   applyView() {
     const q = this.search.trim().toLowerCase();
     let list = [...this.allItems];
-
-    // Filter: Titel durchsuchen
     if (q) list = list.filter(x => (x.title || '').toLowerCase().includes(q));
 
-    // Sortierung: nach createdAt oder startAt
     const factor = this.sortDir === 'desc' ? -1 : 1;
     list.sort((a, b) => {
       const aVal = a.createdAt?.getTime?.() ?? a.startAt?.getTime?.() ?? 0;
@@ -165,9 +131,7 @@ export class SurveysDashboardComponent {
     this.applyView();
   }
 
-  // =========================================================
-  // Status-Label CSS-Klassen
-  // =========================================================
+  // CSS-Klassen für Status-Chips
   statusClass(s: Survey['status']) {
     return {
       draft:     'chip chip--draft',
@@ -176,9 +140,7 @@ export class SurveysDashboardComponent {
     }[s];
   }
 
-  // =========================================================
-  // Aktionen (Publish / Unpublish / Close / Delete)
-  // =========================================================
+  // Aktionen: Status ändern oder löschen
   private stripId(s: Survey): Omit<Survey, 'id'> {
     const { id, ...rest } = s;
     return rest;
@@ -218,25 +180,17 @@ export class SurveysDashboardComponent {
     });
   }
 
-  // =========================================================
   // Navigation
-  // =========================================================
   create() {
     this.router.navigateByUrl('/admin/builder');
   }
   openLinkDialog(survey: Survey) {
     this.dialog.open(UmfrageLinkDialogComponent, {
       width: '720px',
-      data: {
-        id: survey.id,
-        endDate: survey.endAt ? survey.endAt.toISOString() : null
-      }
+      data: { id: survey.id, endDate: survey.endAt ? survey.endAt.toISOString() : null }
     });
   }
-
   edit(s: Survey) {
     this.router.navigate(['/admin/umfragen', s.id, 'edit']);
   }
-
-
 }

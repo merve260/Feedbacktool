@@ -1,6 +1,5 @@
 import {
-  Component, Input, OnInit, OnDestroy, AfterViewInit,
-  inject
+  Component, Input, OnInit, OnDestroy, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
@@ -21,29 +20,39 @@ export class FreiTextListComponent implements OnInit, OnDestroy {
   private sub!: Subscription;
   private dialog = inject(MatDialog);
 
-  @Input() surveyId!: string;
-  @Input() question?: Question;
+  @Input() surveyId!: string;       // ID der aktuellen Umfrage
+  @Input() question?: Question;     // Aktuelle Frage (vom Typ Freitext)
 
-  answers: { name: string; text: string }[] = [];
+  answers: { name: string; text: string }[] = [];  // Gesammelte Antworten
 
   ngOnInit() {
     if (!this.surveyId || !this.question) return;
 
+    // Firestore Collection "antworten" für die Umfrage
     const answersCol = collection(this.firestore, `umfragen/${this.surveyId}/antworten`);
+
+    // Live-Subscription: hört auf alle neuen Antworten
     this.sub = collectionData(answersCol, { idField: 'id' }).subscribe((docs: any[]) => {
       const all: { name: string; text: string }[] = [];
+
+      // Durch alle Dokumente gehen
       docs.forEach(doc => {
         const userName = doc.name || 'Anonym';
+
+        // Nur Antworten für die aktuelle Frage sammeln
         (doc.answers || []).forEach((ans: any) => {
           if (ans.questionId === this.question?.id && ans.textValue) {
             all.push({ name: userName, text: ans.textValue });
           }
         });
       });
+
+      // Ergebnisse ins Array speichern → UI zeigt Vorschau
       this.answers = all;
     });
   }
 
+  // Öffnet den Dialog mit allen Antworten
   openDialog() {
     this.dialog.open(FreiTextDialogComponent, {
       width: '90%',
@@ -51,6 +60,7 @@ export class FreiTextListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Subscription sauber beenden
   ngOnDestroy() {
     if (this.sub) this.sub.unsubscribe();
   }

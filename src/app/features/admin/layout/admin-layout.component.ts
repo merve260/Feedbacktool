@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 import { CommonModule, AsyncPipe, NgIf } from '@angular/common';
 
-// Angular Material
+// Angular Material Module
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,22 +35,22 @@ import { AuthService } from '../../../core/auth/auth.service';
   styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent {
-  // AuthService → für User-Infos im Template
+  // AuthService für Benutzerinformationen
   public auth = inject(AuthService);
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // Flag für Responsive Sidebar (true = Mobile)
+  // true = Mobile-Ansicht
   isMobile = window.innerWidth <= 768;
 
-  // Fenstergröße überwachen
+  // prüft Fenstergröße bei Resize
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth <= 768;
   }
 
-  // Seitentitel aus den Routen-Data
+  // Seitentitel aus den Routen-Daten
   pageTitle$: Observable<string> = this.router.events.pipe(
     filter(e => e instanceof NavigationEnd),
     map(() => {
@@ -61,7 +61,7 @@ export class AdminLayoutComponent {
     startWith(this.route.snapshot.firstChild?.data?.['title'] ?? 'Meine Umfragen')
   );
 
-  // Logout → zurück zur Login-Seite
+  // Logout: beendet Session und geht zurück zum Login
   async logout(): Promise<void> {
     await this.auth.logout();
     await this.router.navigateByUrl('/login');

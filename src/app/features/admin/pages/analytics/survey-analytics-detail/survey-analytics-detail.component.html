@@ -1,9 +1,9 @@
 <div class="card" *ngIf="survey; else loading">
-  <!-- 🔹 Titel -->
+  <!-- Titel und Beschreibung der Umfrage -->
   <h2>Analyse – {{ survey.title }}</h2>
   <p *ngIf="survey.description">{{ survey.description }}</p>
 
-  <!-- 🔹 Meta-Daten -->
+  <!-- Meta-Daten der Umfrage -->
   <div class="meta">
     <span><strong>Status:</strong> {{ survey.status }}</span>
     <span><strong>Start:</strong> {{ survey.startAt | date:'dd.MM.yyyy' }}</span>
@@ -13,13 +13,13 @@
     <button class="export-btn" (click)="exportToExcel()">Excel Export</button>
   </div>
 
-  <!-- 🔹 Charts Grid -->
+  <!-- Charts für jede Frage -->
   <div class="charts-grid">
     <ng-container *ngFor="let q of questions">
       <div class="chart-card"
            [ngClass]="{ 'wide': q.type === 'slider' || q.type === 'star' }">
 
-        <!-- Multiple Choice -->
+        <!-- Multiple Choice Diagramm -->
         <app-multiple-chart
           *ngIf="q.type === 'multiple'"
           [surveyId]="survey.id!"
@@ -27,7 +27,7 @@
           (click)="openChartDialog(q)">
         </app-multiple-chart>
 
-        <!-- Skala -->
+        <!-- Skala (Slider) -->
         <app-skala-chart
           *ngIf="q.type === 'slider'"
           [surveyId]="survey.id!"
@@ -35,7 +35,7 @@
           (click)="openChartDialog(q)">
         </app-skala-chart>
 
-        <!-- Radio Buttons -->
+        <!-- Radio Button Diagramm -->
         <app-radio-button-chart
           *ngIf="q.type === 'radio'"
           [surveyId]="survey.id!"
@@ -51,7 +51,7 @@
           (click)="openChartDialog(q)">
         </app-star-rating-chart>
 
-        <!-- Freitext -->
+        <!-- Freitext Antworten -->
         <app-freitext-list
           *ngIf="q.type === 'freitext'"
           [surveyId]="survey.id!"
@@ -63,7 +63,7 @@
   </div>
 </div>
 
-<!-- Lade-Template -->
+<!-- Ladezustand -->
 <ng-template #loading>
   <div class="card">
     <p>Lade Daten...</p>
