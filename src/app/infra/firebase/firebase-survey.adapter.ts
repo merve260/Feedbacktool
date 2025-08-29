@@ -22,7 +22,7 @@ import { SurveyBackend } from '../../core/ports/survey-backend';
 import { Survey, Question, SurveyStatus } from '../../core/models/survey.models';
 import { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore';
 
-/** Entfernt alle `undefined`-Felder → Firestore akzeptiert das nicht */
+// Hilfsfunktion: entfernt alle Felder, die undefined sind
 function omitUndefined<T extends object>(obj: T): Partial<T> {
   const out: Partial<T> = {};
   (Object.entries(obj) as [keyof T, any][])
@@ -30,7 +30,7 @@ function omitUndefined<T extends object>(obj: T): Partial<T> {
   return out;
 }
 
-/** Hilfsfunktion: Egal ob Date, Firestore Timestamp oder String → immer Date */
+// Hilfsfunktion: wandelt Eingaben (Date, Timestamp, String) sicher in Date um
 function toDateSafe(v: any): Date | undefined {
   if (!v) return undefined;
   if (v instanceof Date) return v;
@@ -42,7 +42,7 @@ function toDateSafe(v: any): Date | undefined {
   return undefined;
 }
 
-/** Bereitet Survey-Daten für Firestore vor */
+// Bereitet Survey-Daten für Firestore vor
 function prepareSurveyData(
   s: Partial<Survey>,
   statusOverride?: SurveyStatus
@@ -55,10 +55,8 @@ function prepareSurveyData(
     title: s.title,
     description: s.description ?? null,
     status: (statusOverride ?? s.status ?? 'draft') as SurveyStatus,
-
     startAt: sDate ? Timestamp.fromDate(sDate) : null,
     endAt:   eDate ? Timestamp.fromDate(eDate) : null,
-
     createdAt: (s as any).createdAt ?? serverTimestamp(),
     updatedAt: serverTimestamp(),
   }) as WithFieldValue<Survey>;
@@ -72,9 +70,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
 
   constructor(private firestore: Firestore) {}
 
-  // -----------------------------------------------------
-  // Converter – sorgt für Typ-Sicherheit bei Firestore
-  // -----------------------------------------------------
+  // Converter für Surveys → sorgt für Typ-Sicherheit
   private surveyConverter: FirestoreDataConverter<Survey> = {
     toFirestore(s: Survey) {
       return prepareSurveyData(s);
@@ -95,6 +91,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     },
   };
 
+  // Converter für Fragen → Typ-Sicherheit bei Firestore
   private questionConverter: FirestoreDataConverter<Question> = {
     toFirestore(q: Question) {
       return omitUndefined({
@@ -135,10 +132,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     },
   };
 
-
-  // -----------------------------------------------------
-  // Referenzen
-  // -----------------------------------------------------
+  // Referenzen auf Collections und Dokumente
   private surveysCol(): CollectionReference<Survey> {
     return collection(this.firestore, this.rootColName).withConverter(this.surveyConverter);
   }
@@ -154,9 +148,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
       .withConverter(this.questionConverter);
   }
 
-  // -----------------------------------------------------
-  // Methoden (Survey)
-  // -----------------------------------------------------
+  // Methoden für Surveys
   async createDraft(s: Partial<Survey>): Promise<string> {
     const ref = doc(this.surveysCol());
     await setDoc(ref, prepareSurveyData(s, 'draft'));
@@ -256,9 +248,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     await updateDoc(this.surveyDoc(id), { updatedAt: serverTimestamp() } as any);
   }
 
-  // -----------------------------------------------------
-  // Methoden (Questions)
-  // -----------------------------------------------------
+  // Methoden für Fragen
   async addQuestion(surveyId: string, q: Question): Promise<string> {
     const qRef = doc(this.questionsCol(surveyId));
     await setDoc(
@@ -278,9 +268,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     return snaps.docs.map(d => d.data());
   }
 
-  // -----------------------------------------------------
-  // Methoden (Responses)
-  // -----------------------------------------------------
+  // Methoden für Antworten
   async submitResponse(
     surveyId: string,
     payload: { name?: string; answers: any[] }

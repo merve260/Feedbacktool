@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
-import {ConfirmDialogComponent} from '../../dialogs/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
 
 @Component({
   selector: 'app-skala-slider-modal',
@@ -44,6 +44,7 @@ export class SkalaSliderModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Werte aus den übergebenen Daten übernehmen
     this.min = this.data.min ?? 0;
     this.max = this.data.max ?? 10;
     this.step = this.data.step ?? 1;
@@ -51,7 +52,7 @@ export class SkalaSliderModalComponent implements OnInit {
     this.thumbLabel = this.data.thumbLabel ?? false;
     this.updatePercent();
 
-
+    // Ursprungszustand merken (für Änderungsprüfung)
     this.originalData = {
       title: this.data.title,
       text: this.data.text,
@@ -63,6 +64,7 @@ export class SkalaSliderModalComponent implements OnInit {
     };
   }
 
+  // Slider-Bewegung → Prozentwert aktualisieren
   onSlide() {
     this.updatePercent();
   }
@@ -72,15 +74,19 @@ export class SkalaSliderModalComponent implements OnInit {
     const pct = ((this.value - this.min) / range) * 100;
     this.percent = Math.max(0, Math.min(100, pct));
   }
+
+  // Ungültiger Bereich wenn min/max zu nah beieinander liegen
   get isInvalidRange(): boolean {
     return this.max - this.min < 2;
   }
 
+  // Farb-Hintergrund für Slider berechnen
   getSliderBackground(): string {
     const percentage = ((this.value - this.min) / (this.max - this.min)) * 100;
     return `linear-gradient(to right, #8133ae 0%, #8133ae ${percentage}%, #c0c0c0 ${percentage}%, #c0c0c0 100%)`;
   }
 
+  // Prüfen, ob sich Daten geändert haben
   isDirty(): boolean {
     return (
       this.data.title !== this.originalData.title ||
@@ -93,6 +99,7 @@ export class SkalaSliderModalComponent implements OnInit {
     );
   }
 
+  // Schließen mit Prüfung auf Änderungen
   onClose(): void {
     if (this.isDirty()) {
       const confirmRef = this.dialog.open(ConfirmDialogComponent, {
@@ -114,7 +121,7 @@ export class SkalaSliderModalComponent implements OnInit {
     }
   }
 
-
+  // Speichern und geänderte Werte zurückgeben
   onSave(): void {
     this.dialogRef.close({
       type: 'slider',

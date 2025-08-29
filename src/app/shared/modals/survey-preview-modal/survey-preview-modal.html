@@ -1,23 +1,23 @@
 <!-- Titel des Dialogs -->
 <h2 mat-dialog-title>Vorschau: {{ data.title }}</h2>
 
-<!-- Inhalt -->
+<!-- Hauptinhalt -->
 <div mat-dialog-content class="preview-content">
 
-  <!-- Beschreibung -->
+  <!-- Beschreibung der Umfrage -->
   <p class="description" *ngIf="data.description">{{ data.description }}</p>
 
-  <!-- Name-Feld (immer deaktiviert) -->
+  <!-- Eingabefeld Name (deaktiviert) -->
   <mat-form-field appearance="fill" class="full-width">
     <mat-label>Ihr Name (optional)</mat-label>
     <input matInput placeholder="Vor- und Nachname" disabled />
   </mat-form-field>
 
-  <!-- Fragenliste -->
+  <!-- Liste der Fragen -->
   <div *ngFor="let q of data.questions; let i = index" class="question-block">
     <h3>{{ i + 1 }}. {{ q.title }}</h3>
 
-    <!-- Fragebeschreibung -->
+    <!-- Zusatztext zur Frage -->
     <p class="question-text" *ngIf="q.text">{{ q.text }}</p>
 
     <ng-container [ngSwitch]="q.type">
@@ -27,7 +27,7 @@
         <mat-checkbox *ngFor="let opt of q.options" disabled>{{ opt }}</mat-checkbox>
       </div>
 
-      <!-- Radiobutton-Auswahl -->
+      <!-- Radiobuttons -->
       <div *ngSwitchCase="'radio'">
         <mat-radio-group>
           <mat-radio-button *ngFor="let opt of q.options" [value]="opt" disabled>
@@ -44,7 +44,7 @@
         <small *ngIf="q.thumbLabel">Wertanzeige: aktiviert</small>
       </div>
 
-      <!-- Sterne-Bewertung -->
+      <!-- Sternebewertung -->
       <div *ngSwitchCase="'star'" class="star-rating">
         <mat-icon *ngFor="let s of [].constructor(q.maxStars || 5)">star</mat-icon>
       </div>
@@ -57,7 +57,7 @@
         </mat-form-field>
       </div>
 
-      <!-- Fallback -->
+      <!-- Unbekannter Typ -->
       <div *ngSwitchDefault>
         <p>Unbekannter Fragetyp</p>
       </div>
@@ -66,7 +66,7 @@
   </div>
 </div>
 
-<!-- Aktionen -->
+<!-- Dialog-Aktion -->
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="primary" (click)="close()">Schließen</button>
 </div>

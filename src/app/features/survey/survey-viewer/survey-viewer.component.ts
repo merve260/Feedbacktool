@@ -52,13 +52,13 @@ export class SurveyViewerComponent implements OnInit {
   surveyId = '';
   surveyData: { title: string; questions: Question[] } | null = null;
 
-  // ---------------- UI-Zustand ----------------
-  currentIndex = 0;       // Index der aktuellen Frage
-  answers: any[] = [];    // Gesammelte Antworten
-  isCompleted = false;    // Wurde die Umfrage beendet?
-  loading = false;        // Ladezustand
-  errorMsg = '';          // Fehlermeldung
-  respondentName = '';    // Teilnehmername (optional)
+  // Zustände für Anzeige und Antworten
+  currentIndex = 0;
+  answers: any[] = [];
+  isCompleted = false;
+  loading = false;
+  errorMsg = '';
+  respondentName = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -67,14 +67,14 @@ export class SurveyViewerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Umfrage-ID aus URL lesen und Daten laden
+    // ID aus der URL holen und Umfrage laden
     this.route.paramMap.subscribe(async (params) => {
       this.surveyId = params.get('id') || '';
       await this.loadSurvey(this.surveyId);
     });
   }
 
-  // ---------------- Umfrage laden ----------------
+  // Lädt eine Umfrage und prüft Status und Zeitraum
   private async loadSurvey(id: string): Promise<void> {
     this.loading = true;
     this.errorMsg = '';
@@ -90,33 +90,57 @@ export class SurveyViewerComponent implements OnInit {
         return;
       }
 
-      const questions = await this.surveyService.listQuestions(id);
+      const now = new Date();
+      const start: Date | null =
+        survey.startAt && typeof (survey.startAt as any).toDate === 'function'
+          ? (survey.startAt as any).toDate()
+          : survey.startAt ?? null;
 
+      const end: Date | null =
+        survey.endAt && typeof (survey.endAt as any).toDate === 'function'
+          ? (survey.endAt as any).toDate()
+          : survey.endAt ?? null;
+
+      // Wenn Status geschlossen ist
+      if (survey.status === 'closed') {
+        this.errorMsg = 'Diese Umfrage ist geschlossen.';
+        this.loading = false;
+        return;
+      }
+
+      // Wenn noch nicht gestartet
+      if (start && now < start) {
+        this.errorMsg = 'Diese Umfrage ist noch nicht gestartet.';
+        this.loading = false;
+        return;
+      }
+
+      // Wenn abgelaufen
+      if (end && now > end) {
+        this.errorMsg = 'Diese Umfrage ist abgelaufen.';
+        if (survey.status === 'published') {
+          await this.surveyService.updateStatus(id, 'closed');
+        }
+        this.loading = false;
+        return;
+      }
+
+      // Fragen laden
+      const questions = await this.surveyService.listQuestions(id);
       this.surveyData = {
         title: survey.title ?? 'Umfrage',
         questions: questions ?? []
       };
 
-      // Initialwerte je nach Fragetyp setzen
+      // Initialwerte je nach Typ vorbereiten
       this.answers = this.surveyData.questions.map((q: Question) => {
         switch (q.type) {
-          case 'radio':
-            return null;
-
-          case 'multiple':
-            return Array(q.options?.length || 0).fill(false);
-
-          case 'slider':
-            return q.min ?? 1;
-
-          case 'star':
-            return 0;
-
-          case 'freitext':
-            return '';
-
-          default:
-            return null;
+          case 'radio': return null;
+          case 'multiple': return Array(q.options?.length || 0).fill(false);
+          case 'slider': return q.min ?? 1;
+          case 'star': return 0;
+          case 'freitext': return '';
+          default: return null;
         }
       });
 
@@ -128,11 +152,12 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
-  // ---------------- Navigation ----------------
+  // Aktuelle Frage ermitteln
   get currentQuestion() {
     return this.surveyData?.questions?.[this.currentIndex];
   }
 
+  // Navigation: weiter zur nächsten Frage
   weiter(): void {
     if (!this.surveyData) return;
     if (this.currentIndex < this.surveyData.questions.length - 1) {
@@ -140,19 +165,21 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
+  // Navigation: zurück zur vorherigen Frage
   zurueck(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
     }
   }
 
+  // Fortschritt für Progressbar
   getProgress(): number {
     const total = this.surveyData?.questions?.length ?? 0;
     if (!total) return 0;
     return ((this.currentIndex + 1) / total) * 100;
   }
 
-  // ---------------- Antworten speichern ----------------
+  // Speichert die Antworten und übermittelt sie an den Service
   async speichern(): Promise<void> {
     if (!this.surveyData) return;
 
@@ -166,13 +193,10 @@ export class SurveyViewerComponent implements OnInit {
           answeredAt: new Date()
         };
 
-        // Antwort je nach Typ zuordnen
         if (q.type === 'radio' || q.type === 'freitext') {
           answer.textValue = val ?? '';
-
         } else if (q.type === 'slider' || q.type === 'star') {
           answer.numberValue = typeof val === 'number' ? val : Number(val);
-
         } else if (q.type === 'multiple') {
           if (Array.isArray(val) && q.options) {
             answer.listValue = q.options.filter((_, idx) => val[idx]);
@@ -195,7 +219,7 @@ export class SurveyViewerComponent implements OnInit {
     }
   }
 
-  // ---------------- Hilfsfunktionen ----------------
+  // Hilfsfunktionen für IDs und Slider-UI
   private generateId(): string {
     return doc(collection(this.firestore, '_')).id;
   }

@@ -8,7 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { take, switchMap } from 'rxjs/operators';
 
 
-import { AuthDialogComponent } from '../../../shared/auth-dialog/auth-dialog.component';
+import { AuthDialogComponent } from '../../../shared/dialogs/auth-dialog/auth-dialog.component';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({

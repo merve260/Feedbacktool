@@ -62,7 +62,7 @@ import { ComponentType } from '@angular/cdk/overlay';
 })
 export class SurveyBuilderComponent implements OnInit {
 
-  // ===== Eingangs- und Ausgangsparameter (2-Wege-Bindung) =====
+  // Eingangs- und Ausgangsparameter für Bindung
   @Input() surveyId?: string;
   @Input() title: string = '';
   @Output() titleChange = new EventEmitter<string>();
@@ -81,7 +81,7 @@ export class SurveyBuilderComponent implements OnInit {
 
   @Input() showActions = true;
 
-  // ===== Verfügbare Fragetypen (links in der Palette) =====
+  // Fragetypen links in der Palette
   questionTypes = [
     { type: 'multiple', label: 'Mehrfachauswahl' },
     { type: 'freitext', label: 'Freitext' },
@@ -90,10 +90,10 @@ export class SurveyBuilderComponent implements OnInit {
     { type: 'radio',    label: 'Radiobutton Auswahl' }
   ];
 
-  // Rechts im Canvas angezeigte Fragen
+  // Fragen, die im Canvas angezeigt werden
   canvasQuestions: any[] = [];
 
-  // Formular für Titel + Zeitraum
+  // Formular für Titel, Beschreibung und Zeitraum
   infoForm: FormGroup<{
     title: FormControl<string>;
     startDate: FormControl<Date | null>;
@@ -112,7 +112,7 @@ export class SurveyBuilderComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
   ) {
-    // Initialisiere das Formular
+    // Initialisierung des Formulars mit Validatoren
     this.infoForm = new FormGroup({
       title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       startDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
@@ -121,7 +121,7 @@ export class SurveyBuilderComponent implements OnInit {
     }, { validators: this.dateRangeValidator });
   }
 
-  // ------------------ Lifecycle ------------------
+  // Daten laden, wenn bereits eine Umfrage-ID existiert (Bearbeitungsmodus)
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -149,7 +149,7 @@ export class SurveyBuilderComponent implements OnInit {
     }
   }
 
-  // ------------------ Normalisierung einer Frage ------------------
+  // Hilfsfunktion: konvertiert ein Objekt in ein gültiges Question-Format
   private toQuestion = (q: any): Omit<Question, 'id'> & { id?: string } => {
     const base: any = { id: q.id, type: q.type, title: q.title, text: q.text };
 
@@ -168,7 +168,7 @@ export class SurveyBuilderComponent implements OnInit {
     return base;
   };
 
-  // ------------------ Speichern (Draft/Publish) ------------------
+  // Speichern als Draft oder Publish
   async saveAs(status: SurveyStatus) {
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
@@ -212,12 +212,12 @@ export class SurveyBuilderComponent implements OnInit {
 
   saveDraft() { return this.saveAs('draft'); }
 
-  // ------------------ Getter fürs Template ------------------
+  // Getter fürs Template
   get titleCtrl() { return this.infoForm.controls.title; }
   get startCtrl() { return this.infoForm.controls.startDate; }
   get endCtrl()   { return this.infoForm.controls.endDate; }
 
-  // ------------------ Validatoren ------------------
+  // Validator für das Start-/Enddatum
   private dateRangeValidator = (group: AbstractControl): ValidationErrors | null => {
     const s: Date | null = group.get('startDate')?.value ?? null;
     const e: Date | null = group.get('endDate')?.value ?? null;
@@ -225,7 +225,7 @@ export class SurveyBuilderComponent implements OnInit {
     return e >= s ? null : { dateInvalid: true };
   };
 
-  // ------------------ Drag & Drop ------------------
+  // Drag & Drop von Fragetypen
   onDrop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(this.canvasQuestions, event.previousIndex, event.currentIndex);
@@ -234,7 +234,6 @@ export class SurveyBuilderComponent implements OnInit {
     }
     const draggedItem = event.item.data;
 
-    // Nur noch erlaubte Typen
     if (draggedItem.type === 'multiple') return this.openMultipleChoiceModal(draggedItem);
     if (draggedItem.type === 'freitext') return this.openFreitextModal(draggedItem);
     if (draggedItem.type === 'star')     return this.openStarRatingModal(draggedItem);
@@ -246,7 +245,7 @@ export class SurveyBuilderComponent implements OnInit {
     this.questionsChange.emit(this.canvasQuestions);
   }
 
-  // ------------------ Modals: Neue Fragen ------------------
+  // Öffnet ein Modal für jede Fragetyp-Erstellung
   openMultipleChoiceModal(q: any) {
     const ref = this.dialog.open(MultipleChoiceModalComponent, { data: { ...q, options: ['', ''] }, disableClose: true, panelClass: 'pol-dialog' });
     ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }});
@@ -268,7 +267,7 @@ export class SurveyBuilderComponent implements OnInit {
     ref.afterClosed().subscribe(r => { if (r) { this.canvasQuestions.push(r); this.questionsChange.emit(this.canvasQuestions); }});
   }
 
-  // ------------------ Frage bearbeiten ------------------
+  // Bestehende Frage bearbeiten
   onEdit(index: number) {
     const q = this.canvasQuestions[index];
     const component: ComponentType<any> =
@@ -288,15 +287,14 @@ export class SurveyBuilderComponent implements OnInit {
         this.questionsChange.emit(this.canvasQuestions);
       }
     });
+  }
 
-    }
-
-  // ------------------ Date-Filter für Datepicker ------------------
+  // Nur heutiges oder zukünftiges Datum erlaubt
   dateFilter: (d: Date | null) => boolean = (d: Date | null) => {
     if (!d) return false;
     const today = new Date(); today.setHours(0,0,0,0);
     const x = new Date(d);    x.setHours(0,0,0,0);
-    return x >= today; // Nur heutiges oder zukünftiges Datum erlaubt
+    return x >= today;
   };
 
   get startDateValue(): Date | null {
@@ -309,13 +307,13 @@ export class SurveyBuilderComponent implements OnInit {
     return val instanceof Date ? val : (val ? new Date(val) : null);
   }
 
-
-  // ------------------ Löschen ------------------
+  // Löscht eine Frage aus dem Canvas
   onDelete(index: number) {
     this.canvasQuestions.splice(index, 1);
     this.questionsChange.emit(this.canvasQuestions);
   }
 
+  // Navigation zurück zum Dashboard
   goToDashboard(): void {
     this.router.navigateByUrl('/admin/umfragen');
   }

@@ -1,7 +1,17 @@
-<div class="survey-viewer" *ngIf="!isCompleted && surveyData as data">
-  <h2>{{ data?.title }}</h2>
+<!-- Anzeige einer Fehlermeldung, wenn Umfrage nicht verfügbar, abgelaufen oder noch nicht gestartet -->
+<div *ngIf="errorMsg" class="error-box">
+  <mat-icon class="error-icon">error_outline</mat-icon>
+  <div class="error-text">
+    <h2>Oops!</h2>
+    <p>{{ errorMsg }}</p>
+  </div>
+</div>
 
-  <!-- Teilnehmer-Name (optional) -->
+<!-- Hauptbereich: Umfrage-Viewer, nur sichtbar wenn keine Fehlermeldung und nicht abgeschlossen -->
+<div class="survey-viewer" *ngIf="!isCompleted && surveyData as data">
+  <h2>{{ data.title }}</h2>
+
+  <!-- Eingabe des Teilnehmernamens (optional, nur bei erster Frage sichtbar) -->
   <div style="margin: 12px 0;" *ngIf="currentIndex === 0">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Ihr Name (optional)</mat-label>
@@ -9,19 +19,19 @@
     </mat-form-field>
   </div>
 
-  <!-- Fortschritt -->
+  <!-- Fortschrittsanzeige: Aktuelle Frage / Gesamtanzahl -->
   <div class="progress-info">
     <p>Frage {{ currentIndex + 1 }} von {{ data.questions.length }}</p>
     <mat-progress-bar mode="determinate" [value]="getProgress()"></mat-progress-bar>
   </div>
 
-  <!-- Aktuelle Frage -->
+  <!-- Anzeige der aktuellen Frage mit passendem Fragetyp -->
   <div class="question-box" *ngIf="currentQuestion">
     <h3>{{ currentQuestion.title }}</h3>
 
     <ng-container [ngSwitch]="currentQuestion.type">
 
-      <!-- Multiple Choice -->
+      <!-- Mehrfachauswahl -->
       <div *ngSwitchCase="'multiple'">
         <div *ngFor="let opt of currentQuestion.options; let i = index">
           <mat-checkbox [(ngModel)]="answers[currentIndex][i]">
@@ -30,7 +40,7 @@
         </div>
       </div>
 
-      <!-- Radiobutton Auswahl -->
+      <!-- Radiobutton-Auswahl -->
       <div *ngSwitchCase="'radio'">
         <mat-radio-group [(ngModel)]="answers[currentIndex]">
           <mat-radio-button *ngFor="let opt of currentQuestion.options" [value]="opt">
@@ -39,7 +49,7 @@
         </mat-radio-group>
       </div>
 
-      <!-- Skala / Slider -->
+      <!-- Skala (Slider) -->
       <div *ngSwitchCase="'slider'" class="slider-container">
         <input
           type="range"
@@ -52,7 +62,7 @@
           [style.background]="getSliderBackground(answers[currentIndex], currentQuestion.min || 1, currentQuestion.max || 10)"
         />
 
-        <!-- Wert-Blase -->
+        <!-- Anzeige des aktuellen Werts -->
         <span
           class="slider-bubble"
           [style.left.%]="getPercent(currentIndex)"
@@ -80,7 +90,7 @@
         </mat-form-field>
       </div>
 
-      <!-- Default -->
+      <!-- Standardanzeige, falls Fragetyp unbekannt -->
       <div *ngSwitchDefault>
         <p>Unbekannter Fragetyp</p>
       </div>
@@ -88,7 +98,7 @@
     </ng-container>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navigations-Buttons -->
   <div class="button-group">
     <button mat-raised-button color="basic" (click)="zurueck()" [disabled]="currentIndex === 0">
       Zurück
@@ -104,7 +114,7 @@
   </div>
 </div>
 
-<!-- Fertig-Ansicht -->
+<!-- Abschlussansicht nach Absenden der Umfrage -->
 <div class="survey-complete" *ngIf="isCompleted">
   <h2>Vielen Dank für Ihre Teilnahme!</h2>
   <p>Ihre Umfrage wurde erfolgreich übermittelt.</p>

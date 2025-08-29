@@ -1,7 +1,8 @@
 <!-- src/app/features/survey/survey-publish/survey-publish.component.html -->
 
 <div class="publish-actions">
-  <!-- ===== Aktionen (Entwurf / Veröffentlichen) ===== -->
+
+  <!-- Buttons zum Speichern als Entwurf oder zum Veröffentlichen -->
   <div class="builder-actions" *ngIf="showActions">
     <button
       mat-stroked-button
@@ -20,19 +21,20 @@
     </button>
   </div>
 
-  <!-- ===== Hinweise & Fehlermeldungen ===== -->
+  <!-- Hinweise und Validierungsfehler (z. B. ungültiges Datum) -->
   <div class="builder-actions" *ngIf="showActions">
     <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
     <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
     <div class="note" *ngIf="canvasQuestions.length === 0">Mindestens eine Frage hinzufügen.</div>
 
+    <!-- Allgemeine Fehlermeldung -->
     <div *ngIf="errorMsg" class="error-message">
       <mat-icon>error_outline</mat-icon>
       {{ errorMsg }}
     </div>
   </div>
 
-  <!-- ===== Link nach erfolgreichem Publish ===== -->
+  <!-- Bereich mit dem Teilnehmer-Link nach erfolgreichem Publish -->
   <div *ngIf="linkVisible" class="link-section" id="linkSection">
     <strong>Umfragelink:</strong>
     <a [href]="getSurveyLink()" target="_blank">{{ getSurveyLink() }}</a>
@@ -45,9 +47,10 @@
     </button>
   </div>
 
+  <!-- Kurze Rückmeldung, dass der Link kopiert wurde -->
   <div *ngIf="copied" class="toast">Link kopiert!</div>
 
-  <!-- Direkt zur Umfrage wechseln -->
+  <!-- Button, um direkt zur Umfrage zu wechseln -->
   <button
     *ngIf="linkVisible"
     mat-stroked-button

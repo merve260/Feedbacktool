@@ -11,7 +11,6 @@ import { Auth } from '@angular/fire/auth';
 import { MatDialog } from '@angular/material/dialog';
 import { SurveyPreviewModalComponent } from '../../../shared/modals/survey-preview-modal/survey-preview-modal';
 
-
 @Component({
   selector: 'app-survey-edit',
   standalone: true,
@@ -27,7 +26,7 @@ import { SurveyPreviewModalComponent } from '../../../shared/modals/survey-previ
 })
 export class SurveyEditComponent implements OnInit {
 
-  // ===== Eigenschaften (State) =====
+  // Zustandsvariablen für die zu bearbeitende Umfrage
   surveyId!: string;
   title = '';
   description = '';
@@ -44,22 +43,21 @@ export class SurveyEditComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  // ------------------ Initialisierung ------------------
+  // Beim Laden der Seite: vorhandene Umfrage + Fragen holen
   async ngOnInit() {
     this.surveyId = this.route.snapshot.paramMap.get('id')!;
 
     try {
-      // Umfrage laden
       const survey = await this.surveyService.getById(this.surveyId);
       if (!survey) throw new Error('Not found');
 
-      // Felder setzen
+      // Basisdaten setzen
       this.title = survey.title ?? '';
       this.description = survey.description ?? '';
       this.startAt = survey.startAt ?? undefined;
       this.endAt   = survey.endAt   ?? undefined;
 
-      // Fragen laden
+      // Fragen separat laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
 
     } catch (err) {
@@ -67,12 +65,11 @@ export class SurveyEditComponent implements OnInit {
     }
   }
 
-  // ------------------ Update (Speichern) ------------------
+  // Änderungen speichern: entweder als Entwurf oder veröffentlichen
   async updateSurvey(status: 'draft' | 'published') {
     if (!this.surveyId) return;
 
     try {
-      // Umfrage + Fragen aktualisieren
       await this.surveyService.updateSurveyWithQuestions(
         this.surveyId,
         {
@@ -86,10 +83,10 @@ export class SurveyEditComponent implements OnInit {
         this.questions
       );
 
-      // Fragenliste nach Update neu laden
+      // Fragenliste nach Speichern neu laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
 
-      // Nach Dashboard zurück
+      // Zurück zum Dashboard
       this.router.navigate(['/admin/umfragen']);
 
     } catch (err) {
@@ -97,6 +94,8 @@ export class SurveyEditComponent implements OnInit {
       this.errorMsg = 'Speichern fehlgeschlagen.';
     }
   }
+
+  // Vorschau öffnet ein Dialog-Fenster mit Umfragedaten
   openPreview() {
     this.dialog.open(SurveyPreviewModalComponent, {
       width: '700px',
@@ -107,5 +106,4 @@ export class SurveyEditComponent implements OnInit {
       }
     });
   }
-
 }

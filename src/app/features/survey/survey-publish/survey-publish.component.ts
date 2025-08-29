@@ -20,7 +20,8 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./survey-publish.component.scss']
 })
 export class SurveyPublishComponent {
-  // ===== Eingaben (Inputs) =====
+
+  // Eingabewerte vom Eltern-Component
   @Input() startDate: Date | null | undefined = null;
   @Input() endDate: Date | null | undefined = null;
   @Input() showActions: boolean = true;
@@ -33,24 +34,24 @@ export class SurveyPublishComponent {
   @Input() surveySubQuestionCount: number = 0;
   @Input() canvasQuestions: Question[] = [];
 
-  // ===== Ausgaben (Outputs) =====
+  // Ausgaben für Eltern-Component
   @Output() draftRequested = new EventEmitter<string>();
   @Output() publishRequested = new EventEmitter<string>();
   @Output() questionsChange = new EventEmitter<Question[]>();
 
-  // ===== Zustände (States) =====
-  busy = false;          // allgemein blockiert (Draft/Publish läuft)
-  publishing = false;    // aktuell "Veröffentlichen" läuft
-  errorMsg = '';         // Fehlermeldung
-  copied = false;        // Link wurde in Zwischenablage kopiert
-  linkVisible = false;   // Soll der fertige Link angezeigt werden?
+  // Zustände
+  busy = false;          // blockiert, wenn Speichern/Veröffentlichen läuft
+  publishing = false;    // ob aktuell Veröffentlichen läuft
+  errorMsg = '';         // Fehlermeldungen
+  copied = false;        // ob Link kopiert wurde
+  linkVisible = false;   // soll der Teilnehmer-Link angezeigt werden
   surveyId: string | null = null;
 
-  // ===== Services =====
+  // Services
   private surveyService = inject(SurveyService);
   private auth = inject(AuthService);
 
-  // ------------------ Datumshilfen ------------------
+  // Hilfsmethode: Datum normalisieren (auf Tagesanfang setzen)
   private startOfDay(d: Date | null | undefined): Date | null {
     if (!d) return null;
     const x = new Date(d);
@@ -64,6 +65,7 @@ export class SurveyPublishComponent {
     return t;
   }
 
+  // Validierungen für Zeiträume
   get startInPast(): boolean {
     const s = this.startOfDay(this.startDate);
     return !!(s && s < this.today);
@@ -75,21 +77,21 @@ export class SurveyPublishComponent {
     return !!(s && e && e < s);
   }
 
-  // ------------------ Validierung ------------------
+  // Überprüfung, ob Titel, Zeitraum und Fragen vorhanden sind
   isReady(): boolean {
     const hasTitle = !!this.surveyTitle?.trim();
     const hasDates = !!this.startDate && !!this.endDate;
     const hasQuestions = this.canvasQuestions?.length > 0;
-
     return hasTitle && hasDates && hasQuestions && !this.startInPast && !this.endBeforeStart;
   }
 
-  // ------------------ Link-Funktionen ------------------
+  // Teilnehmer-Link erzeugen
   getSurveyLink(): string {
     if (!this.surveyId) return '#';
     return `${window.location.origin}/survey/${this.surveyId}`;
   }
 
+  // Link in Zwischenablage kopieren
   copyLinkToClipboard(): void {
     const link = this.getSurveyLink();
     if (!this.surveyId || link === '#') return;
@@ -100,12 +102,13 @@ export class SurveyPublishComponent {
     });
   }
 
+  // Direkt im neuen Tab öffnen
   goToViewer(): void {
     if (!this.surveyId) return;
     window.open(`/survey/${this.surveyId}`, '_blank');
   }
 
-  // ------------------ Fragen-Mapping ------------------
+  // Frage normalisieren (Mapping in einheitliches Schema)
   private mapToQuestion(q: any, index: number): Question {
     const opts = Array.isArray(q.options) ? q.options.filter((x: any) => x != null) : undefined;
 
@@ -123,7 +126,7 @@ export class SurveyPublishComponent {
     } as Question;
   }
 
-  // ------------------ Entwurf speichern ------------------
+  // Entwurf speichern
   async onDraft(): Promise<void> {
     if (!this.isReady() || this.busy) return;
 
@@ -161,7 +164,7 @@ export class SurveyPublishComponent {
     }
   }
 
-  // ------------------ Umfrage veröffentlichen ------------------
+  // Umfrage veröffentlichen
   async publishSurvey(): Promise<void> {
     if (!this.isReady() || this.busy) return;
 
@@ -197,7 +200,7 @@ export class SurveyPublishComponent {
       this.linkVisible = true;
       this.publishRequested.emit(id);
 
-      // Automatisch nach unten scrollen → Link sichtbar machen
+      // Automatisch nach unten scrollen, damit der Link sichtbar wird
       setTimeout(() => {
         document.getElementById('linkSection')
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' });

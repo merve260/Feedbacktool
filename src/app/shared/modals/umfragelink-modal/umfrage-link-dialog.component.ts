@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import {environment} from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-umfrage-link-dialog',
@@ -31,13 +31,12 @@ export class UmfrageLinkDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { id: string; endDate?: string },
     private snackBar: MatSnackBar
   ) {
+    // Basis-Link zur Umfrage aufbauen
     this.surveyLink = `${environment.apiBaseUrl}/survey/${data.id}`;
     this.endDate = data.endDate ? new Date(data.endDate) : null;
   }
 
-
-
-  /** Link kopieren */
+  // Link in die Zwischenablage kopieren
   copyLink(): void {
     navigator.clipboard.writeText(this.surveyLink).then(() => {
       this.snackBar.open('Link kopiert!', 'OK', {
@@ -47,7 +46,7 @@ export class UmfrageLinkDialogComponent {
     });
   }
 
-  /** Link öffnen, nur wenn gültig */
+  // Link öffnen, nur wenn gültig und nicht abgelaufen
   openLink(): void {
     if (!this.endDate) {
       this.snackBar.open('Kein Enddatum definiert!', 'OK', {
@@ -72,7 +71,7 @@ export class UmfrageLinkDialogComponent {
     window.open(this.surveyLink, '_blank');
   }
 
-  /** Dialog schließen */
+  // Dialog schließen
   onClose(): void {
     this.dialogRef.close();
   }

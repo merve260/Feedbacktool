@@ -1,81 +1,51 @@
-/* =======================
-   Globale Basis-Styles
-   ======================= */
+/* Globale Basis-Styles */
 
-/* 1) Imports */
+/* Imports */
 @use '@angular/material' as mat;
 @use 'styles/_theme-colors' as *;
 @use 'styles/_modal-formfield' as *;
 
-/* 2) Angular Material Core aktivieren */
+/* Angular Material Core aktivieren */
 @include mat.core();
 
-/* 3) Eigenes Theme definieren */
-$my-theme: mat.define-theme((
-  color: (theme-type: light),
-));
+/* Eigenes Theme */
+$my-theme: mat.define-theme(( color: (theme-type: light) ));
 
-/* 4) Theme-Mixins IMMER in einem Selector */
 html {
   @include mat.core-theme($my-theme);
   @include mat.all-component-themes($my-theme);
   @include mat.all-component-typographies($my-theme);
 }
 
-/* =======================
-   Farben als CSS Vars
-   ======================= */
+/* Farben als CSS Vars */
 :root {
-  --brand-primary: #996dda;   /* Primärfarbe */
-  --brand-border:  #e6e2f3;   /* dezente Linie */
-  --brand-soft: #efeaf3;   /* softer Hintergrund */
+  --brand-primary: #996dda;
+  --brand-border:  #e6e2f3;
+  --brand-soft:    #efeaf3;
 }
 
-/* =======================
-   Base Layout
-   ======================= */
-html, body {
-  height: 100%;
-}
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
+/* Base Layout */
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-/* =======================
-   Overlay / Backdrop
-   ======================= */
-.cdk-overlay-backdrop.mat-overlay-transparent-backdrop {
+/* Overlay / Backdrop */
+.cdk-overlay-backdrop.mat-overlay-transparent-backdrop,
+.pol-backdrop.cdk-overlay-backdrop {
   background-color: rgba(14, 9, 30, 0.28) !important;
   backdrop-filter: blur(2px);
 }
-.pol-backdrop.cdk-overlay-backdrop {
-  background: rgba(14, 9, 30, 0.28) !important;
-  backdrop-filter: blur(2px);
-}
 
-/* =======================
-   Dialog-Oberfläche
-   ======================= */
+/* Dialog */
 .pol-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
   border-radius: 18px !important;
   background: #fff !important;
   border: 1px solid var(--brand-border);
   box-shadow: 0 16px 40px rgba(22, 8, 56, 0.18) !important;
   overflow: hidden;
-
 }
-.pol-dialog .mat-mdc-dialog-title {
-  padding: 20px 24px 8px;
-  font-weight: 700;
-}
-.pol-dialog .mat-mdc-dialog-content {
-  padding: 8px 24px 0;
-}
-.pol-dialog .mat-mdc-dialog-actions {
-  padding: 16px 24px 24px;
-  gap: 12px;
-}
+.pol-dialog .mat-mdc-dialog-title { padding: 20px 24px 8px; font-weight: 700; }
+.pol-dialog .mat-mdc-dialog-content { padding: 8px 24px 0; }
+.pol-dialog .mat-mdc-dialog-actions { padding: 16px 24px 24px; gap: 12px; }
 
 /* Einheitliche Breite */
 ::ng-deep .cdk-overlay-pane.pol-dialog {
@@ -83,33 +53,14 @@ body {
   max-width: min(92vw, 550px) !important;
 }
 
-/* =======================
-   Buttons
-   ======================= */
-.modal-actions button {
-  border-radius: 6px;
-  padding: 6px 16px;
-  font-weight: 500;
-}
-.modal-actions button[mat-button] {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-.modal-actions button[mat-button]:hover {
-  background: #eee;
-}
-.modal-actions button[mat-raised-button] {
-  background-color: var(--brand-primary);
-  color: #fff;
-}
-.modal-actions button[mat-raised-button]:hover {
-  background-color: #6f3fd6;
-}
+/* Buttons */
+.modal-actions button { border-radius: 6px; padding: 6px 16px; font-weight: 500; }
+.modal-actions button[mat-button] { background: #f5f5f5; border: 1px solid #ddd; }
+.modal-actions button[mat-button]:hover { background: #eee; }
+.modal-actions button[mat-raised-button] { background-color: var(--brand-primary); color: #fff; }
+.modal-actions button[mat-raised-button]:hover { background-color: #6f3fd6; }
 
-/* =======================
-   Tooltip
-   ======================= */
+/* Tooltip */
 .mat-mdc-tooltip {
   background-color: rgba(0, 0, 0, 0.82) !important;
   color: #fff !important;
@@ -117,45 +68,31 @@ body {
   padding: 6px 10px;
   border-radius: 6px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-  letter-spacing: 0.2px;
   max-width: 240px;
   line-height: 1.4;
   text-align: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 .mat-mdc-tooltip-show { transform: translateY(-4px); }
-.cdk-tooltip-position-below .mat-mdc-tooltip  { transform: translateY(4px); }
-.cdk-tooltip-position-above .mat-mdc-tooltip  { transform: translateY(-4px); }
-.cdk-tooltip-position-left  .mat-mdc-tooltip  { transform: translateX(-4px); }
-.cdk-tooltip-position-right .mat-mdc-tooltip { transform: translateX(4px); }
 
-/* =======================
-   Select Panel
-   ======================= */
+/* Select Panel */
 .mdc-menu-surface.mat-mdc-select-panel,
 .mat-mdc-select-panel {
   background: #fff !important;
-  --mdc-menu-container-color: #fff !important;
   border: 1px solid var(--brand-border);
   border-radius: 10px;
   box-shadow: 0 10px 28px rgba(0,0,0,.18);
 }
-.mat-mdc-option { background: #fff !important; }
 .mat-mdc-option:hover { background: #f3eaff !important; }
 .mat-mdc-option.mdc-list-item--selected { background: #ede7f6 !important; }
 
-/* =======================
-   Datepicker
-   ======================= */
+/* Datepicker */
 .mat-calendar-body-cell.mat-calendar-body-active {
   background-color: var(--brand-primary) !important;
   color: #fff !important;
   border-radius: 50%;
 }
 
-/* =======================
-   Vorschau Container
-   ======================= */
+/* Vorschau Container */
 .pol-dialog .preview-box,
 .pol-dialog .preview-container {
   background: var(--brand-soft);
@@ -166,44 +103,13 @@ body {
   font-size: 14px;
   line-height: 1.4;
 }
-.pol-dialog .preview-label-titel {
-  font-weight: 600;
-  font-size: 14px;
-  margin: 12px 0 8px;
-  color: #555;
-}
-.pol-dialog .preview-label {
-  font-size: 13px;
-  color: #777;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
+.pol-dialog .preview-label-titel { font-weight: 600; font-size: 14px; margin: 12px 0 8px; color: #555; }
+.pol-dialog .preview-label { font-size: 13px; color: #777; margin-bottom: 4px; font-weight: 500; }
 .pol-dialog .preview-value,
-.pol-dialog .frage-text {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 6px;
-}
+.pol-dialog .frage-text { font-size: 14px; color: #333; margin-bottom: 6px; }
 .pol-dialog .preview-multiple-options,
-.pol-dialog .preview-radio-options {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 4px;
-}
+.pol-dialog .preview-radio-options { display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
 .pol-dialog .preview-box mat-checkbox,
 .pol-dialog .preview-box mat-radio-button.preview-radio {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.pol-dialog mat-checkbox {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Einheitliche Breite für alle Dialoge */
-::ng-deep .cdk-overlay-pane.pol-dialog {
-  width: auto !important;
-  max-width: min(92vw, 450px) !important; /* Standard: mittlere Größe */
+  opacity: 0.7; pointer-events: none;
 }

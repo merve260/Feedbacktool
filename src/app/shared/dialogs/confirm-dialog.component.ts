@@ -1,3 +1,4 @@
+// src/app/shared/dialogs/confirm-dialog.component.ts
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +15,10 @@ export class ConfirmDialogComponent {
     private ref: MatDialogRef<ConfirmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { message: string; confirmText?: string; cancelText?: string }
   ) {}
-  stay()  { this.ref.close(false); }
-  leave() { this.ref.close(true);  }
+
+  // Benutzer bleibt im Dialog
+  stay() { this.ref.close(false); }
+
+  // Benutzer verlässt den Dialog
+  leave() { this.ref.close(true); }
 }

@@ -1,48 +1,76 @@
 <!-- src/app/features/shared/auth-dialog/auth-dialog.component.html -->
-<h2 mat-dialog-title>Willkommen! </h2>
+
+<!-- Dialog-Titel -->
+<h2 mat-dialog-title>Willkommen!</h2>
 
 <mat-dialog-content>
+  <!-- Tabs: Login und Registrierung -->
   <mat-tab-group [(selectedIndex)]="tabIndex">
+
+    <!-- Login-Tab -->
     <mat-tab label="Login">
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+
+        <!-- E-Mail Feld -->
         <mat-form-field appearance="outline" class="full">
           <mat-label>E-Mail</mat-label>
           <input matInput formControlName="email" type="email" />
         </mat-form-field>
 
+        <!-- Passwort Feld -->
         <mat-form-field appearance="outline" class="full">
           <mat-label>Passwort</mat-label>
           <input matInput formControlName="password" type="password" />
         </mat-form-field>
 
+        <!-- Fehleranzeige nur im Login-Tab -->
         <div class="error" *ngIf="error && tabIndex===0">{{ error }}</div>
-        <button mat-raised-button color="primary" class="full" [disabled]="loginForm.invalid || isLoading">
+
+        <!-- Login-Button -->
+        <button
+          mat-raised-button
+          color="primary"
+          class="full"
+          [disabled]="loginForm.invalid || isLoading">
           {{ isLoading ? 'Bitte warten…' : 'Login' }}
         </button>
       </form>
     </mat-tab>
 
+    <!-- Registrieren-Tab -->
     <mat-tab label="Registrieren">
       <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
+
+        <!-- E-Mail Feld -->
         <mat-form-field appearance="outline" class="full">
           <mat-label>E-Mail</mat-label>
           <input matInput formControlName="email" type="email" />
         </mat-form-field>
 
+        <!-- Passwort Feld -->
         <mat-form-field appearance="outline" class="full">
           <mat-label>Passwort (min. 6 Zeichen)</mat-label>
           <input matInput formControlName="password" type="password" />
         </mat-form-field>
 
+        <!-- Fehleranzeige nur im Registrieren-Tab -->
         <div class="error" *ngIf="error && tabIndex===1">{{ error }}</div>
-        <button mat-raised-button color="primary" class="full" [disabled]="registerForm.invalid || isLoading">
+
+        <!-- Registrieren-Button -->
+        <button
+          mat-raised-button
+          color="primary"
+          class="full"
+          [disabled]="registerForm.invalid || isLoading">
           {{ isLoading ? 'Bitte warten…' : 'Registrieren' }}
         </button>
       </form>
     </mat-tab>
+
   </mat-tab-group>
 </mat-dialog-content>
 
+<!-- Dialog-Aktion: Schließen -->
 <mat-dialog-actions align="end">
   <button mat-stroked-button (click)="ref.close()">Schließen</button>
 </mat-dialog-actions>

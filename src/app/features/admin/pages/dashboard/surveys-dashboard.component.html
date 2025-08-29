@@ -90,3 +90,19 @@
     </div>
   </div>
 </div>
+<div class="status-hinweis" *ngIf="showStatusHinweis">
+  <mat-icon class="info-icon">info</mat-icon>
+  <div class="content">
+    <strong>Status-Erklärung:</strong>
+    <ul>
+      <li><span class="chip chip--pub">published</span> – Die Umfrage ist aktiv und über den Teilnehmer-Link erreichbar.</li>
+      <li><span class="chip chip--closed">closed</span> – Die Umfrage ist beendet. Der Link ist nicht mehr verfügbar.</li>
+      <li><span class="chip chip--draft">draft</span> – Die Umfrage ist im Entwurf. Sie wurde noch nicht veröffentlicht.</li>
+    </ul>
+  </div>
+  <button mat-icon-button class="close-btn" (click)="showStatusHinweis = false">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+

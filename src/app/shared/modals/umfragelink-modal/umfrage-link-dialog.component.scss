@@ -1,4 +1,5 @@
 .dialog-card {
+  /* Grund-Layout des Dialogs */
   background: #fff;
   border-radius: 16px;
   border: 1px solid var(--brand-border);
@@ -9,13 +10,14 @@
 }
 
 .dialog-title {
+  /* Titelstil */
   margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: #222;
 }
 
-/* Einheitlicher Hinweis-Stil für alle Hinweis-Boxen */
+/* Einheitlicher Hinweis-Stil für Info-Boxen */
 .hint-box {
   background: #fff3cd;
   border: 1px solid #ffeeba;
@@ -24,24 +26,28 @@
   margin-bottom: 16px;
   font-size: 14px;
   color: #806104;
+
   h3 {
     margin: 0 0 8px;
     font-weight: 600;
   }
+
   p {
     margin: 0 0 8px;
     font-weight: 400;
   }
+
   ul {
     margin: 0;
     padding-left: 20px;
+
     li {
       margin: 4px 0;
     }
   }
 }
 
-
+/* Roter Hinweistext für Fehler */
 .error-text {
   font-size: 13px;
   color: #b1142c;
@@ -49,6 +55,7 @@
 }
 
 .link-box {
+  /* Container für Eingabefeld mit Umfragelink */
   border: 1px solid var(--brand-border);
   border-radius: 12px;
   padding: 12px;
@@ -65,20 +72,22 @@
   input {
     width: 100%;
   }
-
 }
 
+/* Bereich für Buttons */
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
+/* Snackbar Styles für Feedback-Meldungen */
 .snackbar-success {
   background: var(--brand-primary);
   color: #fff;
   font-weight: 500;
 }
+
 .snackbar-error {
   background: #d32f2f;
   color: #fff;

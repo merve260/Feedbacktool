@@ -6,18 +6,17 @@
   flex-direction: column;
 }
 
-/* === Body === */
+/* Hauptbereich für das Bearbeiten einer Umfrage */
 .edit-body {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  padding: -30px;
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-/* === Actions === */
+/* Container für die Aktions-Buttons (unten rechts) */
 .edit-actions {
   display: flex;
   justify-content: flex-end;
@@ -32,7 +31,7 @@
   }
 }
 
-/* === Error Message === */
+/* Gestaltung für Fehlermeldungen */
 .error {
   text-align: center;
   padding: 8px 12px;

@@ -47,11 +47,13 @@ import { Question } from '../../../core/models/survey.models';
 })
 export class SurveyPreviewModalComponent {
 
+  // Dialog zeigt eine Umfrage als Vorschau
   constructor(
     public dialogRef: MatDialogRef<SurveyPreviewModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; description?: string; questions: Question[] }
   ) {}
 
+  // Dialog schließen
   close(): void {
     this.dialogRef.close();
   }

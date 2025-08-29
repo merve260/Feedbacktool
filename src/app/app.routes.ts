@@ -18,32 +18,33 @@ import { SurveyAnalyticsDetailComponent } from './features/admin/pages/analytics
 
 export const routes: Routes = [
 
-  // --- Öffentliche Routen ---
+  // --- Öffentliche Route: Login ---
   { path: 'login', component: LoginComponent },
 
-  // --- Survey Builder & Publish ---
+  // --- Builder & Publish (nur für Admins) ---
   { path: 'admin/builder/:id', canActivate: [AuthGuard], component: SurveyBuilderComponent },
   { path: 'admin/builder',     canActivate: [AuthGuard], component: SurveyBuilderComponent },
-
   { path: 'admin/publish/:id', canActivate: [AuthGuard], component: SurveyPublishComponent },
 
-  // --- Admin-Routen mit Layout ---
+  // --- Admin-Bereich mit Layout und Unterseiten ---
   {
     path: 'admin',
     canActivate: [AuthGuard],
     component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'umfragen', pathMatch: 'full' },
+
+      // Dashboard: Übersicht aller Umfragen
       { path: 'umfragen', component: SurveysDashboardComponent, data: { title: 'Meine Umfragen' } },
 
-      // ✨ Edit
+      // Umfrage bearbeiten
       { path: 'umfragen/:id/edit', component: SurveyEditComponent, data: { title: 'Umfrage bearbeiten' } },
 
-      // ✨ Ergebnisse
+      // Ergebnisse & Analytics
       { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'Umfrage Ergebnisse & Analytics' } },
       { path: 'ergebnisse/:id', component: SurveyAnalyticsDetailComponent, data: { title: 'Analyse Detail' } },
 
-      // ✨ Profil
+      // Profil-Einstellungen (mit Guard vor ungespeicherten Änderungen)
       {
         path: 'profil',
         component: ProfileSettingsComponent,
@@ -53,12 +54,12 @@ export const routes: Routes = [
     ],
   },
 
-  // --- Survey Viewer (öffentlicher Link für Teilnehmer) ---
+  // --- Öffentlicher Umfrage-Link für Teilnehmer ---
   { path: 'survey/:id', component: SurveyViewerComponent },
 
   // --- Startseite → Dashboard ---
   { path: '', pathMatch: 'full', redirectTo: 'admin/umfragen' },
 
-  // --- Fallback ---
+  // --- Fallback: unbekannte Routen → Dashboard ---
   { path: '**', redirectTo: 'admin/umfragen' },
 ];

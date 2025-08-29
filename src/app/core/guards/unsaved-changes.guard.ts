@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/dialogs/confirm-dialog.component';
 
+// Schnittstelle für Komponenten, die eigene Deaktivierungslogik haben
 export interface CanComponentDeactivate {
   canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
 }
@@ -12,11 +13,12 @@ export interface CanComponentDeactivate {
 export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
   private dialog = inject(MatDialog);
 
+  // Wird aufgerufen, bevor eine Route verlassen wird
   canDeactivate(component: CanComponentDeactivate): Observable<boolean> | Promise<boolean> | boolean {
-    // Eğer component "dirty" ise → kendi metodunu sor
+    // Wenn die Komponente eine eigene canDeactivate-Methode hat, diese aufrufen
     const result = component.canDeactivate ? component.canDeactivate() : true;
 
-    // Eğer boolean dönerse ve false ise → bizim dialog açalım
+    // Wenn ein synchrones false zurückkommt → Dialog anzeigen
     if (result === false) {
       const ref = this.dialog.open(ConfirmDialogComponent, {
         disableClose: true,
@@ -29,9 +31,11 @@ export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate
         }
       });
 
-      return ref.afterClosed(); // Observable<boolean>
+      // Gibt ein Observable zurück, das true oder false liefert
+      return ref.afterClosed();
     }
 
+    // Wenn kein Problem besteht → Navigation erlauben
     return result;
   }
 }

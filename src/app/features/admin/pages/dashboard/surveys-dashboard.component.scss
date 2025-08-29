@@ -151,6 +151,52 @@
     .actions { grid-area: actions; justify-content: flex-start; }
   }
 }
+
+.status-hinweis {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  width: 78%;
+  border: 1px solid #ffe58f;
+  border-radius: 10px;
+  background: #fffbea;
+  font-size: 0.95rem;
+  color: #3b2a45;
+  position: relative;
+
+  .info-icon {
+    color: #faad14;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .content {
+    flex: 1;
+  }
+
+  ul {
+    margin: 8px 0 0 0;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  .close-btn {
+    margin-left: auto;
+    color: #666;
+    &:hover {
+      color: #000;
+    }
+  }
+}
+
+
+
+
 ::ng-deep .mat-mdc-menu-panel {
   background: #fff !important;
   border-radius: 12px;

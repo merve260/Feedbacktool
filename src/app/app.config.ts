@@ -15,11 +15,11 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 import { environment } from '../environments/environment';
 
-// --- Global locale kayıtları (hem 'de' hem 'de-DE') ---
+// --- Locale-Registrierung (Deutsch) ---
 registerLocaleData(localeDe);
 registerLocaleData(localeDe, 'de-DE');
 
-// --- MatDatepicker görünümü: dd.MM.yyyy ---
+// --- Datepicker-Format: dd.MM.yyyy ---
 export const DE_DATE_FORMATS: MatDateFormats = {
   parse:   { dateInput: 'dd.MM.yyyy' },
   display: {
@@ -33,20 +33,22 @@ export const DE_DATE_FORMATS: MatDateFormats = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+
+    // Router + HTTP
     provideRouter(routes),
     provideHttpClient(),
 
-    // Firebase
+    // Firebase Initialisierung
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
 
-
+    // Locale & Datumskonfiguration
     { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: MAT_DATE_LOCALE, useValue: 'de-DE' },
     { provide: MAT_DATE_FORMATS, useValue: DE_DATE_FORMATS },
 
-    // Date adapter
+    // Native Date-Unterstützung
     importProvidersFrom(MatNativeDateModule),
   ],
 };

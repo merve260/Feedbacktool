@@ -1,3 +1,4 @@
+// src/app/shared/modals/multiple-choice-modal/multiple-choice-modal.component.ts
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,6 +35,7 @@ export class MultipleChoiceModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Anfangszustand merken
     this.initialState = JSON.stringify(this.data);
   }
 
@@ -50,6 +52,7 @@ export class MultipleChoiceModalComponent implements OnInit {
     this.data.options.splice(index, 1);
   }
 
+  // A, B, C ... für Optionen
   getOptionLetter(index: number): string {
     return String.fromCharCode(65 + index);
   }
@@ -66,17 +69,19 @@ export class MultipleChoiceModalComponent implements OnInit {
     }
   }
 
+  // Prüfen, ob Änderungen vorliegen
   isDirty(): boolean {
     const currentState = JSON.stringify(this.data);
     return currentState !== this.initialState;
   }
 
+  // Dialog bei ungespeicherten Änderungen
   confirmLeave(): void {
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       disableClose: true,
       data: {
-        message: 'Sie haben ungespeicherte Änderungen.Möchten Sie wirklich verlassen?',
+        message: 'Sie haben ungespeicherte Änderungen. Möchten Sie wirklich verlassen?',
         confirmText: 'Verlassen',
         cancelText: 'Im Dialog bleiben'
       }

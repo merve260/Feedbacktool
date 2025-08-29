@@ -1,11 +1,7 @@
-/* ===============================
-   Gemeinsame Formfield Styles für Modals
-   =============================== */
+/* Formfield Styles für Modals */
 .pol-dialog {
 
-  /* ===============================
-     Input / Select / Textarea
-     =============================== */
+  /* Input / Select / Textarea */
   mat-form-field {
     width: 100%;
   }
@@ -17,18 +13,20 @@
     transition: box-shadow .2s, border-color .2s, background .2s;
   }
 
+  /* Fokus-Effekt für Eingabefelder */
   .mat-mdc-form-field:focus-within .mat-mdc-text-field-wrapper {
     background: #fff;
     border-color: var(--brand-primary);
     box-shadow: 0 0 0 3px rgba(130,76,255,.14);
   }
 
+  /* Untere Linie unsichtbar machen */
   .mdc-line-ripple::before,
   .mdc-line-ripple::after {
     border-bottom-color: transparent !important;
   }
 
-  /* Floating Label */
+  /* Floating Label Position */
   .mat-mdc-form-field.mat-mdc-form-field-should-float .mdc-floating-label,
   .mat-mdc-form-field.mat-focused .mdc-floating-label,
   .mdc-floating-label--float-above {
@@ -39,9 +37,7 @@
     left: 16px !important;
   }
 
-  /* ===============================
-     Checkbox (MAT-MDC!)
-     =============================== */
+  /* Checkbox */
   .mat-mdc-checkbox .mdc-form-field,
   .mat-mdc-checkbox .mat-internal-form-field {
     width: auto !important;

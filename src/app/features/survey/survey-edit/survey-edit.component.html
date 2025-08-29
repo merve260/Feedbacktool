@@ -1,6 +1,9 @@
 <div class="edit-page">
 
   <div class="edit-body">
+    <!-- Builder-Komponente wird eingebunden.
+         showActions = false, weil wir hier nur im Edit-Modus sind.
+         Daten werden über Two-Way-Bindings ([(...)]) übergeben. -->
     <app-survey-builder
       [showActions]="false"
       [surveyId]="surveyId"
@@ -12,21 +15,23 @@
     </app-survey-builder>
   </div>
 
-
   <div class="edit-actions">
-
-    <!-- Vorschau Button -->
+    <!-- Button öffnet eine Vorschau-Ansicht der Umfrage -->
     <button mat-raised-button color="basic" (click)="openPreview()">
       Vorschau
     </button>
 
+    <!-- Änderungen werden nur als Entwurf gespeichert -->
     <button mat-raised-button color="primary" (click)="updateSurvey('draft')">
       Änderungen als Entwurf speichern
     </button>
+
+    <!-- Änderungen werden sofort veröffentlicht -->
     <button mat-raised-button color="accent" (click)="updateSurvey('published')">
       Änderungen veröffentlichen
     </button>
   </div>
 
+  <!-- Fehlermeldungen werden unterhalb angezeigt -->
   <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
 </div>

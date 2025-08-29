@@ -1,7 +1,14 @@
-<div class="confirm-root">
-  <p class="confirm-msg">{{ data.message }}</p>
-  <mat-dialog-actions class="confirm-actions" align="center">
-    <button mat-stroked-button (click)="stay()">{{ data.cancelText || 'Im Dialog bleiben' }}</button>
-    <button mat-flat-button color="warn" (click)="leave()">{{ data.confirmText || 'Verlassen' }}</button>
-  </mat-dialog-actions>
-</div>
+<!-- src/app/shared/dialogs/confirm-dialog.component.html -->
+
+<!-- Nachricht -->
+<p class="confirm-msg">{{ data.message }}</p>
+
+<!-- Aktionen -->
+<mat-dialog-actions class="confirm-actions" align="center">
+  <button mat-stroked-button (click)="stay()">
+    {{ data.cancelText || 'Im Dialog bleiben' }}
+  </button>
+  <button mat-flat-button color="warn" (click)="leave()">
+    {{ data.confirmText || 'Verlassen' }}
+  </button>
+</mat-dialog-actions>

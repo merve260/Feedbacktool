@@ -1,22 +1,22 @@
-<!-- OBERER RAHMEN: Statischer Hinweis + Formular (Titel & Zeitraum) -->
+<!-- Oberer Bereich: Informationen und Formular (Titel & Zeitraum) -->
 <section class="info-panel">
   <h2 class="panel-title">Umfrage-Info</h2>
 
-  <!-- Hinweis -->
+  <!-- Statischer Hinweis zur Veröffentlichung -->
   <div class="builder-actions" *ngIf="showActions">
     <div class="hint-box">
       <p><strong>Hinweise zur Veröffentlichung:</strong></p>
       <ul>
-        <li>Zum Veröffentlichen benötigen Sie mindestens eine Frage, einen Titel und einen Zeitraum (Start–Ende).</li>
-        <li>Nach dem Veröffentlichen erhalten Sie im Admin-Bereich einen Teilnehmer-Link.</li>
-        <li>Sie können Ihre Umfrage später erneut öffnen und bearbeiten.</li>
+        <li>Zum Veröffentlichen braucht man mindestens eine Frage, einen Titel und einen Zeitraum.</li>
+        <li>Nach dem Veröffentlichen gibt es im Admin-Bereich einen Teilnehmer-Link.</li>
+        <li>Die Umfrage kann später erneut geöffnet und bearbeitet werden.</li>
       </ul>
     </div>
   </div>
 
-  <!-- Formular -->
+  <!-- Formular für Titel und Zeitraum -->
   <form [formGroup]="infoForm" class="info-form">
-    <!-- Titel -->
+    <!-- Titel der Umfrage -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Umfragetitel</mat-label>
       <input
@@ -29,7 +29,7 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Zeitraum -->
+    <!-- Zeitraum der Umfrage -->
     <div class="range-row">
       <mat-form-field appearance="outline" class="range-field full">
         <mat-label>Zeitraum</mat-label>
@@ -56,9 +56,9 @@
   </form>
 </section>
 
-<!-- ZWEI SPALTEN -->
+<!-- Zwei Spalten: linke Palette + rechte Canvas -->
 <div class="builder-container">
-  <!-- Linke Palette -->
+  <!-- Linke Spalte: Fragetypen zum Ziehen -->
   <div class="question-palette">
     <h3>Fragetypen</h3>
     <div
@@ -78,7 +78,7 @@
     </div>
   </div>
 
-  <!-- Rechte Canvas -->
+  <!-- Rechte Spalte: Canvas mit den Fragen -->
   <div class="survey-canvas">
     <h3>Umfrage Canvas</h3>
     <div
@@ -89,10 +89,12 @@
       class="canvas"
       (cdkDropListDropped)="onDrop($event)">
 
+      <!-- Hinweis wenn noch keine Frage vorhanden -->
       <div class="empty-state" *ngIf="!canvasQuestions?.length">
         <span>Mindestens eine Frage hinzufügen, um zu veröffentlichen.</span>
       </div>
 
+      <!-- Liste der Fragen auf der Canvas -->
       <div *ngFor="let question of canvasQuestions; let i = index" cdkDrag class="canvas-item">
         <span>{{ question.title }}</span>
         <div class="icon-group">
@@ -108,7 +110,7 @@
   </div>
 </div>
 
-<!-- Publish -->
+<!-- Bereich für Veröffentlichung -->
 <app-survey-publish
   [surveyTitle]="titleCtrl.value"
   [startDate]="startDateValue"

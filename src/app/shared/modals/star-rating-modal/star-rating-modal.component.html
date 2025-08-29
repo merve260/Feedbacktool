@@ -1,4 +1,4 @@
-<!-- X button -->
+<!-- Kopfbereich mit Schließen-Button -->
 <div class="modal-header">
   <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
     <mat-icon>close</mat-icon>
@@ -7,40 +7,43 @@
 
 <div class="modal-container">
   <div class="modal-content">
-  <h2>Sternebewertung bearbeiten</h2>
+    <h2>Sternebewertung bearbeiten</h2>
 
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetitel</mat-label>
-    <input matInput [(ngModel)]="data.title" placeholder="z.B. Wie zufrieden sind Sie?" />
-  </mat-form-field>
+    <!-- Eingabe: Fragetitel -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Fragetitel</mat-label>
+      <input matInput [(ngModel)]="data.title" placeholder="z.B. Wie zufrieden sind Sie?" />
+    </mat-form-field>
 
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetext</mat-label>
-    <input matInput [(ngModel)]="data.text" placeholder="z.B. Bewerten Sie unsere Dienstleistung." />
-  </mat-form-field>
+    <!-- Eingabe: Fragetext -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Fragetext</mat-label>
+      <input matInput [(ngModel)]="data.text" placeholder="z.B. Bewerten Sie unsere Dienstleistung." />
+    </mat-form-field>
 
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Maximale Sterne</mat-label>
-    <mat-select [(ngModel)]="data.maxStars">
-      <mat-option *ngFor="let star of [3, 5, 7, 10]" [value]="star">{{ star }} Sterne</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Auswahl: Anzahl Sterne -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Maximale Sterne</mat-label>
+      <mat-select [(ngModel)]="data.maxStars">
+        <mat-option *ngFor="let star of [3, 5, 7, 10]" [value]="star">{{ star }} Sterne</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <!-- Vorschau -->
-  <p class="preview-label-titel">Vorschau:</p>
-  <div class="preview-box">
-    <p class="preview-label">Fragetitel:</p>
-    <p class="frage-text">{{ data.title }}</p>
+    <!-- Vorschau -->
+    <p class="preview-label-titel">Vorschau:</p>
+    <div class="preview-box">
+      <p class="preview-label">Fragetitel:</p>
+      <p class="frage-text">{{ data.title }}</p>
 
-    <p class="preview-label">Fragetext:</p>
-    <p class="frage-text">{{ data.text }}</p>
+      <p class="preview-label">Fragetext:</p>
+      <p class="frage-text">{{ data.text }}</p>
 
-    <div class="stars">
-      <ng-container *ngFor="let star of [].constructor(data.maxStars)">
-        <mat-icon>star</mat-icon>
-      </ng-container>
+      <div class="stars">
+        <ng-container *ngFor="let star of [].constructor(data.maxStars)">
+          <mat-icon>star</mat-icon>
+        </ng-container>
+      </div>
     </div>
-  </div>
   </div>
 
   <!-- Aktionen -->

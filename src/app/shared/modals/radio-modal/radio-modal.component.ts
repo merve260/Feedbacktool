@@ -35,10 +35,12 @@ export class RadioModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog
   ) {
+    // Startwerte aus den übergebenen Daten übernehmen
     this.title = data?.title || '';
     this.text = data?.text || '';
     this.options = data?.options?.length ? [...data.options] : ['Option 1'];
 
+    // Ursprungszustand merken (für Änderungsprüfung)
     this.initialState = JSON.stringify({
       title: this.title,
       text: this.text,
@@ -46,14 +48,17 @@ export class RadioModalComponent {
     });
   }
 
+  // Neue Option hinzufügen
   addOption(): void {
     this.options.push('');
   }
 
+  // Option entfernen
   removeOption(index: number): void {
     this.options.splice(index, 1);
   }
 
+  // Abbrechen mit Prüfung auf ungespeicherte Änderungen
   onCancel(): void {
     if (this.isDirty()) {
       this.confirmLeave();
@@ -62,6 +67,7 @@ export class RadioModalComponent {
     }
   }
 
+  // Speichern und Dialog schließen
   onSave(): void {
     this.dialogRef.close({
       type: 'radio',
@@ -71,6 +77,7 @@ export class RadioModalComponent {
     });
   }
 
+  // Prüfen, ob sich etwas geändert hat
   isDirty(): boolean {
     const currentState = JSON.stringify({
       title: this.title,
@@ -80,12 +87,13 @@ export class RadioModalComponent {
     return currentState !== this.initialState;
   }
 
+  // Bestätigungsdialog beim Verlassen mit Änderungen
   confirmLeave(): void {
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       disableClose: true,
       data: {
-        message: 'Sie haben ungespeicherte Änderungen.Möchten Sie wirklich verlassen?',
+        message: 'Sie haben ungespeicherte Änderungen. Möchten Sie wirklich verlassen?',
         confirmText: 'Verlassen',
         cancelText: 'Im Dialog bleiben'
       }
@@ -98,6 +106,7 @@ export class RadioModalComponent {
     });
   }
 
+  // Für *ngFor → stabile Indizes
   trackByIndex(index: number, item: string): number {
     return index;
   }

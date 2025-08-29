@@ -70,6 +70,8 @@ export class SurveysDashboardComponent {
   // Suchtext für Filter
   search = '';
 
+  showStatusHinweis = true;
+
   // Sortierrichtung: desc = neueste oben, asc = älteste oben
   sortDir: 'desc' | 'asc' = 'desc';
 
@@ -232,8 +234,9 @@ export class SurveysDashboardComponent {
     });
   }
 
-
   edit(s: Survey) {
     this.router.navigate(['/admin/umfragen', s.id, 'edit']);
   }
+
+
 }

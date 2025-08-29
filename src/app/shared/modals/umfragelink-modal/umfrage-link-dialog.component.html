@@ -1,7 +1,8 @@
 <div class="dialog-card">
+  <!-- Titel des Dialogs -->
   <h2 class="dialog-title">Umfragelink</h2>
 
-  <!-- Hinweis -->
+  <!-- Hinweis-Box mit Informationen zur Gültigkeit des Links -->
   <div class="hint-box">
     <h3>Hinweis:</h3>
     <p>
@@ -9,17 +10,19 @@
       veröffentlichen. Die Ergebnisse und Analysen sind im Admin-Dashboard unter
       Umfrage Ergebnisse sichtbar.
     </p>
+    <!-- Nur wenn ein Enddatum gesetzt ist -->
     <p *ngIf="endDate">
       Der Link ist nur bis zum Enddatum gültig
       ({{ endDate | date: 'dd.MM.yyyy' }} 23:59). Danach ist er nicht mehr
       erreichbar.
     </p>
+    <!-- Wenn KEIN Enddatum gesetzt ist -->
     <p *ngIf="!endDate" class="error-text">
-      ! Kein Enddatum gesetzt – der Link bleibt unbegrenzt erreichbar.
+      Kein Enddatum gesetzt – der Link bleibt unbegrenzt erreichbar.
     </p>
   </div>
 
-  <!-- Link Box -->
+  <!-- Eingabefeld mit dem Umfragelink + Copy-Button -->
   <div class="link-box">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Teilnahmelink</mat-label>
@@ -30,7 +33,7 @@
     </mat-form-field>
   </div>
 
-  <!-- Aktionen -->
+  <!-- Aktionen: Dialog schließen oder Link öffnen -->
   <div class="actions">
     <button mat-button (click)="onClose()">Schließen</button>
     <button mat-raised-button color="primary" (click)="openLink()">Öffnen</button>

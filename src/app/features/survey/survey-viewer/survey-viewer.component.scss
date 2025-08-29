@@ -1,8 +1,9 @@
-// 🎨 Farbvariablen für Lila-Theme
+// Farbvariablen für das Lila-Theme
 $primary-lila: #b47ac7;
 $primary-lila-dark: #9e5db6;
 $accent-lila: #7b4683;
 
+// Hauptcontainer für den Umfrage-Viewer
 .survey-viewer {
   max-width: 700px;
   margin: 2rem auto;
@@ -21,7 +22,7 @@ $accent-lila: #7b4683;
     font-weight: 600;
   }
 
-  // Fortschrittsanzeige
+  // Fortschrittsanzeige (Text + Progressbar)
   .progress-info {
     margin-bottom: 1.5rem;
     p {
@@ -58,13 +59,14 @@ $accent-lila: #7b4683;
     }
   }
 
-  // Buttons
+  // Button-Gruppe (Navigation)
   .button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 2rem;
   }
 
+  // Standardstil für Buttons
   button {
     min-width: 120px;
     border-radius: 24px;
@@ -79,12 +81,14 @@ $accent-lila: #7b4683;
     &:active { transform: scale(0.98); }
   }
 
+  // Variante: Basic-Button
   button[color="basic"] {
     background-color: transparent;
     color: $primary-lila;
     &:hover { background-color: rgba(180, 122, 199, 0.1); }
   }
 
+  // Varianten: Primary und Accent
   button[color="primary"],
   button[color="accent"] {
     background-color: $accent-lila;
@@ -92,6 +96,7 @@ $accent-lila: #7b4683;
     &:hover { background-color: $primary-lila-dark; }
   }
 
+  // Mobile Ansicht (kleinere Geräte)
   @media (max-width: 600px) {
     padding: 1rem;
     .question-box { padding: 1rem; }
@@ -107,7 +112,7 @@ $accent-lila: #7b4683;
   }
 }
 
-// Fertig-Ansicht
+// Abschlussansicht nach dem Absenden
 .survey-complete {
   text-align: center;
   padding: 3rem 2rem;
@@ -128,7 +133,7 @@ $accent-lila: #7b4683;
   }
 }
 
-// Sternebewertung
+// Sternebewertung (aktive Sterne gelb)
 .star-rating {
   display: flex;
   gap: 8px;
@@ -150,7 +155,7 @@ $accent-lila: #7b4683;
   }
 }
 
-// Overrides für Checkbox & Radiobuttons
+// Farben für Checkboxen & Radiobuttons überschreiben
 ::ng-deep .mat-checkbox .mat-checkbox-frame {
   border-color: $primary-lila !important;
 }
@@ -167,7 +172,7 @@ $accent-lila: #7b4683;
   background-color: rgba(180, 122, 199, 0.2) !important;
 }
 
-// Slider
+// Slider mit Farbverlauf und Wert-Bubble
 .slider-container {
   position: relative;
   width: 100%;
@@ -209,4 +214,46 @@ $accent-lila: #7b4683;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     transition: left 0.2s ease;
   }
+}
+
+// Box für Fehlermeldungen
+.error-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 20px;
+  margin: 30px auto;
+  max-width: 500px;
+  animation: fadeIn 0.4s ease-in-out;
+
+  background: #fff5f5;
+  border: 1px solid #f5c2c2;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+  .error-icon {
+    color: #d32f2f;
+    font-size: 36px;
+  }
+
+  .error-text {
+    h2 {
+      margin: 0 0 5px 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #d32f2f;
+    }
+    p {
+      margin: 0;
+      font-size: 16px;
+      color: #444;
+    }
+  }
+}
+
+// Animation beim Einblenden der Fehlerbox
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
