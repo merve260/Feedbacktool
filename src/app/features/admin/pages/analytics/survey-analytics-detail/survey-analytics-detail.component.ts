@@ -13,15 +13,12 @@ import { Survey, Question } from '../../../../../core/models/survey.models';
 
 // Import der Chart-Komponenten
 import { MultipleChartComponent } from '../charts/multiple-chart/multiple-chart.component';
-import { MultipleChartDialogComponent } from '../charts/chart-dialogs/multiple-chart-dialog.component';
 import { SkalaChartComponent } from '../charts/skala-chart/skala-chart.component';
 import { RadioButtonChartComponent } from '../charts/radio-button-chart/radio-button-chart.component';
 import { StarRatingChartComponent } from '../charts/star-rating-chart/star-rating-chart.component';
 import { FreiTextListComponent } from '../charts/freitext-list/freitext-list.component';
 import { FreiTextDialogComponent } from '../charts/chart-dialogs/frei-text-dialog.component';
-import { RadioButtonDialogComponent } from '../charts/chart-dialogs/radio-button-dialog.component';
-import { StarRatingDialogComponent } from '../charts/chart-dialogs/star-rating-dialog.component';
-import { SkalaDialogComponent } from '../charts/chart-dialogs/skala-dialog.component';
+
 
 
 @Component({
@@ -153,15 +150,6 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   // Öffnet verschiedene Diagramm-Dialoge je nach Fragetyp
   openChartDialog(question: Question) {
     //console.log('openChartDialog → answers:', this.answers);
-    if (question.type === 'multiple') {
-      this.dialog.open(MultipleChartDialogComponent, {
-        maxWidth: '600px',
-        width: '90%',
-        height: '600px',
-        panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question, answers: this.answers }
-      });
-    }
 
     if (question.type === 'freitext') {
       this.dialog.open(FreiTextDialogComponent, {
@@ -178,34 +166,6 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
                 }))
             )
         }
-      });
-    }
-
-    if (question.type === 'radio') {
-      this.dialog.open(RadioButtonDialogComponent, {
-        maxWidth: '600px',
-        width: '90%',
-        height: '90%',
-        panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question,answers: this.answers }
-      });
-    }
-
-    if (question.type === 'star') {
-      this.dialog.open(StarRatingDialogComponent, {
-        maxWidth: '600px',
-        width: '90%',
-        panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question,answers: this.answers }
-      });
-    }
-
-    if (question.type === 'slider') {
-      this.dialog.open(SkalaDialogComponent, {
-        maxWidth: '800px',
-        width: '90%',
-        panelClass: 'chart-dialog',
-        data: { surveyId: this.survey?.id!, question,answers: this.answers }
       });
     }
   }
