@@ -16,8 +16,7 @@
   <!-- Charts für jede Frage -->
   <div class="charts-grid">
     <ng-container *ngFor="let q of questions">
-      <div class="chart-card"
-           [ngClass]="{ 'wide': q.type === 'slider' || q.type === 'star' || q.type === 'radio'|| q.type === 'freitext' }">
+      <div class="chart-card">
 
         <!-- Multiple Choice Diagramm -->
         <app-multiple-chart

@@ -21,12 +21,12 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
   @Input() surveyId!: string;
   @Input() question?: Question;
   @Input() inDialog = false;
-  @Input() answers: any[] = []; // ✨ Antworten von außen
+  @Input() answers: any[] = [];
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   averageValue: number = 0;
   answerCount: number = 0;
-  private parsedAnswers: { name: string; value: number }[] = [];
+  private counts: Record<number, number> = {};
 
   ngOnInit() {
     this.calculateResults();
@@ -46,86 +46,83 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
   private calculateResults() {
     if (!this.question) return;
 
+    this.counts = {};
     let sum = 0;
     let count = 0;
-    const all: { name: string; value: number }[] = [];
 
     this.answers.forEach((doc: any) => {
-      const userName = doc.name || 'Anonym';
       (doc.answers || []).forEach((ans: any) => {
         if (ans.questionId === this.question?.id && ans.numberValue !== undefined) {
-          all.push({ name: userName, value: ans.numberValue });
-          sum += ans.numberValue;
+          const val = ans.numberValue;
+          this.counts[val] = (this.counts[val] || 0) + 1;
+          sum += val;
           count++;
         }
       });
     });
 
-    this.parsedAnswers = all;
     this.answerCount = count;
     this.averageValue = count > 0 ? sum / count : 0;
   }
 
   private updateChart() {
-    if (!this.chartCanvas || this.parsedAnswers.length === 0) return;
+    if (!this.chartCanvas) return;
     if (this.chart) this.chart.destroy();
 
     const ctx = this.chartCanvas.nativeElement;
-    const labels = this.parsedAnswers.map(a => a.name);
-    const values = this.parsedAnswers.map(a => a.value);
+    const maxVal = this.question?.max || 10;
 
-    const pastelColors = [
-      'rgba(54, 162, 235, 0.3)',
-      'rgba(153, 102, 255, 0.3)',
-      'rgba(75, 192, 192, 0.3)',
-      'rgba(255, 99, 132, 0.3)',
-      'rgba(255, 206, 86, 0.3)',
-      'rgba(255, 159, 64, 0.3)'
-    ];
+    const labels = Array.from({ length: maxVal }, (_, i) => i + 1);
+    const dataValues = labels.map(v => this.counts[v] || 0);
 
-    const backgroundColors = values.map((_, i) => pastelColors[i % pastelColors.length]);
-    const borderColors = backgroundColors.map(c => c.replace('0.3', '1'));
-    const hoverColors = backgroundColors.map(c => c.replace('0.3', '0.8'));
+    const maxCount = Math.max(...dataValues);
+    const yMax = maxCount > 0 ? Math.ceil(maxCount * 1.2) : 1;
 
-    const data: ChartConfiguration<'bar'>['data'] = {
+    const data: ChartConfiguration<'line'>['data'] = {
       labels,
-      datasets: [{
-        data: values,
-        backgroundColor: backgroundColors,
-        hoverBackgroundColor: hoverColors,
-        borderColor: borderColors,
-        borderWidth: 2,
-        barThickness: 45
-      }]
+      datasets: [
+        {
+          label: 'Antworten',
+          data: dataValues,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.4)',
+          pointStyle: 'circle',
+          pointRadius: dataValues.map(v => v > 0 ? 8 : 0),
+          pointHoverRadius: dataValues.map(v => v > 0 ? 12 : 0),
+          borderWidth: 3,   // ✨ Çizgiyi kalınlaştırdık
+          tension: 0        // ✨ Keskin köşeler
+        }
+      ]
     };
 
     this.chart = new Chart(ctx, {
-      type: 'bar',
+      type: 'line',
       data,
       options: {
-        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        interaction: { mode: 'y', intersect: false },
         scales: {
           x: {
-            min: 0,
-            max: this.question?.max || 10,
+            title: { display: true, text: 'Skala-Wert' },
             ticks: { stepSize: 1 }
           },
-          y: { ticks: { font: { size: 12 } } }
+          y: {
+            beginAtZero: true,
+            max: yMax,
+            title: { display: true, text: 'Anzahl Personen' }
+          }
         },
         plugins: {
           legend: { display: false },
           tooltip: {
-            bodyFont: { size: 18, family: 'Arial' },
-            titleFont: { size: 16, family: 'Arial' },
-            padding: 12,
+            enabled: true,
+            bodyFont: { size: 14 },
+            titleFont: { size: 14 },
             callbacks: {
               label: (ctx) => {
-                const name = ctx.label || 'Anonym';
-                const value = ctx.dataset.data[ctx.dataIndex] as number;
-                return `${name}: ${value} / ${this.question?.max || 10}`;
+                const wert = ctx.parsed.x;  // Skala değeri
+                const count = ctx.parsed.y; // Katılımcı sayısı
+                return `${count} Person(en) haben ${wert} gewählt`;
               }
             }
           }

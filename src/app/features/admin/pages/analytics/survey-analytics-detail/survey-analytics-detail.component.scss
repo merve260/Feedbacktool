@@ -60,10 +60,11 @@ h2 {
 /* Grid für Diagramme */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* immer 2 Spalten */
   gap: 24px;
   justify-items: stretch;
-  align-items: stretch; /* gleiche Höhe */
+  align-items: stretch;
+  width: 100%;
 }
 
 /* Karte für ein einzelnes Diagramm */
@@ -85,15 +86,21 @@ h2 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
+  /* breite Karten (Slider, Sterne etc.) */
   &.wide {
-    grid-column: span 2; /* breite Karten (Slider, Sterne) */
+    grid-column: span 2;
   }
 }
 
 /* Responsive Anpassung: Tablet */
 @media (max-width: 1024px) {
   .charts-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr; /* eine Spalte */
+  }
+
+  .chart-card,
+  .chart-card.wide {
+    grid-column: span 1; /* alles normal */
   }
 }
 
@@ -115,12 +122,12 @@ h2 {
   }
 
   .charts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* auch eine Spalte */
     gap: 16px;
   }
 
   .chart-card {
-    min-height: auto; /* kleine Kartenhöhe */
+    min-height: auto;
     padding: 0.8rem;
   }
 }
