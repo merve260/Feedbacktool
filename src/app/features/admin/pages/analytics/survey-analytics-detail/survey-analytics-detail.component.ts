@@ -9,6 +9,8 @@ import { Timestamp } from 'firebase/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { combineLatest } from 'rxjs';
+
 import { Survey, Question } from '../../../../../core/models/survey.models';
 
 // Import der Chart-Komponenten
@@ -18,8 +20,6 @@ import { RadioButtonChartComponent } from '../charts/radio-button-chart/radio-bu
 import { StarRatingChartComponent } from '../charts/star-rating-chart/star-rating-chart.component';
 import { FreiTextListComponent } from '../charts/freitext-list/freitext-list.component';
 import { FreiTextDialogComponent } from '../charts/chart-dialogs/frei-text-dialog.component';
-
-
 
 @Component({
   selector: 'app-survey-analytics-detail',
@@ -44,6 +44,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   questions: Question[] = [];
   answers: any[] = [];
   questionsMap: Record<string, string> = {};
+  freitextAnswersMap: Record<string, { name: string; text: string }[]> = {};
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -62,19 +63,37 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
       } as Survey;
     }
 
-    // Fragen laden
+    // Fragen + Antworten gleichzeitig laden
     const fragenCol = collection(this.firestore, `umfragen/${id}/fragen`);
-    collectionData(fragenCol, { idField: 'id' }).subscribe((fragen: any[]) => {
+    const answersCol = collection(this.firestore, `umfragen/${id}/antworten`);
+
+    combineLatest([
+      collectionData(fragenCol, { idField: 'id' }),
+      collectionData(answersCol, { idField: 'id' })
+    ]).subscribe(([fragen, ans]: [any[], any[]]) => {
       this.questions = fragen;
-      fragen.forEach((q) => {
+      this.answers = ans;
+
+      // Fragen-Mapping
+      this.questions.forEach(q => {
         this.questionsMap[q.id] = q.title || q.text || q.id;
       });
-    });
 
-    // Antworten laden
-    const answersCol = collection(this.firestore, `umfragen/${id}/antworten`);
-    collectionData(answersCol, { idField: 'id' }).subscribe((ans: any[]) => {
-      this.answers = ans;
+      // Freitext-Antworten vorbereiten
+      this.freitextAnswersMap = {};
+      this.questions.forEach(q => {
+        if (q.type === 'freitext') {
+          this.freitextAnswersMap[q.id] = this.answers
+            .flatMap(entry =>
+              (entry.answers || [])
+                .filter((a: any) => a.questionId === q.id && a.textValue)
+                .map((a: any) => ({
+                  name: entry.name || 'Anonym',
+                  text: a.textValue.length > 50 ? a.textValue.slice(0, 50) + '…' : a.textValue
+                }))
+            );
+        }
+      });
     });
   }
 
@@ -93,7 +112,6 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
       (entry.answers || []).forEach((ans: any) => {
         let value = '';
 
-        // verschiedene Antworttypen prüfen
         if (ans.textValue) {
           value = ans.textValue;
         } else if (ans.numberValue !== undefined) {
@@ -147,10 +165,8 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     saveAs(data, `umfrage-${this.survey?.title || 'antworten'}.xlsx`);
   }
 
-  // Öffnet verschiedene Diagramm-Dialoge je nach Fragetyp
+  // Dialog für Freitext
   openChartDialog(question: Question) {
-    //console.log('openChartDialog → answers:', this.answers);
-
     if (question.type === 'freitext') {
       this.dialog.open(FreiTextDialogComponent, {
         width: '90%',

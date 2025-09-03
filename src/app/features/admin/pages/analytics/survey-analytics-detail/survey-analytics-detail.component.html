@@ -60,7 +60,7 @@
           *ngIf="q.type === 'freitext'"
           [surveyId]="survey.id!"
           [question]="q"
-          [answers]="answers"
+          [answers]="freitextAnswersMap[q.id] || []"
           (click)="openChartDialog(q)">
         </app-freitext-list>
       </div>
