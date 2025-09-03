@@ -56,7 +56,7 @@
       –
       <span *ngIf="s.endAt as b">{{ b | date:'dd.MM.yyyy' }}</span>
     </div>
-    <div><span class="{{ statusClass(s.status) }}">{{ s.status }}</span></div>
+    <div><span class="{{ statusClass(getDisplayStatus(s)) }}">{{ getDisplayStatus(s) }}</span></div>
     <div class="created">
       <span *ngIf="s.createdAt as c">{{ c | date:'dd.MM.yyyy HH:mm' }}</span>
       <span *ngIf="!s.createdAt">–</span>

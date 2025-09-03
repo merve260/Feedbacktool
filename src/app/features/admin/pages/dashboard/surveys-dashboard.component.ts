@@ -1,6 +1,6 @@
 // src/app/features/survey/surveys-dashboard/surveys-dashboard.component.ts
 
-import { Component, inject } from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +28,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
-import { MatTooltip } from '@angular/material/tooltip';
 import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-modal/umfrage-link-dialog.component';
 
 @Component({
@@ -44,7 +43,7 @@ import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-
   templateUrl: './surveys-dashboard.component.html',
   styleUrls: ['./surveys-dashboard.component.scss'],
 })
-export class SurveysDashboardComponent {
+export class SurveysDashboardComponent implements OnInit{
 
   // Dienste: Firestore, Adapter, Auth, Router, Dialog
   private afs    = inject(Firestore);
@@ -82,21 +81,33 @@ export class SurveysDashboardComponent {
         return new Date(x);
       };
 
-      // Firestore-Daten mappen
-      this.allItems = snap.docs.map(d => {
-        const data: any = d.data();
-        return {
-          id: d.id,
-          ownerId: data.ownerId,
-          title: data.title ?? '',
-          description: data.description ?? undefined,
-          startAt: toDate(data.startAt),
-          endAt:   toDate(data.endAt),
-          status:  data.status,
-          createdAt: toDate(data.createdAt ?? null),
-          updatedAt: toDate(data.updatedAt ?? null),
-        } as Survey & { createdAt?: Date; updatedAt?: Date };
-      });
+      const now = new Date();
+
+      // Firestore-Daten mappen + abgelaufene Umfragen schließen
+      this.allItems = await Promise.all(
+        snap.docs.map(async d => {
+          const data: any = d.data();
+          const survey: Survey & { createdAt?: Date; updatedAt?: Date } = {
+            id: d.id,
+            ownerId: data.ownerId,
+            title: data.title ?? '',
+            description: data.description ?? undefined,
+            startAt: toDate(data.startAt),
+            endAt:   toDate(data.endAt),
+            status:  data.status,
+            createdAt: toDate(data.createdAt ?? null),
+            updatedAt: toDate(data.updatedAt ?? null),
+          };
+
+          // ⏰ Prüfen ob Umfrage abgelaufen ist
+          if (survey.status === 'published' && survey.endAt && survey.endAt < now) {
+            await this.fbSvc.setSurveyWithId(survey.id, { ...this.stripId(survey), status: 'closed' });
+            survey.status = 'closed';
+          }
+
+          return survey;
+        })
+      );
 
       this.applyView();
     } finally {
@@ -192,4 +203,13 @@ export class SurveysDashboardComponent {
   edit(s: Survey) {
     this.router.navigate(['/admin/umfragen', s.id, 'edit']);
   }
+
+  getDisplayStatus(s: Survey): 'draft' | 'published' | 'closed' {
+    const now = new Date();
+    if (s.status === 'published' && s.endAt && s.endAt < now) {
+      return 'closed';
+    }
+    return s.status;
+  }
+
 }
