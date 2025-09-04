@@ -109,8 +109,9 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
         maintainAspectRatio: false,
         scales: {
           x: { beginAtZero: true, ticks: { stepSize: 1 } },
-          y: { ticks: { font: { size: 14 } } }
+          y: { ticks: { font: { size: 14 }, stepSize: 1} }
         },
+
         interaction: {
           mode: 'nearest',
           intersect: true
