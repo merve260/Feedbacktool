@@ -11,3 +11,15 @@
     <p><strong>Antworten:</strong> {{ answerCount }}</p>
   </div>
 </div>
+
+<!-- Teilnehmer-Liste -->
+<div class="answer-list" *ngIf="answers && answers.length > 0">
+  <ul>
+    <li *ngFor="let entry of answers">
+      <strong>{{ entry.name || 'Anonym' }}:</strong>
+      {{ getAnswerValue(entry, question?.id!) }}
+    </li>
+
+  </ul>
+</div>
+

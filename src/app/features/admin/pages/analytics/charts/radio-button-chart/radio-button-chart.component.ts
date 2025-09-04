@@ -18,10 +18,10 @@ Chart.register(...registerables);
 export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private chart!: Chart;
 
-  @Input() surveyId!: string;   // 🔹 ID der Umfrage
-  @Input() question?: Question; // 🔹 Aktuelle Frage
-  @Input() inDialog = false;    // 🔹 Flag: wird im Dialog angezeigt?
-  @Input() answers: any[] = []; // 🔹 Antworten (vom Parent übergeben)
+  @Input() surveyId!: string;   // ID der Umfrage
+  @Input() question?: Question; // Aktuelle Frage
+  @Input() inDialog = false;    // Flag: wird im Dialog angezeigt?
+  @Input() answers: any[] = []; // Antworten (vom Parent übergeben)
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   answerCount: number = 0; // Gesamtanzahl Antworten
@@ -104,12 +104,16 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
       type: 'bar',
       data,
       options: {
-        indexAxis: 'y',
+        indexAxis: 'x',
         responsive: true,
         maintainAspectRatio: false,
         scales: {
           x: { beginAtZero: true, ticks: { stepSize: 1 } },
           y: { ticks: { font: { size: 14 } } }
+        },
+        interaction: {
+          mode: 'nearest',
+          intersect: true
         },
         plugins: {
           legend: { display: false }, // keine Legende

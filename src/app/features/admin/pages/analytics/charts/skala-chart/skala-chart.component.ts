@@ -89,8 +89,9 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
           pointStyle: 'circle',
           pointRadius: dataValues.map(v => v > 0 ? 8 : 0),
           pointHoverRadius: dataValues.map(v => v > 0 ? 12 : 0),
-          borderWidth: 3,   // ✨ Çizgiyi kalınlaştırdık
-          tension: 0        // ✨ Keskin köşeler
+          pointHitRadius: 15,
+          borderWidth: 3,
+          tension: 0
         }
       ]
     };
@@ -104,24 +105,31 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
         scales: {
           x: {
             title: { display: true, text: 'Skala-Wert' },
-            ticks: { stepSize: 1 }
           },
           y: {
             beginAtZero: true,
             max: yMax,
-            title: { display: true, text: 'Anzahl Personen' }
+            title: { display: true, text: 'Anzahl Personen' },
+            ticks: {
+              stepSize: 1
+            }
           }
+        },
+        interaction: {
+          mode: 'nearest',
+          intersect: false
         },
         plugins: {
           legend: { display: false },
           tooltip: {
             enabled: true,
+            usePointStyle: true,
             bodyFont: { size: 14 },
             titleFont: { size: 14 },
             callbacks: {
               label: (ctx) => {
-                const wert = ctx.parsed.x;  // Skala değeri
-                const count = ctx.parsed.y; // Katılımcı sayısı
+                const wert = ctx.parsed.x;
+                const count = ctx.parsed.y;
                 return `${count} Person(en) haben ${wert} gewählt`;
               }
             }
@@ -130,6 +138,14 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
       }
     });
   }
+
+  getAnswerValue(entry: any, questionId: string): number | string {
+    const ans = (entry.answers || []).find(
+      (a: any) => a.questionId === questionId && a.numberValue !== undefined
+    );
+    return ans ? ans.numberValue : '-';
+  }
+
 
   ngOnDestroy() {
     if (this.chart) this.chart.destroy();
