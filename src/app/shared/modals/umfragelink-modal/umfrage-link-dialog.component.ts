@@ -32,7 +32,7 @@ export class UmfrageLinkDialogComponent {
     private snackBar: MatSnackBar
   ) {
     // Basis-Link zur Umfrage aufbauen
-    this.surveyLink = `${environment.apiBaseUrl}/survey/${data.id}`;
+    this.surveyLink = `${window.location.origin}/survey/${data.id}`;
     this.endDate = data.endDate ? new Date(data.endDate) : null;
   }
 

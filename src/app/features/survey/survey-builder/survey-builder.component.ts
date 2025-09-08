@@ -165,6 +165,7 @@ export class SurveyBuilderComponent implements OnInit {
     } else if (q.type === 'star') {
       base.maxStars = Number(q.maxStars ?? 5);
     }
+    base.order = q.order ?? 0;
     return base;
   };
 
@@ -229,6 +230,10 @@ export class SurveyBuilderComponent implements OnInit {
   onDrop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(this.canvasQuestions, event.previousIndex, event.currentIndex);
+      this.canvasQuestions.forEach((q, idx) => {
+        q.order = idx;
+      });
+
       this.questionsChange.emit(this.canvasQuestions);
       return;
     }
@@ -241,7 +246,13 @@ export class SurveyBuilderComponent implements OnInit {
     if (draggedItem.type === 'radio')    return this.openRadioModal(draggedItem);
 
     const copiedItem = { ...draggedItem, title: draggedItem.label, editing: false };
-    this.canvasQuestions.splice(event.currentIndex, 0, copiedItem);
+    this.canvasQuestions.splice(event.currentIndex, 0, {
+      ...copiedItem,
+      order: event.currentIndex
+    });
+    this.canvasQuestions.forEach((q, idx) => {
+      q.order = idx;
+    });
     this.questionsChange.emit(this.canvasQuestions);
   }
 

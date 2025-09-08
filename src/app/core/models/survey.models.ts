@@ -29,6 +29,7 @@ export interface Question {
   thumbLabel?: boolean;     // Anzeige des Werts am Slider
   createdAt?: Date;
   updatedAt?: Date;
+  order?: number;
 }
 
 // Datenstruktur für eine Antwort eines Teilnehmers

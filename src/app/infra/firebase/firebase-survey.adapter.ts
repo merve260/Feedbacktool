@@ -265,9 +265,12 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   async listQuestions(surveyId: string): Promise<Question[]> {
-    const snaps = await getDocs(query(this.questionsCol(surveyId), orderBy('order', 'asc')));
-    return snaps.docs.map(d => d.data());
+    const snaps = await getDocs(this.questionsCol(surveyId));
+    return snaps.docs
+      .map(d => d.data())
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }
+
 
   // Methoden für Antworten
   async submitResponse(
