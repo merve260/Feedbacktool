@@ -1,14 +1,8 @@
 import { Component, inject, HostListener } from '@angular/core';
-import {
-  Router, ActivatedRoute, NavigationEnd,
-  RouterOutlet, RouterLink, RouterLinkActive,
-} from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-
 import { CommonModule, AsyncPipe, NgIf } from '@angular/common';
-
-// Angular Material Module
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +10,6 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
-
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
@@ -28,29 +21,31 @@ import { AuthService } from '../../../core/auth/auth.service';
     // Common
     CommonModule, AsyncPipe, NgIf,
     // Material
-    MatSidenavModule, MatToolbarModule, MatIconModule, MatListModule,
-    MatButtonModule, MatMenuModule, MatDividerModule,
+    MatSidenavModule, MatToolbarModule, MatIconModule,
+    MatListModule, MatButtonModule, MatMenuModule, MatDividerModule,
   ],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })
 export class AdminLayoutComponent {
-  // AuthService für Benutzerinformationen
   public auth = inject(AuthService);
-
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // true = Mobile-Ansicht
   isMobile = window.innerWidth <= 768;
+  avatar$: Observable<string | null> | null = null;
 
-  // prüft Fenstergröße bei Resize
+  constructor() {
+    if (this.auth.userId) {
+      this.avatar$ = this.auth.getUserAvatar(this.auth.userId);
+    }
+  }
+
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth <= 768;
   }
 
-  // Seitentitel aus den Routen-Daten
   pageTitle$: Observable<string> = this.router.events.pipe(
     filter(e => e instanceof NavigationEnd),
     map(() => {
@@ -61,9 +56,32 @@ export class AdminLayoutComponent {
     startWith(this.route.snapshot.firstChild?.data?.['title'] ?? 'Meine Umfragen')
   );
 
-  // Logout: beendet Session und geht zurück zum Login
   async logout(): Promise<void> {
     await this.auth.logout();
     await this.router.navigateByUrl('/login');
+  }
+
+  async changeAvatar() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        const base64 = await this.toBase64(file);
+        await this.auth.uploadUserAvatarBase64(base64);
+      }
+    };
+  }
+
+  private toBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
   }
 }

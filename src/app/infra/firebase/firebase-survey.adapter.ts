@@ -58,6 +58,7 @@ function prepareSurveyData(
     status: (statusOverride ?? s.status ?? 'draft') as SurveyStatus,
     startAt: sDate ? Timestamp.fromDate(sDate) : null,
     endAt:   eDate ? Timestamp.fromDate(eDate) : null,
+    logoUrl: s.logoUrl ?? null,
     createdAt: (s as any).createdAt ?? serverTimestamp(),
     updatedAt: serverTimestamp(),
   }) as WithFieldValue<Survey>;
@@ -83,6 +84,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         ownerId: d.ownerId,
         title: d.title,
         description: d.description ?? null,
+        logoUrl: d.logoUrl ?? null,
         startAt: d.startAt ? (d.startAt as Timestamp).toDate() : undefined,
         endAt: d.endAt ? (d.endAt as Timestamp).toDate() : undefined,
         status: d.status as SurveyStatus,

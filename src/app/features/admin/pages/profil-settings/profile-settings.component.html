@@ -1,30 +1,53 @@
 <div class="card" *ngIf="user$ | async as u">
   <h2>Profil</h2>
 
-  <!-- Formular für Profil-Daten -->
+  <!-- Formular -->
   <form [formGroup]="form" class="profile-form">
     <div class="row">
       <span class="label">E-Mail</span>
-      <!-- nur Anzeige, keine Bearbeitung -->
       <span>{{ u.email }}</span>
     </div>
 
     <div class="row">
       <span class="label">Name</span>
-      <!-- Eingabefeld für Display-Name -->
       <input formControlName="displayName" placeholder="Name eingeben" />
     </div>
+
+    <div class="row avatar-row">
+      <span class="label">Avatar</span>
+      <div class="avatar-content">
+        <img
+          *ngIf="avatarPreview; else noAvatar"
+          [src]="avatarPreview"
+          alt="Avatar"
+          class="avatar-img"
+        />
+        <ng-template #noAvatar>
+          <div class="avatar-default">
+            <mat-icon fontIcon="person"></mat-icon>
+          </div>
+        </ng-template>
+
+        <div class="avatar-actions">
+          <button type="button" class="btn-avatar" (click)="changeAvatar()">
+            Avatar ändern
+          </button>
+          <button type="button" class="btn-icon" (click)="resetAvatar()" aria-label="Zurücksetzen">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
   </form>
 
   <!-- Aktionen -->
   <div class="actions">
-    <!-- Speichern nur aktiv, wenn Änderungen -->
     <button class="btn btn-primary"
-            [disabled]="!form.dirty"
+            [disabled]="!form.dirty && !avatarChanged"
             (click)="saveProfile()">
       Speichern
     </button>
-    <!-- Abmelden -->
     <button class="btn btn-danger" (click)="logout()">
       Ausloggen
     </button>

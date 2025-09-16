@@ -34,6 +34,8 @@ export class SurveyEditComponent implements OnInit {
   endAt?: Date;
   questions: Question[] = [];
   errorMsg = '';
+  logoUrl: string | null = null;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -56,6 +58,7 @@ export class SurveyEditComponent implements OnInit {
       this.description = survey.description ?? '';
       this.startAt = survey.startAt ?? undefined;
       this.endAt   = survey.endAt   ?? undefined;
+      this.logoUrl = survey.logoUrl ?? null;
 
       // Fragen separat laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
@@ -78,7 +81,8 @@ export class SurveyEditComponent implements OnInit {
           description: this.description ?? '',
           startAt: this.startAt ?? undefined,
           endAt: this.endAt ?? undefined,
-          status
+          status,
+          logoUrl: this.logoUrl ?? null
         },
         this.questions
       );

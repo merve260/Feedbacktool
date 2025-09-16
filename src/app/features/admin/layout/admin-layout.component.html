@@ -41,7 +41,6 @@
           <mat-icon matListIcon>person</mat-icon>
           <span class="label">Profil bearbeiten</span>
         </a>
-
         <a mat-list-item (click)="logout()">
           <mat-icon matListIcon>logout</mat-icon>
           <span class="label">Ausloggen</span>
@@ -49,7 +48,6 @@
       </nav>
     </div>
   </mat-sidenav>
-
 
   <!-- Hauptinhalt -->
   <mat-sidenav-content class="content">
@@ -70,23 +68,33 @@
       <span class="flex-spacer"></span>
 
       <!-- Benutzer-Menü -->
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="userMenu"
-        class="avatar-btn"
-        aria-label="Benutzer-Menü"
-      >
-        <img
-          *ngIf="(auth.user$ | async)?.photoURL as photo"
-          [src]="photo"
-          alt="Avatar"
-        />
-        <mat-icon *ngIf="!(auth.user$ | async)?.photoURL">account_circle</mat-icon>
-      </button>
+      <ng-container *ngIf="avatar$ | async as photo; else noPhoto">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="userMenu"
+          class="avatar-btn"
+          aria-label="Benutzer-Menü"
+        >
+          <img [src]="photo" alt="Avatar" />
+        </button>
+      </ng-container>
+      <ng-template #noPhoto>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="userMenu"
+          class="avatar-btn"
+          aria-label="Benutzer-Menü"
+        >
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      </ng-template>
 
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item routerLink="/admin/profil">
           <span>Profil bearbeiten</span>
+        </button>
+        <button mat-menu-item (click)="changeAvatar()">
+          <span>Avatar ändern</span>
         </button>
         <button mat-menu-item (click)="logout()">
           <span>Ausloggen</span>

@@ -50,7 +50,7 @@ import { doc, collection, Firestore } from '@angular/fire/firestore';
 })
 export class SurveyViewerComponent implements OnInit {
   surveyId = '';
-  surveyData: { title: string; questions: Question[] } | null = null;
+  surveyData: { title: string; logoUrl?: string | null  ; questions: Question[] } | null = null;
 
   // Zustände für Anzeige und Antworten
   currentIndex = 0;
@@ -129,8 +129,10 @@ export class SurveyViewerComponent implements OnInit {
       const questions = await this.surveyService.listQuestions(id);
       this.surveyData = {
         title: survey.title ?? 'Umfrage',
+        logoUrl: survey.logoUrl ?? null,
         questions: questions ?? []
       };
+
 
       // Initialwerte je nach Typ vorbereiten
       this.answers = this.surveyData.questions.map((q: Question) => {
@@ -205,9 +207,6 @@ export class SurveyViewerComponent implements OnInit {
 
         return answer;
       });
-      console.log("🚀 Final responses:", responses);
-      console.log("Antworten die gespeichert werden:", JSON.stringify(responses, null, 2));
-
       await this.surveyService.submitResponse(this.surveyId, {
         name: this.respondentName?.trim() || 'Anonym',
         answers: responses
@@ -235,7 +234,6 @@ export class SurveyViewerComponent implements OnInit {
 
   onSlide(i: number): void {
     const val = this.answers[i];
-    console.log(`Slider für Frage ${i + 1}: Wert = ${val}`);
   }
 
   getSliderBackground(value: number, min: number, max: number): string {

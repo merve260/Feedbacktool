@@ -9,7 +9,11 @@
 
 <!-- Hauptbereich: Umfrage-Viewer, nur sichtbar wenn keine Fehlermeldung und nicht abgeschlossen -->
 <div class="survey-viewer" *ngIf="!isCompleted && surveyData as data">
-  <h2>{{ data.title }}</h2>
+  <!-- Titel + Logo -->
+  <div class="survey-header">
+    <h2>{{ data.title }}</h2>
+    <img *ngIf="data.logoUrl" [src]="data.logoUrl" alt="Umfrage Logo" class="survey-logo" />
+  </div>
 
   <!-- Eingabe des Teilnehmernamens (optional, nur bei erster Frage sichtbar) -->
   <div style="margin: 12px 0;" *ngIf="currentIndex === 0">

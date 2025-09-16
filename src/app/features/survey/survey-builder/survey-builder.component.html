@@ -53,6 +53,30 @@
         </mat-error>
       </mat-form-field>
     </div>
+    <!-- Logo Upload (optional) -->
+    <div class="logo-upload">
+      <label class="logo-label">Firmen Logo (optional)</label>
+
+      <!-- Upload Button -->
+      <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon>
+        Datei auswählen
+      </button>
+      <input
+        type="file"
+        accept="image/*"
+        hidden
+        #fileInput
+        (change)="onLogoSelected($event)" />
+
+      <!-- Preview -->
+      <div *ngIf="infoForm.controls.logoUrl.value" class="logo-preview">
+        <img [src]="infoForm.controls.logoUrl.value" alt="Logo Vorschau" />
+        <button mat-icon-button color="warn" (click)="removeLogo()" aria-label="Logo löschen">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
   </form>
 </section>
 

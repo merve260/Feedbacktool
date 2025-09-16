@@ -12,6 +12,7 @@ export interface Survey {
   status: SurveyStatus;
   createdAt?: Date;
   updatedAt?: Date;
+  logoUrl?: string | null;
 }
 
 // Datenstruktur für eine Frage innerhalb einer Umfrage

@@ -79,7 +79,11 @@ export class SurveyBuilderComponent implements OnInit {
   @Input() questions: Question[] = [];
   @Output() questionsChange = new EventEmitter<Question[]>();
 
+  @Input() logoUrl: string | null = null;
+  @Output() logoUrlChange = new EventEmitter<string | null>();
+
   @Input() showActions = true;
+
 
   // Fragetypen links in der Palette
   questionTypes = [
@@ -99,6 +103,7 @@ export class SurveyBuilderComponent implements OnInit {
     startDate: FormControl<Date | null>;
     endDate: FormControl<Date | null>;
     description: FormControl<string | null>;
+    logoUrl: FormControl<string | null>;
   }>;
 
   isEditMode = false;
@@ -117,7 +122,8 @@ export class SurveyBuilderComponent implements OnInit {
       title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       startDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
       endDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
-      description: new FormControl<string | null>(null)
+      description: new FormControl<string | null>(null),
+      logoUrl: new FormControl<string | null>(null)
     }, { validators: this.dateRangeValidator });
   }
 
@@ -134,7 +140,8 @@ export class SurveyBuilderComponent implements OnInit {
           title:       survey.title,
           description: survey.description ?? '',
           startDate:   survey.startAt ? new Date(survey.startAt) : null,
-          endDate:     survey.endAt   ? new Date(survey.endAt)   : null
+          endDate:     survey.endAt   ? new Date(survey.endAt)   : null,
+          logoUrl:     survey.logoUrl ?? null
         });
 
         this.canvasQuestions = questions ?? [];
@@ -168,9 +175,32 @@ export class SurveyBuilderComponent implements OnInit {
     base.order = q.order ?? 0;
     return base;
   };
+  onLogoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const value = reader.result as string;
+        this.infoForm.controls.logoUrl.setValue(value);
+
+        this.logoUrl = value;
+        this.logoUrlChange.emit(value);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeLogo() {
+    this.infoForm.controls.logoUrl.setValue(null);
+
+    this.logoUrl = null;
+    this.logoUrlChange.emit(null);
+  }
 
   // Speichern als Draft oder Publish
   async saveAs(status: SurveyStatus) {
+    console.log("Survey payload", this.canvasQuestions.map(this.toQuestion));
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
       alert('Bitte Titel, Zeitraum und mindestens eine Frage angeben.');
@@ -189,6 +219,7 @@ export class SurveyBuilderComponent implements OnInit {
         startAt: this.startCtrl.value ?? undefined,
         endAt:   this.endCtrl.value   ?? undefined,
         status,
+        logoUrl: this.logoUrl ?? this.infoForm.controls.logoUrl.value ?? null
       };
 
       const qPayload = this.canvasQuestions.map(this.toQuestion);

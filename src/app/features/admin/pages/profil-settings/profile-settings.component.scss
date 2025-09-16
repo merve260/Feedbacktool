@@ -12,6 +12,27 @@ h2 {
   color: #2e236d;
 }
 
+/* Avatar */
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatar-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 70px;
+  color: #bbb;
+}
+
 /* Formular-Zeilen */
 .row {
   display: flex;
@@ -22,7 +43,7 @@ h2 {
 }
 .row:last-child { border-bottom: none; }
 
-/* Label-Spalte */
+/* Label */
 .label {
   min-width: 140px;
   color: #6d63a8;
@@ -38,21 +59,19 @@ input {
   font-size: 14px;
 }
 
-/* Button-Bereich */
+/* Buttons */
 .actions {
   margin-top: 16px;
   display: flex;
   gap: 12px;
 }
 
-/* Basis-Button */
 .btn {
   padding: 8px 14px;
   border-radius: 10px;
   cursor: pointer;
 }
 
-/* Primärer Button (Speichern) */
 .btn-primary {
   background: #6b4cff;
   color: #fff;
@@ -64,7 +83,6 @@ input {
   cursor: not-allowed;
 }
 
-/* Gefahr-Button (Logout) */
 .btn-danger {
   border: 1px solid #ffd7de;
   background: #fff;
@@ -73,3 +91,63 @@ input {
 .btn-danger:hover {
   background: #f6f4ff;
 }
+.avatar-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-avatar {
+  background: #6b4cff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-avatar:hover {
+  background: #523ac3;
+}
+
+.btn-icon {
+  background: #fff;
+  border: 1px solid #ffd7de;
+  border-radius: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-icon mat-icon {
+  font-size: 20px;
+  color: #b1142c;
+}
+.btn-icon:hover {
+  background: #fff0f3;
+}
+.avatar-default {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid #7a7979;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #838282;
+}
+
+.avatar-default mat-icon {
+  font-size: 28px;
+  color: #f5f5f5;
+}
+
+
+

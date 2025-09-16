@@ -251,6 +251,22 @@ $accent-lila: #7b4683;
     }
   }
 }
+.survey-logo {
+  display: block;
+  max-height: 80px;
+  margin: 0 auto 1rem auto;
+
+  img {
+    max-height: 100px;
+    border-radius: 12px;
+    border: 1px solid #e2cdea;
+    background: #fff;
+    padding: 6px 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    object-fit: contain;
+  }
+}
+
 
 // Animation beim Einblenden der Fehlerbox
 @keyframes fadeIn {
