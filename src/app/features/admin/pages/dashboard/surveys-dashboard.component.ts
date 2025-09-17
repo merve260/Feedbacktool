@@ -77,9 +77,11 @@ export class SurveysDashboardComponent implements OnInit{
       let snap;
       try {
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid), orderBy('createdAt', 'desc')));
-      } catch {
+      } catch (err) {
+        console.error("Query failed, falling back:", err);
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid)));
       }
+
 
       const toDate = (x: any): Date | undefined => {
         if (!x) return undefined;

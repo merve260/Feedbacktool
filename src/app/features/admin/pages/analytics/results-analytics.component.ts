@@ -7,10 +7,11 @@ import {
   query,
   where,
 } from '@angular/fire/firestore';
-import { Observable, map, shareReplay } from 'rxjs';
+import { Observable, map, shareReplay, firstValueFrom } from 'rxjs';
 import { Survey } from '../../../../core/models/survey.models';
 import { Timestamp } from 'firebase/firestore';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-results-analytics',
@@ -22,15 +23,22 @@ import { Router } from '@angular/router';
 export class ResultsAnalyticsComponent implements OnInit {
   private firestore = inject(Firestore);
   private router = inject(Router);
+  private auth = inject(AuthService);
 
   surveys$!: Observable<Survey[]>;
 
-  ngOnInit() {
-    // Nur Umfragen mit Status "published" oder "closed" laden
-    const surveysCol = collection(this.firestore, 'umfragen');
-    const q = query(surveysCol, where('status', 'in', ['published', 'closed']));
 
-    // Daten aus Firestore lesen + Zeitfelder umwandeln
+  async ngOnInit() {
+    const u = await firstValueFrom(this.auth.user$);
+    if (!u) return;
+
+    const surveysCol = collection(this.firestore, 'umfragen');
+    const q = query(
+      surveysCol,
+      where('ownerId', '==', u.uid),
+      where('status', 'in', ['published', 'closed'])
+    );
+
     this.surveys$ = collectionData(q, { idField: 'id' }).pipe(
       map((docs: any[]) =>
         docs.map((doc) => ({
@@ -41,13 +49,12 @@ export class ResultsAnalyticsComponent implements OnInit {
           updatedAt: doc.updatedAt instanceof Timestamp ? doc.updatedAt.toDate() : doc.updatedAt,
         }))
       ),
-      // shareReplay → sorgt für nur eine Datenabfrage
       shareReplay(1)
     ) as Observable<Survey[]>;
   }
 
-  // Detailseite der ausgewählten Umfrage öffnen
   openAnalytics(survey: Survey) {
     this.router.navigate(['/admin/ergebnisse', survey.id]);
   }
+
 }

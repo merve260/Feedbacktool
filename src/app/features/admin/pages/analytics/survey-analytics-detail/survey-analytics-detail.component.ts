@@ -1,15 +1,27 @@
+// src/app/features/survey/survey-analytics/survey-analytics-detail/survey-analytics-detail.component.ts
+
 // Komponente: Detail-Analyse einer Umfrage
 // Zeigt Charts und ermöglicht Excel-Export
 
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { Firestore, doc, getDoc, collection, collectionData } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  getDoc,
+  collection,
+  collectionData,
+  query,
+  where,
+  orderBy,
+  getDocs
+} from '@angular/fire/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import {combineLatest, firstValueFrom, take} from 'rxjs';
+import { combineLatest, firstValueFrom, take } from 'rxjs';
 
 import { Survey, Question } from '../../../../../core/models/survey.models';
 
@@ -51,46 +63,48 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
+
     const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
-    console.log("Aktueller User:", u);
     if (!u) return;
 
-    // Umfrage-Dokument laden
+    // Nur dieses Dokument laden
     const docRef = doc(this.firestore, 'umfragen', id);
     const snap = await getDoc(docRef);
-    if (snap.exists()) {
-      const data = snap.data() as any;
-      console.log("Umfrage-Daten:", data);
-      if (data.ownerId !== u.uid) {
-        alert('Keine Berechtigung für diese Analyse.');
-        return;
-      }
-      this.survey = {
-        id: snap.id,
-        ...data,
-        startAt: data.startAt instanceof Timestamp ? data.startAt.toDate() : data.startAt,
-        endAt: data.endAt instanceof Timestamp ? data.endAt.toDate() : data.endAt,
-      } as Survey;
 
+    if (!snap.exists()) {
+      alert('Umfrage nicht gefunden.');
+      return;
     }
 
-    // Fragen + Antworten gleichzeitig laden
+    const data = snap.data() as any;
+    if (data.ownerId !== u.uid) {
+      alert('Keine Berechtigung für diese Analyse.');
+      return;
+    }
+
+    this.survey = {
+      id: snap.id,
+      ...data,
+      startAt: data.startAt instanceof Timestamp ? data.startAt.toDate() : data.startAt,
+      endAt: data.endAt instanceof Timestamp ? data.endAt.toDate() : data.endAt,
+    } as Survey;
+
+    // Danach Fragen & Antworten laden
     const fragenCol = collection(this.firestore, `umfragen/${id}/fragen`);
     const answersCol = collection(this.firestore, `umfragen/${id}/antworten`);
 
     combineLatest([
-      collectionData(fragenCol, { idField: 'id' }),
-      collectionData(answersCol, { idField: 'id' })
+      collectionData(fragenCol, {idField: 'id'}),
+      collectionData(answersCol, {idField: 'id'})
     ]).subscribe(([fragen, ans]: [any[], any[]]) => {
       this.questions = fragen;
       this.answers = ans;
 
-      // Fragen-Mapping
+      this.questionsMap = {};
       this.questions.forEach(q => {
         this.questionsMap[q.id] = q.title || q.text || q.id;
       });
 
-      // Freitext-Antworten vorbereiten
       this.freitextAnswersMap = {};
       this.questions.forEach(q => {
         if (q.type === 'freitext') {
@@ -106,7 +120,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
         }
       });
     });
-  }
+}
 
   // Export der Antworten nach Excel
   exportToExcel() {
