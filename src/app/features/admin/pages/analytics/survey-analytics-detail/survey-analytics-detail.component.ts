@@ -9,7 +9,7 @@ import { Timestamp } from 'firebase/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { combineLatest } from 'rxjs';
+import {combineLatest, firstValueFrom, take} from 'rxjs';
 
 import { Survey, Question } from '../../../../../core/models/survey.models';
 
@@ -20,6 +20,7 @@ import { RadioButtonChartComponent } from '../charts/radio-button-chart/radio-bu
 import { StarRatingChartComponent } from '../charts/star-rating-chart/star-rating-chart.component';
 import { FreiTextListComponent } from '../charts/freitext-list/freitext-list.component';
 import { FreiTextDialogComponent } from '../charts/chart-dialogs/frei-text-dialog.component';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-survey-analytics-detail',
@@ -39,6 +40,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private firestore = inject(Firestore);
   private dialog = inject(MatDialog);
+  private auth = inject(AuthService);
 
   survey?: Survey;
   questions: Question[] = [];
@@ -49,18 +51,27 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
+    const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
+    console.log("Aktueller User:", u);
+    if (!u) return;
 
     // Umfrage-Dokument laden
     const docRef = doc(this.firestore, 'umfragen', id);
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       const data = snap.data() as any;
+      console.log("Umfrage-Daten:", data);
+      if (data.ownerId !== u.uid) {
+        alert('Keine Berechtigung für diese Analyse.');
+        return;
+      }
       this.survey = {
         id: snap.id,
         ...data,
         startAt: data.startAt instanceof Timestamp ? data.startAt.toDate() : data.startAt,
         endAt: data.endAt instanceof Timestamp ? data.endAt.toDate() : data.endAt,
       } as Survey;
+
     }
 
     // Fragen + Antworten gleichzeitig laden

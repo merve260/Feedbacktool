@@ -11,6 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/auth/auth.service';
+import { take } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin-layout',
@@ -34,11 +36,16 @@ export class AdminLayoutComponent {
 
   isMobile = window.innerWidth <= 768;
   avatar$: Observable<string | null> | null = null;
+  displayName: string | null = null;
 
   constructor() {
     if (this.auth.userId) {
       this.avatar$ = this.auth.getUserAvatar(this.auth.userId);
     }
+    firstValueFrom(this.auth.user$.pipe(take(1))).then(user => {
+      console.log("User aus AuthService:", user);
+      this.displayName = user?.displayName ?? 'Gast';
+    });
   }
 
   @HostListener('window:resize')

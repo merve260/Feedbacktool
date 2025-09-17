@@ -85,5 +85,17 @@ export class AuthService {
     await fbUpdateProfile(this.auth.currentUser, { photoURL: null });
   }
 
+  async updateDisplayName(name: string) {
+    if (!this.auth.currentUser) throw new Error('Kein Benutzer angemeldet');
+    await fbUpdateProfile(this.auth.currentUser, { displayName: name });
+
+    const uid = this.auth.currentUser.uid;
+    await setDoc(
+      doc(this.firestore, 'roles', uid),
+      { displayName: name },
+      { merge: true }
+    );
+  }
+
 
 }

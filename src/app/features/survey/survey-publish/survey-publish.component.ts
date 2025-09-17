@@ -33,6 +33,8 @@ export class SurveyPublishComponent {
   @Input() surveyQuestionCount: number = 0;
   @Input() surveySubQuestionCount: number = 0;
   @Input() canvasQuestions: Question[] = [];
+  @Input() logoUrl: string | null = null;
+
 
   // Ausgaben für Eltern-Component
   @Output() draftRequested = new EventEmitter<string>();
@@ -144,7 +146,8 @@ export class SurveyPublishComponent {
         title: this.surveyTitle.trim(),
         description: this.surveySubDescription || null,
         startAt: this.startDate ? new Date(this.startDate) : undefined,
-        endAt:   this.endDate ? new Date(this.endDate) : undefined
+        endAt:   this.endDate ? new Date(this.endDate) : undefined,
+        logoUrl: this.logoUrl ?? null
       });
 
       this.surveyId = id;
@@ -184,7 +187,8 @@ export class SurveyPublishComponent {
         title: this.surveyTitle.trim(),
         description: this.surveySubDescription || null,
         startAt: this.startDate!,
-        endAt: this.endDate!
+        endAt: this.endDate!,
+        logoUrl: this.logoUrl ?? null
       });
 
       this.surveyId = id;

@@ -143,5 +143,6 @@
   (questionsChange)="canvasQuestions = $event"
   (draftRequested)="goToDashboard()"
   (publishRequested)="goToDashboard()"
-  [showActions]="showActions">
+  [showActions]="showActions"
+  [logoUrl]="infoForm.controls.logoUrl.value">
 </app-survey-publish>

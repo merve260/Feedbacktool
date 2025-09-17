@@ -182,6 +182,8 @@ export class SurveyBuilderComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         const value = reader.result as string;
+        console.log("Selected logo:", value.substring(0,50));
+
         this.infoForm.controls.logoUrl.setValue(value);
 
         this.logoUrl = value;
@@ -211,6 +213,7 @@ export class SurveyBuilderComponent implements OnInit {
     try {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) { alert('Bitte einloggen.'); return; }
+      console.log("LogoUrl saving:", this.infoForm.controls.logoUrl.value);
 
       const survey: Omit<Survey, 'id'> = {
         ownerId: u.uid,

@@ -58,7 +58,7 @@ function prepareSurveyData(
     status: (statusOverride ?? s.status ?? 'draft') as SurveyStatus,
     startAt: sDate ? Timestamp.fromDate(sDate) : null,
     endAt:   eDate ? Timestamp.fromDate(eDate) : null,
-    logoUrl: s.logoUrl ?? null,
+    ...(s.logoUrl ? { logoUrl: s.logoUrl } : {}),
     createdAt: (s as any).createdAt ?? serverTimestamp(),
     updatedAt: serverTimestamp(),
   }) as WithFieldValue<Survey>;
@@ -237,14 +237,22 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
 
   async deleteSurvey(id: string): Promise<void> {
     const surveyRef = this.surveyDoc(id);
-    const qSnap = await getDocs(this.questionsCol(id));
     const batch = writeBatch(this.firestore);
 
+    // Fragen löschen
+    const qSnap = await getDocs(this.questionsCol(id));
     qSnap.forEach(qDoc => batch.delete(qDoc.ref));
+
+    // Antworten löschen
+    const aSnap = await getDocs(collection(this.firestore, this.rootColName, id, this.responsesSubCol));
+    aSnap.forEach(aDoc => batch.delete(aDoc.ref));
+
+    // Survey löschen
     batch.delete(surveyRef);
 
     await batch.commit();
   }
+
 
   async setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {
     await setDoc(this.surveyDoc(id), prepareSurveyData(s), { merge: true });

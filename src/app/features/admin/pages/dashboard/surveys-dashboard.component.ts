@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { getDoc } from '@angular/fire/firestore';
 
 import {
   Firestore,
@@ -59,13 +60,19 @@ export class SurveysDashboardComponent implements OnInit{
   search = '';
   showStatusHinweis = true;
   sortDir: 'desc' | 'asc' = 'desc';
+  displayName: string | null = null;
 
   // Initiales Laden aller Umfragen
   async ngOnInit(): Promise<void> {
     try {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) { this.loading = false; return; }
-
+      this.displayName = u.displayName || u.email || 'Benutzer';
+      const roleDoc = await getDoc(doc(this.afs, 'roles', u.uid));
+      if (roleDoc.exists()) {
+        const data: any = roleDoc.data();
+        this.displayName = data.displayName || u.displayName || u.email;
+      }
       const colRef = collection(this.afs, 'umfragen');
       let snap;
       try {
@@ -99,7 +106,7 @@ export class SurveysDashboardComponent implements OnInit{
             updatedAt: toDate(data.updatedAt ?? null),
           };
 
-          // ⏰ Prüfen ob Umfrage abgelaufen ist
+          // Prüfen ob Umfrage abgelaufen ist
           if (survey.status === 'published' && survey.endAt && survey.endAt < now) {
             await this.fbSvc.setSurveyWithId(survey.id, { ...this.stripId(survey), status: 'closed' });
             survey.status = 'closed';

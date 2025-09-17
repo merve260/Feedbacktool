@@ -64,7 +64,6 @@
 
       <!-- Titel aus den Routen -->
       <div class="page-title">{{ pageTitle$ | async }}</div>
-
       <span class="flex-spacer"></span>
 
       <!-- Benutzer-Menü -->
@@ -90,6 +89,7 @@
       </ng-template>
 
       <mat-menu #userMenu="matMenu">
+        <h4 class="displayname">{{ displayName }}</h4>
         <button mat-menu-item routerLink="/admin/profil">
           <span>Profil bearbeiten</span>
         </button>

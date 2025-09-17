@@ -122,3 +122,32 @@ a[mat-list-item] {
   .side { width: 240px !important; }
   .page-title { font-size: 1rem; }
 }
+.displayname {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #490553;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  border-bottom: 2px solid #9a9999;
+  padding-bottom: 2px;
+}
+::ng-deep .mat-mdc-menu-panel {
+  background: #fff !important;
+  border-radius: 16px !important;
+  padding: 8px 0 !important;
+  min-width: 190px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  max-width: 90vw !important;
+}
+
+::ng-deep .mat-mdc-menu-item {
+  padding: 13px 18px !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+
+
+
