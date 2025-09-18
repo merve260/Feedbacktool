@@ -25,20 +25,29 @@ export class AuthService {
   }
 
   // Login
-  login(email: string, password: string) {
-    return signInWithEmailAndPassword(this.auth, email, password);
+  async login(email: string, password: string): Promise<void> {
+    try {
+      await signInWithEmailAndPassword(this.auth, email, password);
+    } catch (err: any) {
+      throw new Error(this.mapAuthError(err));  // 🔥 burada
+    }
   }
 
   // Registrierung (immer als Admin)
   async register(email: string, password: string) {
-    const cred = await createUserWithEmailAndPassword(this.auth, email, password);
-    const uid = cred.user.uid;
+    try {
+      const cred = await createUserWithEmailAndPassword(this.auth, email, password);
+      const uid = cred.user.uid;
 
-    // Rolle speichern
-    await setDoc(doc(this.firestore, 'roles', uid), { role: 'admin' });
+      // Rolle speichern
+      await setDoc(doc(this.firestore, 'roles', uid), { role: 'admin' });
 
-    return cred;
+      return cred;
+    } catch (err: any) {
+      throw new Error(this.mapAuthError(err));
+    }
   }
+
 
   // Profil updaten (Name, Foto-URL falls nötig)
   async updateProfile(data: { displayName?: string; photoURL?: string }) {
@@ -95,6 +104,23 @@ export class AuthService {
       { displayName: name },
       { merge: true }
     );
+  }
+
+  private mapAuthError(error: any): string {
+    switch (error.code) {
+      case 'auth/invalid-email':
+        return 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        return 'E-Mail oder Passwort ist falsch.';
+      case 'auth/email-already-in-use':
+        return 'Diese E-Mail-Adresse wird bereits verwendet.';
+      case 'auth/weak-password':
+        return 'Das Passwort ist zu schwach.';
+      default:
+        return 'Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
+    }
   }
 
 
