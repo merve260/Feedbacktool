@@ -1,7 +1,8 @@
+// app.config.ts
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
@@ -15,6 +16,14 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 import { environment } from '../environments/environment';
 
+// --- i18n ---
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
+
+export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
 // --- Locale-Registrierung (Deutsch) ---
 registerLocaleData(localeDe);
 registerLocaleData(localeDe, 'de-DE');
@@ -36,7 +45,7 @@ export const appConfig: ApplicationConfig = {
 
     // Router + HTTP
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
 
     // Firebase Initialisierung
     provideFirebaseApp(() => initializeApp(environment.firebase)),
@@ -50,5 +59,17 @@ export const appConfig: ApplicationConfig = {
 
     // Native Date-Unterstützung
     importProvidersFrom(MatNativeDateModule),
+
+    // i18n
+    importProvidersFrom(
+      TranslateModule.forRoot({
+        defaultLanguage: 'de',
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient],
+        },
+      })
+    )
   ],
 };

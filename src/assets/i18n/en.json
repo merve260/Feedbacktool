@@ -1,0 +1,15 @@
+{
+  "landing": {
+    "title": "Surveys in minutes",
+    "subtitle": "create & share",
+    "lead": "Drag & Drop Builder · Date Range · Participant Link · Analytics",
+    "login": "Login",
+    "register": "Register for free",
+    "footer": {
+      "impressum": "Legal notice",
+      "privacy": "Privacy",
+      "contact": "Contact"
+    }
+  }
+}
+

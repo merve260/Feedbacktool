@@ -1,3 +1,9 @@
+<!-- Sprache umschalten -->
+<div class="lang-switch">
+  <button (click)="toggleLang()">
+    {{ currentLang === 'de' ? 'EN' : 'DE' }}
+  </button>
+</div>
 <!-- Startseite (Landing) im Vollbild -->
 <div class="landing">
 
@@ -8,21 +14,21 @@
   <!-- Hauptbereich (Hero) -->
   <main class="hero">
     <h1>
-      Umfragen in Minuten
-      <span>erstellen & teilen</span>
+      {{ 'landing.title' | translate }}
+      <span>{{ 'landing.subtitle' | translate }}</span>
     </h1>
 
     <p class="lead">
-      Drag & Drop Builder · Datum-Range · Teilnehmer-Link · Auswertung
+      {{ 'landing.lead' | translate }}
     </p>
 
     <!-- Buttons für Login / Registrierung -->
     <div class="actions">
       <button mat-raised-button color="primary" class="btn primary" (click)="openAuth('login')">
-        <mat-icon>login</mat-icon> Login
+        <mat-icon>login</mat-icon> {{ 'landing.login' | translate }}
       </button>
       <button mat-stroked-button class="btn ghost" (click)="openAuth('register')">
-        <mat-icon>person_add</mat-icon> Kostenlos registrieren
+        <mat-icon>person_add</mat-icon> {{ 'landing.register' | translate }}
       </button>
     </div>
   </main>
@@ -32,9 +38,9 @@
     <div class="wrap">
       <span>© {{ currentYear }} Umfrage Tool</span>
       <nav>
-        <a href="#" rel="nofollow">Impressum</a>
-        <a href="#" rel="nofollow">Datenschutz</a>
-        <a href="#" rel="nofollow">Kontakt</a>
+        <a href="#" rel="nofollow">{{ 'landing.footer.impressum' | translate }}</a>
+        <a href="#" rel="nofollow">{{ 'landing.footer.privacy' | translate }}</a>
+        <a href="#" rel="nofollow">{{ 'landing.footer.contact' | translate }}</a>
       </nav>
     </div>
   </footer>

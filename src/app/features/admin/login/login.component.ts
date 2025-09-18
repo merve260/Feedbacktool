@@ -9,13 +9,15 @@ import { take, switchMap } from 'rxjs/operators';
 
 import { AuthDialogComponent } from '../../../shared/dialogs/auth-dialog/auth-dialog.component';
 import { AuthService } from '../../../core/auth/auth.service';
+import {TranslateModule} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatDialogModule, TranslateModule],
 })
 export class LoginComponent implements OnInit {
   // Services
@@ -23,15 +25,19 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private route  = inject(ActivatedRoute);
   private auth   = inject(AuthService);
+  private translate = inject(TranslateService);
 
   currentYear = new Date().getFullYear();
-
+  currentLang: 'de' | 'en' = 'de';
   ngOnInit(): void {
     // Prüfen: ist der User schon eingeloggt?
     // → wenn ja, sofort zum Dashboard (/admin/umfragen)
     this.auth.isAuthenticated$.pipe(take(1)).subscribe(ok => {
       if (ok) this.router.navigateByUrl('/admin/umfragen');
     });
+    //translate-pipes
+    this.translate.setDefaultLang('de');
+    this.translate.use('de');
   }
 
   openAuth(initial: 'login' | 'register' = 'login') {
@@ -55,5 +61,14 @@ export class LoginComponent implements OnInit {
         this.router.navigateByUrl(redirect || '/admin/umfragen');
       }
     });
+  }
+  toggleLang() {
+    if (this.currentLang === 'de') {
+      this.currentLang = 'en';
+      this.translate.use('en');
+    } else {
+      this.currentLang = 'de';
+      this.translate.use('de');
+    }
   }
 }
