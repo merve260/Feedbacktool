@@ -62,7 +62,7 @@ export class SurveyEditComponent implements OnInit {
 
       // Fragen separat laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
-
+      console.log("EditComponent questions:", this.questions.map(q => q.order));
     } catch (err) {
       this.errorMsg = 'Fehler beim Laden.';
     }
@@ -73,6 +73,10 @@ export class SurveyEditComponent implements OnInit {
     if (!this.surveyId) return;
 
     try {
+      this.questions = this.questions.map((q, idx) => ({
+        ...q,
+        order: idx
+      }));
       await this.surveyService.updateSurveyWithQuestions(
         this.surveyId,
         {

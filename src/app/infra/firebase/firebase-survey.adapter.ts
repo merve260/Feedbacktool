@@ -109,7 +109,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
         thumbLabel: q.thumbLabel ?? null,
         placeholderText: q.placeholderText ?? null,
         maxStars: q.maxStars ?? null,
-        order: (q as any).order ?? null,
+        order: q.order ?? 0,
         createdAt: (q as any).createdAt ?? serverTimestamp(),
         updatedAt: serverTimestamp(),
       }) as any;
@@ -184,26 +184,42 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   ): Promise<void> {
     const batch = writeBatch(this.firestore as any);
 
+    // Survey-Daten aktualisieren
     batch.set(this.surveyDoc(surveyId), prepareSurveyData(survey), { merge: true });
 
+    // Existierende Fragen laden
     const existingSnap = await getDocs(this.questionsCol(surveyId));
     const existingIds = new Set(existingSnap.docs.map(d => d.id));
     const keptIds = new Set<string>();
 
-    for (const q of questions) {
-      const qRef = q.id ? this.questionDoc(surveyId, q.id) : doc(this.questionsCol(surveyId));
-      batch.set(qRef, { ...q, id: qRef.id } as any);
+    // Neue oder aktualisierte Fragen setzen
+    for (let idx = 0; idx < questions.length; idx++) {
+      const q = questions[idx];
+      const qRef = q.id
+        ? this.questionDoc(surveyId, q.id)
+        : doc(this.questionsCol(surveyId));
+
+      batch.set(
+        qRef,
+        {
+          ...q,
+          id: qRef.id,
+          // Order immer setzen (falls q.order fehlt, Index als Fallback)
+          order: q.order ?? idx,
+        } as any
+      );
       keptIds.add(qRef.id);
     }
-
+    // Alte, nicht mehr vorhandene Fragen löschen
     for (const oldId of existingIds) {
       if (!keptIds.has(oldId)) {
         batch.delete(this.questionDoc(surveyId, oldId));
       }
     }
-
+    // Änderungen speichern
     await batch.commit();
   }
+
 
   async getSurveyWithQuestions(
     id: string
@@ -212,7 +228,12 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     if (!surveySnap.exists()) return null;
 
     const survey = surveySnap.data() as Survey;
-    const qSnap = await getDocs(collection(this.firestore, this.rootColName, id, this.subColName));
+    const qSnap = await getDocs(
+      query(
+        collection(this.firestore, this.rootColName, id, this.subColName),
+        orderBy('order')
+      )
+    );
     const questions = qSnap.docs.map(d => d.data() as Question);
 
     return { survey: { ...survey, id }, questions };
@@ -226,10 +247,16 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     await setDoc(surveyRef, prepareSurveyData(survey));
 
     const batch = writeBatch(this.firestore);
-    for (const q of questions) {
+    questions.forEach((q, idx) => {
       const qRef = doc(collection(this.firestore, this.rootColName, surveyRef.id, this.subColName));
-      batch.set(qRef, { ...q, id: qRef.id } as any);
-    }
+      batch.set(qRef, {
+        ...q,
+        id: qRef.id,
+        order: q.order ?? idx,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      } as any);
+    });
     await batch.commit();
 
     return surveyRef.id;

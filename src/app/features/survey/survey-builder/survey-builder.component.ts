@@ -1,5 +1,5 @@
 // src/app/features/survey/survey-builder/survey-builder.component.ts
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit,OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -60,7 +60,7 @@ import { ComponentType } from '@angular/cdk/overlay';
   templateUrl: './survey-builder.component.html',
   styleUrls: ['./survey-builder.component.scss']
 })
-export class SurveyBuilderComponent implements OnInit {
+export class SurveyBuilderComponent implements OnInit, OnChanges {
 
   // Eingangs- und Ausgangsparameter für Bindung
   @Input() surveyId?: string;
@@ -130,7 +130,9 @@ export class SurveyBuilderComponent implements OnInit {
   // Daten laden, wenn bereits eine Umfrage-ID existiert (Bearbeitungsmodus)
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
+
+    // Nur laden, wenn NICHT von außen via @Input() geliefert
+    if (id && (!this.questions || this.questions.length === 0)) {
       this.currentSurveyId = id;
       const result = await this.surveyService.getSurveyWithQuestions(id);
       if (result) {
@@ -153,6 +155,17 @@ export class SurveyBuilderComponent implements OnInit {
         this.endDateChange.emit(survey.endAt ? new Date(survey.endAt) : undefined);
         this.questionsChange.emit(questions ?? []);
       }
+    } else if (this.questions?.length) {
+      // Falls Input schon Fragen liefert → Canvas direkt übernehmen
+      this.canvasQuestions = [...this.questions];
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['questions'] && changes['questions'].currentValue) {
+      console.log("Builder ngOnChanges questions:", this.questions.map(q => q.order));
+      // Externe questions übernehmen und Canvas aktualisieren
+      this.canvasQuestions = [...this.questions];
     }
   }
 

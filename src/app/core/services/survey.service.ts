@@ -1,13 +1,14 @@
 // src/app/core/services/survey.service.ts
 import { Injectable } from '@angular/core';
 import { Survey, Question } from '../models/survey.models';
-import { SurveyBackend } from '../ports/survey-backend';
 import { FirebaseSurveyAdapter } from '../../infra/firebase/firebase-survey.adapter';
+import { Firestore, collection, getDocs, query, orderBy } from '@angular/fire/firestore';
+
 
 @Injectable({ providedIn: 'root' })
 export class SurveyService {
 
-  constructor(private backend: FirebaseSurveyAdapter) {}
+  constructor(private backend: FirebaseSurveyAdapter,private firestore: Firestore) {}
 
   // Surveys anlegen, abrufen und verwalten
   createDraft(s: Partial<Survey>): Promise<string> {
@@ -54,9 +55,13 @@ export class SurveyService {
     return this.backend.addQuestion(surveyId, q);
   }
 
-  listQuestions(surveyId: string): Promise<Question[]> {
-    return this.backend.listQuestions(surveyId);
+  async listQuestions(surveyId: string): Promise<Question[]> {
+    const colRef = collection(this.firestore, `umfragen/${surveyId}/fragen`);
+    const q = query(colRef, orderBy('order'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));
   }
+
 
   // Survey-Daten direkt überschreiben
   setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {

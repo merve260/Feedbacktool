@@ -125,8 +125,11 @@ export class SurveyPublishComponent {
       placeholderText: q.placeholderText ?? null,
       maxStars: q.maxStars ?? null,
       thumbLabel: q.thumbLabel ?? null,
+      order: typeof q.order === 'number' ? q.order : index   // 🔥 fallback eklendi
     } as Question;
   }
+
+
 
   // Entwurf speichern
   async onDraft(): Promise<void> {
