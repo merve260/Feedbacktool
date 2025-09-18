@@ -62,7 +62,6 @@ export class SurveyEditComponent implements OnInit {
 
       // Fragen separat laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
-      console.log("EditComponent questions:", this.questions.map(q => q.order));
     } catch (err) {
       this.errorMsg = 'Fehler beim Laden.';
     }

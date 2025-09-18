@@ -43,7 +43,6 @@ export class AdminLayoutComponent {
       this.avatar$ = this.auth.getUserAvatar(this.auth.userId);
     }
     firstValueFrom(this.auth.user$.pipe(take(1))).then(user => {
-      console.log("User aus AuthService:", user);
       this.displayName = user?.displayName ?? 'Gast';
     });
   }

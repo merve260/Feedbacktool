@@ -163,7 +163,6 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['questions'] && changes['questions'].currentValue) {
-      console.log("Builder ngOnChanges questions:", this.questions.map(q => q.order));
       // Externe questions übernehmen und Canvas aktualisieren
       this.canvasQuestions = [...this.questions];
     }
@@ -195,7 +194,6 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
       const reader = new FileReader();
       reader.onload = () => {
         const value = reader.result as string;
-        console.log("Selected logo:", value.substring(0,50));
 
         this.infoForm.controls.logoUrl.setValue(value);
 
@@ -215,7 +213,6 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
 
   // Speichern als Draft oder Publish
   async saveAs(status: SurveyStatus) {
-    console.log("Survey payload", this.canvasQuestions.map(this.toQuestion));
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
       alert('Bitte Titel, Zeitraum und mindestens eine Frage angeben.');
@@ -226,7 +223,6 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     try {
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
       if (!u) { alert('Bitte einloggen.'); return; }
-      console.log("LogoUrl saving:", this.infoForm.controls.logoUrl.value);
 
       const survey: Omit<Survey, 'id'> = {
         ownerId: u.uid,
