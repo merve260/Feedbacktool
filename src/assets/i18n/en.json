@@ -287,5 +287,11 @@
     "star": {
       "answers": "ratings"
     }
+  },
+  "avatar": {
+    "invalidType": "Only PNG/JPEG/WebP are allowed. SVG is not supported."
+  },
+  "common": {
+    "ok": "OK"
   }
 }

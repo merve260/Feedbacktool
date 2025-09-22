@@ -15,6 +15,8 @@ import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { LanguageService } from '../../../core/services/language.service';
 import {TranslateModule} from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -37,6 +39,8 @@ export class AdminLayoutComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private languageService = inject(LanguageService);
+  private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   isMobile = window.innerWidth <= 768;
   avatar$: Observable<string | null> | null = null;
@@ -75,14 +79,26 @@ export class AdminLayoutComponent {
   async changeAvatar() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
+    input.accept = 'image/png, image/jpeg, image/webp';
     input.click();
 
     input.onchange = async () => {
       const file = input.files?.[0];
-      if (file) {
-        const base64 = await this.toBase64(file);
-        await this.auth.uploadUserAvatarBase64(base64);
+      if (!file) return;
+
+      const allowed = ['image/png', 'image/jpeg', 'image/webp'];
+      if (!allowed.includes(file.type)) {
+        this.snackBar.open(
+          this.translate.instant('avatar.invalidType'),
+          this.translate.instant('common.ok'),
+          {
+            duration: 4000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['custom-snackbar']
+          }
+        );
+        return;
       }
     };
   }
