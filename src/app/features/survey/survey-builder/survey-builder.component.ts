@@ -177,19 +177,25 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
   };
   onLogoSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        const value = reader.result as string;
+    if (!input.files || input.files.length === 0) return;
 
-        this.infoForm.controls.logoUrl.setValue(value);
+    const file = input.files[0];
+    const allowed = ['image/png', 'image/jpeg', 'image/webp'];
 
-        this.logoUrl = value;
-        this.logoUrlChange.emit(value);
-      };
-      reader.readAsDataURL(file);
+    //Ohne .svg Dateien wegen XSS-Angriffe
+    if (!allowed.includes(file.type)) {
+      input.value = '';
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const value = reader.result as string;
+      this.infoForm.controls.logoUrl.setValue(value);
+      this.logoUrl = value;
+      this.logoUrlChange.emit(value);
+    };
+    reader.readAsDataURL(file);
   }
 
   removeLogo() {
