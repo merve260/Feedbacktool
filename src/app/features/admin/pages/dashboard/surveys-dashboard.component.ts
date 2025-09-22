@@ -30,6 +30,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
 import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-modal/umfrage-link-dialog.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-surveys-dashboard',
@@ -39,7 +40,8 @@ import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-
     FormsModule,
     MatMenuModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    TranslateModule
   ],
   templateUrl: './surveys-dashboard.component.html',
   styleUrls: ['./surveys-dashboard.component.scss'],

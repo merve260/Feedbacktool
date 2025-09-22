@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-multiple-choice-modal',
@@ -21,6 +22,7 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatButtonModule,
     MatIconModule,
     MatCheckbox,
+    TranslateModule,
   ],
   templateUrl: './multiple-choice-modal.component.html',
   styleUrls: ['./multiple-choice-modal.component.scss']

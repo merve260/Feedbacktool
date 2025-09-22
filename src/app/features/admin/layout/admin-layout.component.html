@@ -1,10 +1,10 @@
 <!--
-  Admin-Shell Layout (responsive)
+  Admin-Layout (responsive)
   - Desktop: Sidebar dauerhaft sichtbar (mode="side")
   - Mobil: Sidebar überlagert, via Hamburger-Menü (mode="over")
 -->
 <mat-sidenav-container class="shell">
-  <!-- Linke Sidebar -->
+  <!-- Sidebar -->
   <mat-sidenav
     #sidenav
     class="side"
@@ -24,12 +24,12 @@
       <nav class="nav">
         <a mat-list-item routerLink="/admin/umfragen" routerLinkActive="active">
           <mat-icon matListIcon>assignment</mat-icon>
-          <span class="label">Meine Umfragen</span>
+          <span class="label">{{ 'sidebar.surveys' | translate }}</span>
         </a>
 
         <a mat-list-item routerLink="/admin/ergebnisse" routerLinkActive="active">
           <mat-icon matListIcon>bar_chart</mat-icon>
-          <span class="label">Umfrage Ergebnisse & Analytics</span>
+          <span class="label">{{ 'sidebar.results' | translate }}</span>
         </a>
       </nav>
 
@@ -37,14 +37,22 @@
 
       <!-- Unteres Menü -->
       <nav class="bottom">
+        <!-- Sprache wechseln -->
+        <a mat-list-item (click)="switchLang(currentLang==='de' ? 'en' : 'de')">
+          <mat-icon matListIcon>language</mat-icon>
+          <span class="label">{{ 'sidebar.switch' | translate }}</span>
+        </a>
+
         <a mat-list-item routerLink="/admin/profil" routerLinkActive="active">
           <mat-icon matListIcon>person</mat-icon>
-          <span class="label">Profil bearbeiten</span>
+          <span class="label">{{ 'sidebar.profile' | translate }}</span>
         </a>
+
         <a mat-list-item (click)="logout()">
           <mat-icon matListIcon>logout</mat-icon>
-          <span class="label">Ausloggen</span>
+          <span class="label">{{ 'sidebar.logout' | translate }}</span>
         </a>
+
       </nav>
     </div>
   </mat-sidenav>
@@ -52,7 +60,7 @@
   <!-- Hauptinhalt -->
   <mat-sidenav-content class="content">
     <mat-toolbar color="primary" class="topbar">
-      <!-- Hamburger-Menü nur auf Mobilgeräten -->
+      <!-- Hamburger-Menü mobil -->
       <button
         *ngIf="isMobile"
         mat-icon-button
@@ -62,8 +70,8 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <!-- Titel aus den Routen -->
-      <div class="page-title">{{ pageTitle$ | async }}</div>
+      <!-- Seitentitel -->
+      <div class="page-title">{{ (pageTitle$ | async) ?? '' | translate }}</div>
       <span class="flex-spacer"></span>
 
       <!-- Benutzer-Menü -->
@@ -91,18 +99,24 @@
       <mat-menu #userMenu="matMenu">
         <h4 class="displayname">{{ displayName }}</h4>
         <button mat-menu-item routerLink="/admin/profil">
-          <span>Profil bearbeiten</span>
+          <span>{{ 'menu.profile' | translate }}</span>
         </button>
         <button mat-menu-item (click)="changeAvatar()">
-          <span>Avatar ändern</span>
+          <span>{{ 'menu.avatar' | translate }}</span>
         </button>
+
+        <!-- Sprache wechseln -->
+        <button mat-menu-item (click)="switchLang(currentLang==='de' ? 'en' : 'de')">
+          <span>{{ 'menu.switch' | translate }}</span>
+        </button>
+
         <button mat-menu-item (click)="logout()">
-          <span>Ausloggen</span>
+          <span>{{ 'menu.logout' | translate }}</span>
         </button>
       </mat-menu>
     </mat-toolbar>
 
-    <!-- Unterseiten -->
+    <!-- Router Outlet -->
     <div class="route-slot">
       <router-outlet></router-outlet>
     </div>

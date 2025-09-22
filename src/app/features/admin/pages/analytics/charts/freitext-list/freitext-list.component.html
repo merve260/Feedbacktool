@@ -1,6 +1,6 @@
 <div class="frei-text-card" *ngIf="question">
   <!-- Fragetitel -->
-  <h3>{{ question.title }}</h3>
+  <h3>{{ question.title | translate }}</h3>
 
   <!-- Vorschau: zeigt nur die ersten 3 Antworten -->
   <ul class="preview-list">
@@ -11,9 +11,7 @@
   </ul>
 
   <!-- Button: öffnet Dialog mit allen Antworten -->
-  <button *ngIf="answers.length > 0"
-          class="mehr-btn"
-          >
-    Alle Antworten anzeigen ({{ answers.length }})
+  <button *ngIf="answers.length > 0" class="mehr-btn">
+    {{ 'results.showAllAnswers' | translate:{ count: answers.length } }}
   </button>
 </div>

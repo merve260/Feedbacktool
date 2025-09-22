@@ -9,6 +9,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-skala-slider-modal',
@@ -24,6 +25,7 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatCheckboxModule,
     MatSliderModule,
     MatIconModule,
+    TranslateModule,
   ]
 })
 export class SkalaSliderModalComponent implements OnInit {

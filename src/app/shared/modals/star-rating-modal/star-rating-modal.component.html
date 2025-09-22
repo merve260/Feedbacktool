@@ -1,34 +1,38 @@
 <!-- Kopfbereich mit Schließen-Button -->
 <div class="modal-header">
-  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+  <button
+    mat-icon-button
+    (click)="onCancel()"
+    [attr.aria-label]="'modal.close' | translate"
+    class="close-button">
     <mat-icon>close</mat-icon>
   </button>
+
 </div>
 
 <div class="modal-container">
   <div class="modal-content">
-    <h2>Sternebewertung bearbeiten</h2>
+    <h2>{{ 'modal.star.edit' | translate }}</h2>
 
     <!-- Eingabe: Fragetitel -->
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Fragetitel</mat-label>
-      <input matInput [(ngModel)]="data.title" placeholder="z.B. Wie zufrieden sind Sie?" />
+      <mat-label>{{ 'modal.star.title' | translate }}</mat-label>
+      <input matInput [(ngModel)]="data.title" placeholder="{{ 'modal.star.titlePlaceholder' | translate }}" />
     </mat-form-field>
 
     <!-- Eingabe: Fragetext -->
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Fragetext</mat-label>
-      <input matInput [(ngModel)]="data.text" placeholder="z.B. Bewerten Sie unsere Dienstleistung." />
+      <mat-label>{{ 'modal.star.text' | translate }}</mat-label>
+      <input matInput [(ngModel)]="data.text" placeholder="{{ 'modal.star.textPlaceholder' | translate }}" />
     </mat-form-field>
 
-
     <!-- Vorschau -->
-    <p class="preview-label-titel">Vorschau:</p>
+    <p class="preview-label-titel">{{ 'modal.preview' | translate }}</p>
     <div class="preview-box">
-      <p class="preview-label">Fragetitel:</p>
+      <p class="preview-label">{{ 'modal.star.title' | translate }}</p>
       <p class="frage-text">{{ data.title }}</p>
 
-      <p class="preview-label">Fragetext:</p>
+      <p class="preview-label">{{ 'modal.star.text' | translate }}</p>
       <p class="frage-text">{{ data.text }}</p>
 
       <div class="stars">
@@ -41,7 +45,7 @@
 
   <!-- Aktionen -->
   <div class="modal-actions">
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+    <button mat-button (click)="onCancel()">{{ 'modal.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="onSave()">{{ 'modal.save' | translate }}</button>
   </div>
 </div>

@@ -4,51 +4,62 @@
     <mat-icon>search</mat-icon>
     <input
       type="search"
-      placeholder="Suchen nach Titel…"
+      [placeholder]="'dashboard.searchPlaceholder' | translate"
       [(ngModel)]="search"
       (input)="applyView()"
-      aria-label="Suche nach Titel" />
-    <button *ngIf="search" class="clear" (click)="clearSearch()" aria-label="Suche löschen">
+      [attr.aria-label]="'dashboard.searchPlaceholder' | translate" />
+    <button *ngIf="search"
+            class="clear"
+            (click)="clearSearch()"
+            [attr.aria-label]="'dashboard.searchClear' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
-  <button class="btn btn-primary" (click)="create()">+ Erstellen</button>
-</div>
-<h2 class="welcome">Willkommen, {{ displayName }}</h2>
-<!-- Lade-Status -->
-<div *ngIf="loading" class="loading">Lade…</div>
-
-<!-- Wenn keine Umfragen existieren -->
-<div *ngIf="!loading && items.length === 0" class="empty-card">
-  <p class="empty-text">Es gibt noch keine Umfrage.</p>
-  <button class="btn-cta" (click)="create()">
-    <mat-icon>add_circle</mat-icon>
-    Jetzt Erstellen!
+  <button class="btn btn-primary" (click)="create()">
+    + {{ 'dashboard.create' | translate }}
   </button>
 </div>
 
+<h2 class="welcome">
+  {{ 'dashboard.welcome' | translate:{ name: displayName } }}
+</h2>
+
+<!-- Lade-Status -->
+<div *ngIf="loading" class="loading">
+  {{ 'dashboard.loading' | translate }}
+</div>
+
+<!-- Wenn keine Umfragen existieren -->
+<div *ngIf="!loading && items.length === 0" class="empty-card">
+  <p class="empty-text">{{ 'dashboard.emptyText' | translate }}</p>
+  <button class="btn-cta" (click)="create()">
+    <mat-icon>add_circle</mat-icon>
+    {{ 'dashboard.emptyCta' | translate }}
+  </button>
+</div>
 
 <!-- Liste mit Umfragen -->
 <div *ngIf="!loading && items.length > 0" class="list">
   <div class="row head">
-    <div>Titel</div>
-    <div>Zeitraum</div>
-    <div>Status</div>
+    <div>{{ 'dashboard.table.title' | translate }}</div>
+    <div>{{ 'dashboard.table.range' | translate }}</div>
+    <div>{{ 'dashboard.table.status' | translate }}</div>
 
     <!-- Sortierung nach Erstellungsdatum -->
     <div class="th-sort"
-         role="button" tabindex="0"
+         role="button"
+         tabindex="0"
          (click)="toggleCreatedSort()"
          (keydown.enter)="toggleCreatedSort()"
          [attr.aria-sort]="sortDir==='desc' ? 'descending' : 'ascending'">
-      Erstellt am
+      {{ 'dashboard.table.created' | translate }}
       <mat-icon class="caret" [class.asc]="sortDir==='asc'">arrow_drop_down</mat-icon>
     </div>
 
-    <div class="actions">Aktionen</div>
+    <div class="actions">{{ 'dashboard.table.actions' | translate }}</div>
   </div>
 
-  <!-- Jede Umfrage in einer Reihe -->
+  <!-- Jede Umfrage -->
   <div class="row" *ngFor="let s of items">
     <div class="title">{{ s.title }}</div>
     <div class="range">
@@ -56,50 +67,56 @@
       –
       <span *ngIf="s.endAt as b">{{ b | date:'dd.MM.yyyy' }}</span>
     </div>
-    <div><span class="{{ statusClass(getDisplayStatus(s)) }}">{{ getDisplayStatus(s) }}</span></div>
+    <div>
+      <span class="{{ statusClass(s.status) }}">
+        {{ 'status.' + s.status | translate }}
+      </span>
+    </div>
     <div class="created">
       <span *ngIf="s.createdAt as c">{{ c | date:'dd.MM.yyyy HH:mm' }}</span>
       <span *ngIf="!s.createdAt">–</span>
     </div>
 
-    <!-- Menü für Bearbeiten, Veröffentlichen usw. -->
+    <!-- Menü für Aktionen -->
     <div class="actions">
-      <button mat-icon-button [matMenuTriggerFor]="menu" matMenuPositionX="before" aria-label="Aktionen">
+      <button mat-icon-button
+              [matMenuTriggerFor]="menu"
+              matMenuPositionX="before"
+              [attr.aria-label]="'dashboard.table.actions' | translate">
         <mat-icon>more_vert</mat-icon>
       </button>
 
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="edit(s)">
           <mat-icon>edit</mat-icon>
-          <span>Bearbeiten</span>
+          <span>{{ 'dashboard.actions.edit' | translate }}</span>
         </button>
 
         <button mat-menu-item *ngIf="s.status==='draft'" (click)="publish(s)">
           <mat-icon>publish</mat-icon>
-          <span>Veröffentlichen</span>
+          <span>{{ 'dashboard.actions.publish' | translate }}</span>
         </button>
 
-        <button mat-menu-item *ngIf="s.status==='published' || s.status ==='closed'" (click)="unpublish(s)">
+        <button mat-menu-item *ngIf="s.status==='published' || s.status==='closed'" (click)="unpublish(s)">
           <mat-icon>undo</mat-icon>
-          <span>Zurückziehen</span>
+          <span>{{ 'dashboard.actions.unpublish' | translate }}</span>
         </button>
 
         <button mat-menu-item *ngIf="s.status==='published' || s.status==='draft'" (click)="close(s)">
           <mat-icon>block</mat-icon>
-          <span>Schließen</span>
+          <span>{{ 'dashboard.actions.close' | translate }}</span>
         </button>
 
         <button mat-menu-item *ngIf="s.status==='published'" (click)="openLinkDialog(s)">
           <mat-icon>link</mat-icon>
-          <span>Link anzeigen</span>
+          <span>{{ 'dashboard.actions.link' | translate }}</span>
         </button>
 
         <button mat-menu-item (click)="remove(s)" class="warn">
           <mat-icon>delete</mat-icon>
-          <span>Löschen</span>
+          <span>{{ 'dashboard.actions.delete' | translate }}</span>
         </button>
       </mat-menu>
-
     </div>
   </div>
 </div>
@@ -108,11 +125,20 @@
 <div class="status-hinweis" *ngIf="showStatusHinweis">
   <mat-icon class="info-icon">info</mat-icon>
   <div class="content">
-    <strong>Status-Erklärung:</strong>
+    <strong>{{ 'dashboard.statusHint.title' | translate }}</strong>
     <ul>
-      <li><span class="chip chip--pub">published</span> – Umfrage aktiv, Link erreichbar.</li>
-      <li><span class="chip chip--closed">closed</span> – Umfrage beendet, Link nicht mehr verfügbar.</li>
-      <li><span class="chip chip--draft">draft</span> – Umfrage noch im Entwurf.</li>
+      <li>
+        <span class="chip chip--pub">{{ 'status.published' | translate }}</span> –
+        {{ 'dashboard.statusHint.published' | translate }}
+      </li>
+      <li>
+        <span class="chip chip--closed">{{ 'status.closed' | translate }}</span> –
+        {{ 'dashboard.statusHint.closed' | translate }}
+      </li>
+      <li>
+        <span class="chip chip--draft">{{ 'status.draft' | translate }}</span> –
+        {{ 'dashboard.statusHint.draft' | translate }}
+      </li>
     </ul>
   </div>
   <button mat-icon-button class="close-btn" (click)="showStatusHinweis = false">

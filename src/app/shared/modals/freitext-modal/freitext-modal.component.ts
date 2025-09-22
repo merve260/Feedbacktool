@@ -9,6 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-freitext-modal',
@@ -20,6 +21,7 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    TranslateModule,
   ],
   templateUrl: './freitext-modal.component.html',
   styleUrls: ['./freitext-modal.component.scss']

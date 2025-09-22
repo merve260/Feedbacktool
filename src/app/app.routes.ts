@@ -35,21 +35,21 @@ export const routes: Routes = [
       { path: '', redirectTo: 'umfragen', pathMatch: 'full' },
 
       // Dashboard: Übersicht aller Umfragen
-      { path: 'umfragen', component: SurveysDashboardComponent, data: { title: 'Meine Umfragen' } },
+      { path: 'umfragen', component: SurveysDashboardComponent, data: { title: 'dashboard.pageTitle' } },
 
       // Umfrage bearbeiten
-      { path: 'umfragen/:id/edit', component: SurveyEditComponent, data: { title: 'Umfrage bearbeiten' } },
+      { path: 'umfragen/:id/edit', component: SurveyEditComponent, data: { title: 'survey.editTitle' } },
 
       // Ergebnisse & Analytics
-      { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'Umfrage Ergebnisse & Analytics' } },
-      { path: 'ergebnisse/:id', component: SurveyAnalyticsDetailComponent, data: { title: 'Analyse Detail' } },
+      { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'results.pageTitle' } },
+      { path: 'ergebnisse/:id', component: SurveyAnalyticsDetailComponent, data: { title: 'results.detailTitle' } },
 
       // Profil-Einstellungen (mit Guard vor ungespeicherten Änderungen)
       {
         path: 'profil',
         component: ProfileSettingsComponent,
         canDeactivate: [UnsavedChangesGuard],
-        data: { title: 'Profil bearbeiten' }
+        data: { title: 'profile.editTitle' }
       },
     ],
   },

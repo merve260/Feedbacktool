@@ -8,11 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
 import { CanComponentDeactivate } from '../../../../core/guards/unsaved-changes.guard';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, TranslateModule],
   templateUrl: './profile-settings.component.html',
   styleUrls: ['./profile-settings.component.scss'],
 })

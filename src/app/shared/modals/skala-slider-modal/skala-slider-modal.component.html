@@ -1,59 +1,66 @@
 <!-- X button -->
 <div class="modal-header">
-  <button mat-icon-button (click)="onClose()" aria-label="Schließen" class="close-button">
+  <button mat-icon-button (click)="onClose()" [attr.aria-label]="'modal.close' | translate" class="close-button">
     <mat-icon>close</mat-icon>
   </button>
 </div>
 
 <div class="modal-container">
-  <h2>Skala-Frage bearbeiten</h2>
+  <h2>{{ 'modal.slider.edit' | translate }}</h2>
 
   <!-- Fragetitel -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetitel</mat-label>
-    <input matInput [(ngModel)]="data.title" placeholder="z.B. Wie bewerten Sie...?" />
+    <mat-label>{{ 'modal.slider.title' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.title"
+      [placeholder]="'modal.slider.titlePlaceholder' | translate" />
   </mat-form-field>
 
   <!-- Fragetext -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetext</mat-label>
-    <input matInput [(ngModel)]="data.text" placeholder="z.B. Ihre Meinung ist uns wichtig..." />
+    <mat-label>{{ 'modal.slider.text' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.text"
+      [placeholder]="'modal.slider.textPlaceholder' | translate" />
   </mat-form-field>
 
   <!-- Min -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Min Wert</mat-label>
+    <mat-label>{{ 'modal.slider.min' | translate }}</mat-label>
     <input matInput type="number" [(ngModel)]="min" [max]="max - 2" class="no-spinner" />
   </mat-form-field>
 
   <!-- Max -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Max Wert</mat-label>
+    <mat-label>{{ 'modal.slider.max' | translate }}</mat-label>
     <input matInput type="number" [(ngModel)]="max" [min]="min + 2" class="no-spinner" />
   </mat-form-field>
 
   <!-- Step -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Schrittgröße</mat-label>
+    <mat-label>{{ 'modal.slider.step' | translate }}</mat-label>
     <input matInput type="number" [(ngModel)]="step" />
   </mat-form-field>
 
   <!-- Thumb Label -->
-
-  <mat-checkbox [(ngModel)]="thumbLabel">Wertanzeige beim Ziehen anzeigen</mat-checkbox>
+  <mat-checkbox [(ngModel)]="thumbLabel">
+    {{ 'modal.slider.thumbLabel' | translate }}
+  </mat-checkbox>
 
   <!-- Fehlermeldung -->
   <div *ngIf="isInvalidRange" class="error-text">
-    Die Differenz zwischen Max und Min muss mindestens 2 betragen.
+    {{ 'modal.slider.errorRange' | translate }}
   </div>
 
   <!-- Vorschau -->
-  <p class="preview-label-titel">Vorschau:</p>
+  <p class="preview-label-titel">{{ 'modal.preview' | translate }}</p>
   <div class="preview-box">
-    <p class="preview-label">Fragetitel</p>
+    <p class="preview-label">{{ 'modal.slider.title' | translate }}</p>
     <p class="frage-text">{{ data.title }}</p>
 
-    <p class="preview-label">Fragetext</p>
+    <p class="preview-label">{{ 'modal.slider.text' | translate }}</p>
     <p class="frage-text">{{ data.text }}</p>
 
     <div class="slider-container">
@@ -68,19 +75,18 @@
         [style.background]="getSliderBackground()"
         (input)="onSlide()"
       />
-      <span
-        *ngIf="thumbLabel"
-        class="slider-bubble"
-        [style.left.%]="percent"
-      >
-    {{ value }} / {{max}}
-  </span>
+      <span *ngIf="thumbLabel" class="slider-bubble" [style.left.%]="percent">
+        {{ value }} / {{ max }}
+      </span>
       <span class="slider-value" *ngIf="!thumbLabel">{{ value }}</span>
     </div>
   </div>
+
   <!-- Aktionen -->
   <div class="modal-actions">
-    <button mat-button (click)="onClose()">Abbrechen</button>
-    <button mat-raised-button color="primary" [disabled]="isInvalidRange" (click)="onSave()">Speichern</button>
+    <button mat-button (click)="onClose()">{{ 'modal.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" [disabled]="isInvalidRange" (click)="onSave()">
+      {{ 'modal.save' | translate }}
+    </button>
   </div>
 </div>

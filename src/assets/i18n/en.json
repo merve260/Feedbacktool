@@ -10,6 +10,282 @@
       "privacy": "Privacy",
       "contact": "Contact"
     }
+  },
+  "sidebar": {
+    "surveys": "My Surveys",
+    "results": "Survey Results & Analytics",
+    "profile": "Edit Profile",
+    "logout": "Logout",
+    "switch": "Switch language: Deutsch"
+  },
+  "menu": {
+    "profile": "Edit Profile",
+    "avatar": "Change Avatar",
+    "logout": "Logout",
+    "switch": "Switch language: Deutsch"
+  },
+  "status": {
+    "published": "Published",
+    "closed": "Closed",
+    "draft": "Draft"
+  },
+  "dashboard": {
+    "pageTitle": "My Surveys",
+    "searchPlaceholder": "Search by title…",
+    "searchClear": "Clear search",
+    "create": "Create",
+    "welcome": "Welcome, {{name}}",
+    "loading": "Loading…",
+    "emptyText": "There are no surveys yet.",
+    "emptyCta": "Create now!",
+    "table": {
+      "title": "Title",
+      "range": "Period",
+      "status": "Status",
+      "created": "Created at",
+      "actions": "Actions"
+    },
+    "actions": {
+      "edit": "Edit",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "close": "Close",
+      "link": "Show link",
+      "delete": "Delete"
+    },
+    "statusHint": {
+      "title": "Status explanation:",
+      "published": "Survey active, link available.",
+      "closed": "Survey ended, link not available anymore.",
+      "draft": "Survey still in draft."
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "editTitle": "Edit Profile",
+    "email": "E-Mail",
+    "name": "Name",
+    "namePlaceholder": "Enter name",
+    "avatar": "Avatar",
+    "changeAvatar": "Change Avatar",
+    "reset": "Reset",
+    "save": "Save",
+    "logout": "Logout"
+  },
+  "results": {
+    "pageTitle": "Survey Results & Analytics",
+    "hintTitle": "Note:",
+    "hintText1": "In this overview you only see published or closed surveys that already have answers.",
+    "hintText2": "Drafts do not appear here.",
+    "detailTitle": "Analysis",
+    "status": "Status",
+    "start": "Start",
+    "end": "End",
+    "answersCount": "Number of answers",
+    "notFound": "Survey not found.",
+    "noPermission": "No permission for this analysis.",
+    "noAnswers": "No answers available!",
+    "noAnswersDocs": "No answers found in the documents.",
+    "anonymous": "Anonymous",
+    "answers": "Answers",
+    "export": "Export to Excel",
+    "loading": "Loading data...",
+    "showAllAnswers": "Show all answers ({{count}})",
+    "excel": {
+      "participant": "Participant",
+      "createdAt": "Created At",
+      "question": "Question",
+      "answeredAt": "Answered At",
+      "answer": "Answer",
+      "sheetName": "Answers",
+      "filePrefix": "survey"
+    }
+  },
+  "publish": {
+    "draft": "Save draft",
+    "publish": "Publish survey",
+    "publishing": "Publishing...",
+    "error": {
+      "startInPast": "Start date cannot be in the past.",
+      "endBeforeStart": "End date cannot be before start date.",
+      "notLoggedIn": "Not logged in.",
+      "saveFailed": "Draft could not be saved.",
+      "publishFailed": "Publishing failed."
+    },
+    "linkTitle": "Survey link:",
+    "copy": "Copy link",
+    "copied": "Link copied!",
+    "showSurvey": "Show survey",
+    "defaultQuestion": "Question {{index}}"
+  },
+  "edit": {
+    "preview": "Preview",
+    "saveDraft": "Save changes as draft",
+    "publish": "Publish changes",
+    "errorLoad": "Error while loading.",
+    "errorSave": "Saving failed."
+  },
+  "builder": {
+    "infoTitle": "Survey Info",
+    "hintTitle": "Publishing notes:",
+    "hint1": "To publish you need at least one question, a title and a date range.",
+    "hint2": "After publishing you get a participant link in the admin area.",
+    "hint3": "The survey can later be reopened and edited.",
+
+    "form": {
+      "titleLabel": "Survey title",
+      "titleRequired": "Title is required.",
+      "rangeLabel": "Date range",
+      "startPlaceholder": "Start",
+      "endPlaceholder": "End",
+      "dateInvalid": "End date must be after start date."
+    },
+
+    "logo": {
+      "label": "Company logo (optional)",
+      "select": "Select file",
+      "previewAlt": "Logo preview",
+      "delete": "Delete logo"
+    },
+
+    "palette": {
+      "title": "Question types"
+    },
+    "canvas": {
+      "title": "Survey Canvas",
+      "empty": "Add at least one question to publish.",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+
+    "types": {
+      "multiple": "Multiple choice",
+      "freitext": "Free text",
+      "star": "Star rating",
+      "slider": "Scale / Slider",
+      "radio": "Radio button choice"
+    }
+  },
+  "survey": {
+    "editTitle": "Edit Survey"
+  },
+  "viewer": {
+    "errorTitle": "Error",
+    "errorNotFound": "This survey does not exist or is no longer available.",
+    "errorClosed": "This survey is closed.",
+    "errorNotStarted": "This survey has not started yet.",
+    "errorExpired": "This survey has expired.",
+    "errorLoad": "Survey could not be loaded.",
+    "errorSave": "Responses could not be saved.",
+
+    "nameLabel": "Your name (optional)",
+    "namePlaceholder": "First and last name",
+
+    "questionProgress": "Question {{current}} of {{total}}",
+
+    "textAnswer": "Your answer",
+    "unknownType": "Unknown question type",
+
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+
+    "thankYou": "Thank you for your participation!",
+    "submitted": "Your survey has been successfully submitted."
+  },
+  "modal": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "preview": "Preview:",
+    "multipleChoice": {
+      "edit": "Edit Multiple Choice",
+      "title": "Question title",
+      "titlePlaceholder": "e.g. Question 1",
+      "text": "Question text",
+      "textPlaceholder": "e.g. What do you like best?",
+      "optionPlaceholder": "Answer option",
+      "addOption": "Add another option"
+    },
+    "radio": {
+      "edit": "Edit Radio Choice",
+      "title": "Question title",
+      "titlePlaceholder": "e.g. Question 1",
+      "text": "Question text",
+      "textPlaceholder": "e.g. Which color do you like most?",
+      "option": "Option {{index}}",
+      "addOption": "Add another option"
+    },
+    "freitext": {
+      "edit": "Edit Free Text Question",
+      "title": "Question title",
+      "titlePlaceholder": "e.g. Question 3",
+      "text": "Question text",
+      "textPlaceholder": "e.g. What do you think about our product?",
+      "answer": "Your answer",
+      "answerPlaceholder": "Please write here..."
+    },
+    "slider": {
+      "edit": "Edit slider question",
+      "title": "Question title",
+      "titlePlaceholder": "e.g. Slider question",
+      "text": "Question text",
+      "textPlaceholder": "e.g. How much do you agree?",
+      "average": "Average",
+      "answers": "Answers",
+      "anonymous": "Anonymous",
+      "personsChose": "{{count}} person(s) chose {{value}}",
+      "min": "Minimum value",
+      "max": "Maximum value",
+      "step": "Step size",
+      "thumbLabel": "Show value bubble when sliding",
+      "errorRange": "The difference between Max and Min must be at least 2"
+    },
+    "star": {
+      "edit": "Edit star rating",
+      "title": "Question title",
+      "text": "Question text",
+      "titlePlaceholder": "e.g. How satisfied are you?",
+      "textPlaceholder": "e.g. Please rate our service."
+    },
+    "surveyPreview": {
+      "title": "Survey preview",
+      "name": "Your Name (optional)",
+      "namePlaceholder": "First and last name",
+      "thumbLabel": "Value display: enabled",
+      "answer": "Answer",
+      "unknownType": "Unknown question type"
+    },
+    "link": {
+      "title": "Survey Link",
+      "hintTitle": "Note:",
+      "hintText": "You can share this link with your users to publish the survey. Results and analytics are visible in the admin dashboard.",
+      "validUntil": "The link is only valid until the end date ({{date}} 23:59). After that it will no longer be accessible.",
+      "noEndDate": "No end date set – the link remains accessible indefinitely.",
+      "label": "Survey link",
+      "copied": "Link copied!",
+      "open": "Open",
+      "errorNoEnd": "No end date defined!",
+      "errorExpired": "The link has expired."
+    }
+  },
+  "chart": {
+    "multiple": {
+      "mostChosen": "Most chosen answer(s):",
+      "votes": "votes"
+    },
+    "radio": {
+      "votes": "votes",
+      "totalAnswers": "Total answers",
+      "tooltip": "{{option}}: {{count}} votes"
+    },
+    "slider": {
+      "label": "Answers",
+      "scale": "Scale value",
+      "participants": "Number of participants"
+    },
+    "star": {
+      "answers": "ratings"
+    }
   }
 }
-

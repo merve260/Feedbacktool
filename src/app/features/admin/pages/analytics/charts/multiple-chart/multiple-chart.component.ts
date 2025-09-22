@@ -1,18 +1,20 @@
 import {
   Component, Input, OnInit, OnDestroy, AfterViewInit,
   OnChanges, SimpleChanges,
-  ViewChild, ElementRef
+  ViewChild, ElementRef, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Question } from '../../../../../../core/models/survey.models';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import {TranslateModule} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-multiple-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './multiple-chart.component.html',
   styleUrls: ['./multiple-chart.component.scss'],
 })
@@ -22,8 +24,10 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
   @Input() surveyId!: string;       // ID der aktuellen Umfrage
   @Input() question?: Question;     // Aktuelle Frage (Multiple Choice)
   @Input() inDialog = false;        // Flag: wird im Dialog angezeigt?
-  @Input() answers: any[] = [];     // ✨ Alle Antworten (vom Parent übergeben)
+  @Input() answers: any[] = [];     // Alle Antworten (vom Parent übergeben)
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+
+  private translate: TranslateService = inject(TranslateService);
 
   // Speichert meistgewählte Optionen
   mostChosenOptions: { option: string; count: number }[] = [];
@@ -31,7 +35,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
   private chartData: { option: string; count: number }[] = [];
 
   ngOnInit() {
-    // Initialisierung: Logik passiert über ngOnChanges
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -52,9 +55,6 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
    * Verarbeitet alle Antworten und zählt die Auswahl pro Option
    */
   private processAnswers(docs: any[]) {
-   // console.log("Dialog Question ID:", this.question?.id);
-   // console.log("All answers (raw):", docs);
-
     if (!this.question) return;
 
     // Zähler initialisieren (alle Optionen = 0)
@@ -102,7 +102,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
     const data: ChartConfiguration<'pie'>['data'] = {
       labels: this.chartData.map(r => r.option),
       datasets: [{
-        label: 'Stimmen',
+        label: this.translate.instant('chart.multiple.votes'),
         data: values,
         backgroundColor: colors.backgrounds,
         borderColor: colors.borders,
@@ -112,6 +112,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
         offset: 8
       }]
     };
+
 
     // Neues Chart erstellen
     this.chart = new Chart(ctx, {

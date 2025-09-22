@@ -273,3 +273,49 @@ $accent-lila: #7b4683;
   from { opacity: 0; transform: translateY(-10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.survey-viewer {
+  position: relative;
+
+  .survey-header {
+    position: relative;
+    text-align: center;
+
+    h2 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: #2c2c2c;
+    }
+
+    .survey-logo {
+      display: block;
+      max-height: 60px;
+      margin: 10px auto 0 auto;
+    }
+
+    .lang-switch {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      button {
+        background: #fff;
+        border: 1px solid #ae3ebf;
+        padding: 6px 10px;
+        min-width: 40px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+        &:hover {
+          background: #f0f0f0;
+        }
+      }
+    }
+  }
+}
+

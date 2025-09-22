@@ -115,7 +115,11 @@ a[mat-list-item] {
 
 /* Hover + Active */
 .side a[mat-list-item]:hover  { background: $soft; }
-.side a[mat-list-item].active { background: $soft-strong; }
+.side a[mat-list-item].active {
+  background: $soft-strong;
+  font-weight: 600;
+}
+
 
 /* Responsive Sidebar */
 @media (max-width: 768px) {
@@ -148,6 +152,7 @@ a[mat-list-item] {
   font-size: 1rem !important;
   line-height: 1.6 !important;
 }
+
 
 
 

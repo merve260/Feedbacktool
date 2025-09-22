@@ -13,6 +13,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/auth/auth.service';
 import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
+import { LanguageService } from '../../../core/services/language.service';
+import {TranslateModule} from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-admin-layout',
@@ -24,7 +27,7 @@ import { firstValueFrom } from 'rxjs';
     CommonModule, AsyncPipe, NgIf,
     // Material
     MatSidenavModule, MatToolbarModule, MatIconModule,
-    MatListModule, MatButtonModule, MatMenuModule, MatDividerModule,
+    MatListModule, MatButtonModule, MatMenuModule, MatDividerModule, TranslateModule,
   ],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
@@ -33,10 +36,12 @@ export class AdminLayoutComponent {
   public auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private languageService = inject(LanguageService);
 
   isMobile = window.innerWidth <= 768;
   avatar$: Observable<string | null> | null = null;
   displayName: string | null = null;
+  currentLang = this.languageService.currentLang();
 
   constructor() {
     if (this.auth.userId) {
@@ -89,5 +94,9 @@ export class AdminLayoutComponent {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = error => reject(error);
     });
+  }
+  switchLang(lang: string) {
+    this.languageService.use(lang);
+    this.currentLang = lang;
   }
 }

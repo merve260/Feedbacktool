@@ -17,22 +17,22 @@
   </div>
 
   <div class="edit-actions">
-    <!-- Button öffnet eine Vorschau-Ansicht der Umfrage -->
+    <!-- Vorschau -->
     <button mat-raised-button color="basic" (click)="openPreview()">
-      Vorschau
+      {{ 'edit.preview' | translate }}
     </button>
 
-    <!-- Änderungen werden nur als Entwurf gespeichert -->
+    <!-- Entwurf speichern -->
     <button mat-raised-button color="primary" (click)="updateSurvey('draft')">
-      Änderungen als Entwurf speichern
+      {{ 'edit.saveDraft' | translate }}
     </button>
 
-    <!-- Änderungen werden sofort veröffentlicht -->
+    <!-- Veröffentlichen -->
     <button mat-raised-button color="accent" (click)="updateSurvey('published')">
-      Änderungen veröffentlichen
+      {{ 'edit.publish' | translate }}
     </button>
   </div>
 
-  <!-- Fehlermeldungen werden unterhalb angezeigt -->
+  <!-- Fehlermeldung -->
   <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
 </div>

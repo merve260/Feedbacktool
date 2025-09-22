@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-radio-modal',
@@ -21,7 +22,8 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatRadioModule
+    MatRadioModule,
+    TranslateModule
   ]
 })
 export class RadioModalComponent {

@@ -1,41 +1,49 @@
-<!-- Anzeige einer Fehlermeldung, wenn Umfrage nicht verfügbar, abgelaufen oder noch nicht gestartet -->
+<!-- Fehlermeldung -->
 <div *ngIf="errorMsg" class="error-box">
   <mat-icon class="error-icon">error_outline</mat-icon>
   <div class="error-text">
-    <h2>Oops!</h2>
-    <p>{{ errorMsg }}</p>
+    <h2>{{ 'viewer.errorTitle' | translate }}</h2>
+    <p>{{ errorMsg | translate }}</p>
   </div>
 </div>
 
-<!-- Hauptbereich: Umfrage-Viewer, nur sichtbar wenn keine Fehlermeldung und nicht abgeschlossen -->
+<!-- Hauptbereich -->
 <div class="survey-viewer" *ngIf="!isCompleted && surveyData as data">
-  <!-- Titel + Logo -->
+
+  <!-- Header -->
   <div class="survey-header">
     <h2>{{ data.title }}</h2>
-    <img *ngIf="data.logoUrl" [src]="data.logoUrl" alt="Umfrage Logo" class="survey-logo" />
+    <img *ngIf="data.logoUrl" [src]="data.logoUrl" alt="Survey Logo" class="survey-logo" />
+
+    <div class="lang-switch">
+      <button *ngIf="currentLang === 'de'" (click)="switchLang('en')">EN</button>
+      <button *ngIf="currentLang === 'en'" (click)="switchLang('de')">DE</button>
+    </div>
   </div>
 
-  <!-- Eingabe des Teilnehmernamens (optional, nur bei erster Frage sichtbar) -->
+  <!-- Teilnehmername -->
   <div style="margin: 12px 0;" *ngIf="currentIndex === 0">
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Ihr Name (optional)</mat-label>
-      <input matInput [(ngModel)]="respondentName" placeholder="Vor- und Nachname" />
+      <mat-label>{{ 'viewer.nameLabel' | translate }}</mat-label>
+      <input
+        matInput
+        [(ngModel)]="respondentName"
+        [placeholder]="'viewer.namePlaceholder' | translate" />
     </mat-form-field>
   </div>
 
-  <!-- Fortschrittsanzeige: Aktuelle Frage / Gesamtanzahl -->
+  <!-- Fortschritt -->
   <div class="progress-info">
-    <p>Frage {{ currentIndex + 1 }} von {{ data.questions.length }}</p>
+    <p>{{ 'viewer.questionProgress' | translate:{ current: currentIndex + 1, total: data.questions.length } }}</p>
     <mat-progress-bar mode="determinate" [value]="getProgress()"></mat-progress-bar>
   </div>
 
-  <!-- Anzeige der aktuellen Frage mit passendem Fragetyp -->
+  <!-- Aktuelle Frage -->
   <div class="question-box" *ngIf="currentQuestion">
     <h3>{{ currentQuestion.title }}</h3>
 
     <ng-container [ngSwitch]="currentQuestion.type">
-
-      <!-- Mehrfachauswahl -->
+      <!-- Multiple -->
       <div *ngSwitchCase="'multiple'">
         <div *ngFor="let opt of currentQuestion.options; let i = index">
           <mat-checkbox [(ngModel)]="answers[currentIndex][i]">
@@ -44,7 +52,7 @@
         </div>
       </div>
 
-      <!-- Radiobutton-Auswahl -->
+      <!-- Radio -->
       <div *ngSwitchCase="'radio'">
         <mat-radio-group [(ngModel)]="answers[currentIndex]">
           <mat-radio-button *ngFor="let opt of currentQuestion.options" [value]="opt">
@@ -53,7 +61,7 @@
         </mat-radio-group>
       </div>
 
-      <!-- Skala (Slider) -->
+      <!-- Slider -->
       <div *ngSwitchCase="'slider'" class="slider-container">
         <input
           type="range"
@@ -65,17 +73,12 @@
           (input)="onSlide(currentIndex)"
           [style.background]="getSliderBackground(answers[currentIndex], currentQuestion.min || 1, currentQuestion.max || 10)"
         />
-
-        <!-- Anzeige des aktuellen Werts -->
-        <span
-          class="slider-bubble"
-          [style.left.%]="getPercent(currentIndex)"
-        >
+        <span class="slider-bubble" [style.left.%]="getPercent(currentIndex)">
           {{ answers[currentIndex] }} / {{ currentQuestion.max || 10 }}
         </span>
       </div>
 
-      <!-- Sternebewertung -->
+      <!-- Sterne -->
       <div *ngSwitchCase="'star'" class="star-rating">
         <ng-container *ngFor="let _ of [].constructor(currentQuestion.maxStars || 5); let i = index">
           <mat-icon
@@ -89,37 +92,38 @@
       <!-- Freitext -->
       <div *ngSwitchCase="'freitext'">
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Ihre Antwort</mat-label>
+          <mat-label>{{ 'viewer.textAnswer' | translate }}</mat-label>
           <input matInput [(ngModel)]="answers[currentIndex]" />
         </mat-form-field>
       </div>
 
-      <!-- Standardanzeige, falls Fragetyp unbekannt -->
+      <!-- Default -->
       <div *ngSwitchDefault>
-        <p>Unbekannter Fragetyp</p>
+        <p>{{ 'viewer.unknownType' | translate }}</p>
       </div>
-
     </ng-container>
   </div>
 
-  <!-- Navigations-Buttons -->
+  <!-- Buttons -->
   <div class="button-group">
     <button mat-raised-button color="basic" (click)="zurueck()" [disabled]="currentIndex === 0">
-      Zurück
+      {{ 'viewer.back' | translate }}
     </button>
 
     <button mat-raised-button color="primary" *ngIf="currentIndex < data.questions.length - 1" (click)="weiter()">
-      Weiter
+      {{ 'viewer.next' | translate }}
     </button>
 
     <button mat-raised-button color="accent" *ngIf="currentIndex === data.questions.length - 1" (click)="speichern()">
-      Speichern
+      {{ 'viewer.save' | translate }}
     </button>
   </div>
 </div>
 
-<!-- Abschlussansicht nach Absenden der Umfrage -->
+<!-- Fertig -->
 <div class="survey-complete" *ngIf="isCompleted">
-  <h2>Vielen Dank für Ihre Teilnahme!</h2>
-  <p>Ihre Umfrage wurde erfolgreich übermittelt.</p>
+  <h2>{{ 'viewer.thankYou' | translate }}</h2>
+  <p>{{ 'viewer.submitted' | translate }}</p>
 </div>
+
+

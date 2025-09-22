@@ -2,14 +2,14 @@
 
 <div class="publish-actions">
 
-  <!-- Buttons zum Speichern als Entwurf oder zum Veröffentlichen -->
+  <!-- Buttons: Entwurf speichern + Umfrage veröffentlichen -->
   <div class="builder-actions" *ngIf="showActions">
     <button
       mat-stroked-button
       color="primary"
       (click)="onDraft()"
       [disabled]="!isReady() || busy">
-      Entwurf speichern
+      {{ 'publish.draft' | translate }}
     </button>
 
     <button
@@ -17,14 +17,14 @@
       color="primary"
       [disabled]="!isReady() || busy"
       (click)="publishSurvey()">
-      {{ publishing ? 'Veröffentlichen...' : 'Umfrage veröffentlichen' }}
+      {{ publishing ? ('publish.publishing' | translate) : ('publish.publish' | translate) }}
     </button>
   </div>
 
-  <!-- Hinweise und Validierungsfehler (z. B. ungültiges Datum) -->
+  <!-- Hinweise + Validierungsfehler -->
   <div class="builder-actions" *ngIf="showActions">
-    <div class="note" *ngIf="startInPast">Startdatum darf nicht in der Vergangenheit liegen.</div>
-    <div class="note" *ngIf="endBeforeStart">Enddatum darf nicht vor dem Startdatum liegen.</div>
+    <div class="note" *ngIf="startInPast">{{ 'publish.error.startInPast' | translate }}</div>
+    <div class="note" *ngIf="endBeforeStart">{{ 'publish.error.endBeforeStart' | translate }}</div>
 
     <!-- Allgemeine Fehlermeldung -->
     <div *ngIf="errorMsg" class="error-message">
@@ -33,28 +33,28 @@
     </div>
   </div>
 
-  <!-- Bereich mit dem Teilnehmer-Link nach erfolgreichem Publish -->
+  <!-- Teilnehmer-Link nach erfolgreichem Publish -->
   <div *ngIf="linkVisible" class="link-section" id="linkSection">
-    <strong>Umfragelink:</strong>
+    <strong>{{ 'publish.linkTitle' | translate }}</strong>
     <a [href]="getSurveyLink()" target="_blank">{{ getSurveyLink() }}</a>
     <button
       mat-icon-button
       (click)="copyLinkToClipboard()"
-      matTooltip="Link kopieren"
+      [matTooltip]="'publish.copy' | translate"
       matTooltipPosition="right">
       <mat-icon>content_copy</mat-icon>
     </button>
   </div>
 
-  <!-- Kurze Rückmeldung, dass der Link kopiert wurde -->
-  <div *ngIf="copied" class="toast">Link kopiert!</div>
+  <!-- Toast: Link kopiert -->
+  <div *ngIf="copied" class="toast">{{ 'publish.copied' | translate }}</div>
 
-  <!-- Button, um direkt zur Umfrage zu wechseln -->
+  <!-- Direkt zur Umfrage wechseln -->
   <button
     *ngIf="linkVisible"
     mat-stroked-button
     color="accent"
     (click)="goToViewer()">
-    Umfrage anzeigen
+    {{ 'publish.showSurvey' | translate }}
   </button>
 </div>

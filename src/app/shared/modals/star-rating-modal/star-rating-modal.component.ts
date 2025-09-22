@@ -9,6 +9,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-star-rating-modal',
@@ -23,7 +24,8 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog.component';
     MatSelectModule,
     MatOptionModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    TranslateModule
   ]
 })
 export class StarRatingModalComponent {

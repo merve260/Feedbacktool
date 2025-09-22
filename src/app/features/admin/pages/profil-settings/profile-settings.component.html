@@ -1,20 +1,20 @@
 <div class="card" *ngIf="user$ | async as u">
-  <h2>Profil</h2>
+  <h2>{{ 'profile.title' | translate }}</h2>
 
   <!-- Formular -->
   <form [formGroup]="form" class="profile-form">
     <div class="row">
-      <span class="label">E-Mail</span>
+      <span class="label">{{ 'profile.email' | translate }}</span>
       <span>{{ u.email }}</span>
     </div>
 
     <div class="row">
-      <span class="label">Name</span>
-      <input formControlName="displayName" placeholder="Name eingeben" />
+      <span class="label">{{ 'profile.name' | translate }}</span>
+      <input formControlName="displayName" [placeholder]="'profile.namePlaceholder' | translate" />
     </div>
 
     <div class="row avatar-row">
-      <span class="label">Avatar</span>
+      <span class="label">{{ 'profile.avatar' | translate }}</span>
       <div class="avatar-content">
         <img
           *ngIf="avatarPreview; else noAvatar"
@@ -30,15 +30,14 @@
 
         <div class="avatar-actions">
           <button type="button" class="btn-avatar" (click)="changeAvatar()">
-            Avatar ändern
+            {{ 'profile.changeAvatar' | translate }}
           </button>
-          <button type="button" class="btn-icon" (click)="resetAvatar()" aria-label="Zurücksetzen">
+          <button type="button" class="btn-icon" (click)="resetAvatar()" [attr.aria-label]="'profile.reset' | translate">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
       </div>
     </div>
-
   </form>
 
   <!-- Aktionen -->
@@ -46,10 +45,10 @@
     <button class="btn btn-primary"
             [disabled]="!form.dirty && !avatarChanged"
             (click)="saveProfile()">
-      Speichern
+      {{ 'profile.save' | translate }}
     </button>
     <button class="btn btn-danger" (click)="logout()">
-      Ausloggen
+      {{ 'profile.logout' | translate }}
     </button>
   </div>
 </div>

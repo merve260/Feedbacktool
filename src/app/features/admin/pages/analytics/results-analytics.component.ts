@@ -12,11 +12,12 @@ import { Survey } from '../../../../core/models/survey.models';
 import { Timestamp } from 'firebase/firestore';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-results-analytics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './results-analytics.component.html',
   styleUrls: ['./results-analytics.component.scss'],
 })

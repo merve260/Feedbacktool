@@ -10,7 +10,277 @@
       "privacy": "Datenschutz",
       "contact": "Kontakt"
     }
+  },
+  "sidebar": {
+    "surveys": "Meine Umfragen",
+    "results": "Umfrage Ergebnisse & Analytics",
+    "profile": "Profil bearbeiten",
+    "logout": "Ausloggen",
+    "switch": "Sprache wechseln: English"
+  },
+  "menu": {
+    "profile": "Profil bearbeiten",
+    "avatar": "Avatar ändern",
+    "logout": "Ausloggen",
+    "switch": "Sprache wechseln: English"
+  },
+  "status": {
+    "published": "Veröffentlicht",
+    "closed": "Beendet",
+    "draft": "Entwurf"
+  },
+  "dashboard": {
+    "pageTitle": "Meine Umfragen",
+    "searchPlaceholder": "Suchen nach Titel…",
+    "searchClear": "Suche löschen",
+    "create": "Erstellen",
+    "welcome": "Willkommen, {{name}}",
+    "loading": "Lade…",
+    "emptyText": "Es gibt noch keine Umfrage.",
+    "emptyCta": "Jetzt erstellen!",
+    "table": {
+      "title": "Titel",
+      "range": "Zeitraum",
+      "status": "Status",
+      "created": "Erstellt am",
+      "actions": "Aktionen"
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "publish": "Veröffentlichen",
+      "unpublish": "Zurückziehen",
+      "close": "Schließen",
+      "link": "Link anzeigen",
+      "delete": "Löschen"
+    },
+    "statusHint": {
+      "title": "Status-Erklärung:",
+      "published": "Umfrage aktiv, Link erreichbar.",
+      "closed": "Umfrage beendet, Link nicht mehr verfügbar.",
+      "draft": "Umfrage noch im Entwurf."
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "editTitle": "Profil bearbeiten",
+    "email": "E-Mail",
+    "name": "Name",
+    "namePlaceholder": "Name eingeben",
+    "avatar": "Avatar",
+    "changeAvatar": "Avatar ändern",
+    "reset": "Zurücksetzen",
+    "save": "Speichern",
+    "logout": "Ausloggen"
+  },
+  "results": {
+    "pageTitle": "Umfrage Ergebnisse & Analytics",
+    "hintTitle": "Hinweis:",
+    "hintText1": "In dieser Übersicht sehen Sie nur veröffentlichte oder geschlossene Umfragen, die bereits beantwortet wurden.",
+    "hintText2": "Entwürfe erscheinen hier nicht.",
+    "detailTitle": "Analyse",
+    "status": "Status",
+    "start": "Start",
+    "end": "Ende",
+    "answersCount": "Anzahl Antworten",
+    "notFound": "Umfrage nicht gefunden.",
+    "noPermission": "Keine Berechtigung für diese Analyse.",
+    "noAnswers": "Keine Antworten vorhanden!",
+    "noAnswersDocs": "Keine Antworten in den Dokumenten gefunden.",
+    "anonymous": "Anonym",
+    "answers": "Antworten",
+    "export": "Excel Export",
+    "loading": "Lade Daten...",
+    "showAllAnswers": "Alle Antworten anzeigen ({{count}})",
+    "excel": {
+      "participant": "Teilnehmer",
+      "createdAt": "Erstell-Datum",
+      "question": "Frage",
+      "answeredAt": "Antwort-Datum",
+      "answer": "Antwort",
+      "sheetName": "Antworten",
+      "filePrefix": "umfrage"
+    }
+  },
+  "publish": {
+    "draft": "Entwurf speichern",
+    "publish": "Umfrage veröffentlichen",
+    "publishing": "Veröffentlichen...",
+    "error": {
+      "startInPast": "Startdatum darf nicht in der Vergangenheit liegen.",
+      "endBeforeStart": "Enddatum darf nicht vor dem Startdatum liegen.",
+      "notLoggedIn": "Nicht angemeldet.",
+      "saveFailed": "Entwurf konnte nicht gespeichert werden.",
+      "publishFailed": "Veröffentlichen fehlgeschlagen."
+    },
+    "linkTitle": "Umfragelink:",
+    "copy": "Link kopieren",
+    "copied": "Link kopiert!",
+    "showSurvey": "Umfrage anzeigen",
+    "defaultQuestion": "Frage {{index}}"
+  },
+  "edit": {
+    "preview": "Vorschau",
+    "saveDraft": "Änderungen als Entwurf speichern",
+    "publish": "Änderungen veröffentlichen",
+    "errorLoad": "Fehler beim Laden.",
+    "errorSave": "Speichern fehlgeschlagen."
+  },
+  "builder": {
+    "infoTitle": "Umfrage-Info",
+    "hintTitle": "Hinweise zur Veröffentlichung:",
+    "hint1": "Zum Veröffentlichen braucht man mindestens eine Frage, einen Titel und einen Zeitraum.",
+    "hint2": "Nach dem Veröffentlichen gibt es im Admin-Bereich einen Teilnehmer-Link.",
+    "hint3": "Die Umfrage kann später erneut geöffnet und bearbeitet werden.",
+    "form": {
+      "titleLabel": "Umfragetitel",
+      "titleRequired": "Titel ist erforderlich.",
+      "rangeLabel": "Zeitraum",
+      "startPlaceholder": "Start",
+      "endPlaceholder": "Ende",
+      "dateInvalid": "Enddatum muss nach dem Startdatum liegen."
+    },
+    "logo": {
+      "label": "Firmen Logo (optional)",
+      "select": "Datei auswählen",
+      "previewAlt": "Logo Vorschau",
+      "delete": "Logo löschen"
+    },
+    "palette": {
+      "title": "Fragetypen"
+    },
+    "canvas": {
+      "title": "Umfrage Canvas",
+      "empty": "Mindestens eine Frage hinzufügen, um zu veröffentlichen.",
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "types": {
+      "multiple": "Mehrfachauswahl",
+      "freitext": "Freitext",
+      "star": "Sternebewertung",
+      "slider": "Skala / Slider",
+      "radio": "Radiobutton Auswahl"
+    }
+  },"survey": {
+  "editTitle": "Umfrage bearbeiten"
+},
+  "viewer": {
+    "errorTitle": "Fehler",
+    "errorNotFound": "Diese Umfrage existiert nicht oder ist nicht mehr verfügbar.",
+    "errorClosed": "Diese Umfrage ist geschlossen.",
+    "errorNotStarted": "Diese Umfrage ist noch nicht gestartet.",
+    "errorExpired": "Diese Umfrage ist abgelaufen.",
+    "errorLoad": "Umfrage konnte nicht geladen werden.",
+    "errorSave": "Antworten konnten nicht gespeichert werden.",
+
+    "nameLabel": "Ihr Name (optional)",
+    "namePlaceholder": "Vor- und Nachname",
+
+    "questionProgress": "Frage {{current}} von {{total}}",
+
+    "textAnswer": "Ihre Antwort",
+    "unknownType": "Unbekannter Fragetyp",
+
+    "back": "Zurück",
+    "next": "Weiter",
+    "save": "Speichern",
+
+    "thankYou": "Vielen Dank für Ihre Teilnahme!",
+    "submitted": "Ihre Umfrage wurde erfolgreich übermittelt."
+  },
+  "modal": {
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "preview": "Vorschau:",
+    "multipleChoice": {
+      "edit": "Mehrfachauswahl bearbeiten",
+      "title": "Fragetitel",
+      "titlePlaceholder": "z.B. 1. Frage",
+      "text": "Fragetext",
+      "textPlaceholder": "z.B. Was gefällt Ihnen am besten?",
+      "optionPlaceholder": "Antwortoption",
+      "addOption": "Weitere Option"
+    },
+    "radio": {
+      "edit": "Einfachauswahl (Radio) bearbeiten",
+      "title": "Fragetitel",
+      "titlePlaceholder": "z.B. 1. Frage",
+      "text": "Fragetext",
+      "textPlaceholder": "z.B. Welche Farbe mögen Sie am liebsten?",
+      "option": "Option {{index}}",
+      "addOption": "Neue Option hinzufügen"
+    },
+    "freitext": {
+      "edit": "Freitext-Frage bearbeiten",
+      "title": "Fragetitel",
+      "titlePlaceholder": "z.B. Frage 3",
+      "text": "Fragetext",
+      "textPlaceholder": "z.B. Was denken Sie über unser Produkt?",
+      "answer": "Ihre Antwort",
+      "answerPlaceholder": "Bitte hier schreiben..."
+    },
+    "slider": {
+      "edit": "Skala-Frage bearbeiten",
+      "title": "Fragetitel",
+      "titlePlaceholder": "z.B. Skala-Frage",
+      "text": "Fragetext",
+      "textPlaceholder": "z.B. Wie sehr stimmen Sie zu?",
+      "average": "Durchschnitt",
+      "answers": "Antworten",
+      "anonymous": "Anonym",
+      "personsChose": "{{count}} Person(en) haben {{value}} gewählt",
+      "min": "Min Wert",
+      "max": "Max Wert",
+      "step": "Schrittgröße",
+      "thumbLabel": "Wertanzeige beim Ziehen anzeigen",
+      "errorRange": "Die Differenz zwischen Max und Min muss mindestens 2 betragen"
+    },
+    "star": {
+      "edit": "Sternebewertung bearbeiten",
+      "title": "Fragetitel",
+      "text": "Fragetext",
+      "titlePlaceholder": "z.B. Wie zufrieden sind Sie?",
+      "textPlaceholder": "z.B. Bewerten Sie unsere Dienstleistung."
+    },
+    "surveyPreview": {
+      "title": "Umfrage-Vorschau",
+      "name": "Ihr Name (optional)",
+      "namePlaceholder": "Vor- und Nachname",
+      "thumbLabel": "Wertanzeige: aktiviert",
+      "answer": "Antwort",
+      "unknownType": "Unbekannter Fragetyp"
+    },
+    "link": {
+      "title": "Umfragelink",
+      "hintTitle": "Hinweis:",
+      "hintText": "Diesen Link können Sie mit Ihren Nutzer:innen teilen, um die Umfrage zu veröffentlichen. Die Ergebnisse und Analysen sind im Admin-Dashboard sichtbar.",
+      "validUntil": "Der Link ist nur bis zum Enddatum gültig ({{date}} 23:59). Danach ist er nicht mehr erreichbar.",
+      "noEndDate": "Kein Enddatum gesetzt – der Link bleibt unbegrenzt erreichbar.",
+      "label": "Teilnahmelink",
+      "copied": "Link kopiert!",
+      "open": "Öffnen",
+      "errorNoEnd": "Kein Enddatum definiert!",
+      "errorExpired": "Der Link ist abgelaufen!"
+    }
+  },
+  "chart": {
+    "multiple": {
+      "mostChosen": "Beliebteste Antwort(en):",
+      "votes": "Stimmen"
+    },
+    "radio": {
+      "votes": "Stimmen",
+      "totalAnswers": "Antworten insgesamt",
+      "tooltip": "{{option}}: {{count}} Stimmen"
+    },
+    "slider": {
+      "label": "Antworten",
+      "scale": "Skala-Wert",
+      "participants": "Anzahl Personen"
+    },
+    "star": {
+      "answers": "Bewertungen"
+    }
   }
 }
-
-

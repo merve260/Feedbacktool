@@ -1,31 +1,27 @@
 <div class="dialog-card">
   <!-- Titel des Dialogs -->
-  <h2 class="dialog-title">Umfragelink</h2>
+  <h2 class="dialog-title">{{ 'modal.link.title' | translate }}</h2>
 
-  <!-- Hinweis-Box mit Informationen zur Gültigkeit des Links -->
+  <!-- Hinweis-Box -->
   <div class="hint-box">
-    <h3>Hinweis:</h3>
-    <p>
-      Diesen Link können Sie mit Ihren Nutzer:innen teilen, um die Umfrage zu
-      veröffentlichen. Die Ergebnisse und Analysen sind im Admin-Dashboard unter
-      Umfrage Ergebnisse sichtbar.
-    </p>
+    <h3>{{ 'modal.link.hintTitle' | translate }}</h3>
+    <p>{{ 'modal.link.hintText' | translate }}</p>
+
     <!-- Nur wenn ein Enddatum gesetzt ist -->
     <p *ngIf="endDate">
-      Der Link ist nur bis zum Enddatum gültig
-      ({{ endDate | date: 'dd.MM.yyyy' }} 23:59). Danach ist er nicht mehr
-      erreichbar.
+      {{ 'modal.link.validUntil' | translate:{ date: (endDate | date:'dd.MM.yyyy') } }}
     </p>
+
     <!-- Wenn KEIN Enddatum gesetzt ist -->
     <p *ngIf="!endDate" class="error-text">
-      Kein Enddatum gesetzt – der Link bleibt unbegrenzt erreichbar.
+      {{ 'modal.link.noEndDate' | translate }}
     </p>
   </div>
 
-  <!-- Eingabefeld mit dem Umfragelink + Copy-Button -->
+  <!-- Eingabefeld + Copy -->
   <div class="link-box">
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Teilnahmelink</mat-label>
+      <mat-label>{{ 'modal.link.label' | translate }}</mat-label>
       <input matInput [value]="surveyLink" readonly />
       <button mat-icon-button matSuffix (click)="copyLink()">
         <mat-icon>content_copy</mat-icon>
@@ -33,9 +29,11 @@
     </mat-form-field>
   </div>
 
-  <!-- Aktionen: Dialog schließen oder Link öffnen -->
+  <!-- Aktionen -->
   <div class="actions">
-    <button mat-button (click)="onClose()">Schließen</button>
-    <button mat-raised-button color="primary" (click)="openLink()">Öffnen</button>
+    <button mat-button (click)="onClose()">{{ 'modal.close' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="openLink()">
+      {{ 'modal.link.open' | translate }}
+    </button>
   </div>
 </div>

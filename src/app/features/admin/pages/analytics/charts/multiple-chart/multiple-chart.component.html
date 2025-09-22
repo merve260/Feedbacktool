@@ -12,10 +12,10 @@
 
   <!-- Zusammenfassung: meistgewählte Optionen -->
   <div class="summary" *ngIf="mostChosenOptions.length > 0">
-    <p><strong>Beliebteste Antwort(en):</strong></p>
+    <p><strong>{{ 'chart.multiple.mostChosen' | translate }}</strong></p>
     <ul>
       <li *ngFor="let opt of mostChosenOptions">
-        {{ opt.option }} ({{ opt.count }} Stimmen)
+        {{ opt.option }} ({{ opt.count }} {{ 'chart.multiple.votes' | translate }})
       </li>
     </ul>
   </div>

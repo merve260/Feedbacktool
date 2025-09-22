@@ -1,22 +1,29 @@
 import {
   Component, Input, OnInit, OnDestroy, AfterViewInit,
-  ViewChild, ElementRef, OnChanges, SimpleChanges
+  ViewChild, ElementRef, OnChanges, SimpleChanges, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Question } from '../../../../../../core/models/survey.models';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import {TranslateModule} from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-skala-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './skala-chart.component.html',
   styleUrls: ['./skala-chart.component.scss'],
 })
 export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private chart!: Chart;
+
+  constructor(private translate: TranslateService) {
+    const lang = localStorage.getItem('lang') || 'de';
+    this.translate.use(lang);
+  }
 
   @Input() surveyId!: string;
   @Input() question?: Question;
@@ -82,7 +89,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
       labels,
       datasets: [
         {
-          label: 'Antworten',
+          label: this.translate.instant('chart.slider.label'), // ✨ i18n
           data: dataValues,
           borderColor: 'rgba(255, 99, 132, 1)',
           backgroundColor: 'rgba(255, 99, 132, 0.4)',
@@ -104,15 +111,13 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
         maintainAspectRatio: false,
         scales: {
           x: {
-            title: { display: true, text: 'Skala-Wert' },
+            title: { display: true, text: this.translate.instant('chart.slider.scale') }, // ✨ i18n
           },
           y: {
             beginAtZero: true,
             max: yMax,
-            title: { display: true, text: 'Anzahl Personen' },
-            ticks: {
-              stepSize: 1
-            }
+            title: { display: true, text: this.translate.instant('chart.slider.participants') }, // ✨ i18n
+            ticks: { stepSize: 1 }
           }
         },
         interaction: {
@@ -130,7 +135,10 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
               label: (ctx) => {
                 const wert = ctx.parsed.x;
                 const count = ctx.parsed.y;
-                return `${count} Person(en) haben ${wert} gewählt`;
+                return this.translate.instant('modal.slider.personsChose', {
+                  count,
+                  value: wert
+                });
               }
             }
           }
