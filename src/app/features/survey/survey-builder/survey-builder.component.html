@@ -1,5 +1,11 @@
 <!-- Oberer Bereich: Informationen und Formular (Titel & Zeitraum) -->
 <section class="info-panel">
+  <div class="lang-switch">
+    <button mat-stroked-button color="primary"
+            (click)="switchLang(lang.currentLang() === 'de' ? 'en' : 'de')">
+      {{ lang.currentLang() === 'de' ? 'EN' : 'DE' }}
+    </button>
+  </div>
   <h2 class="panel-title">{{ 'builder.infoTitle' | translate }}</h2>
 
   <!-- Hinweis zur Veröffentlichung -->

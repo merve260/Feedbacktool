@@ -35,6 +35,8 @@ import { ComponentType } from '@angular/cdk/overlay';
 import { TranslateModule } from '@ngx-translate/core';
 import {take} from 'rxjs/operators';
 import { LanguageService } from '../../../core/services/language.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-survey-builder',
@@ -106,7 +108,9 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private lang = inject(LanguageService);
+  protected lang = inject(LanguageService);
+  private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
 
   constructor() {
@@ -181,9 +185,19 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
 
     const file = input.files[0];
     const allowed = ['image/png', 'image/jpeg', 'image/webp'];
+    const fileName = file.name.toLowerCase();
 
-    //Ohne .svg Dateien wegen XSS-Angriffe
-    if (!allowed.includes(file.type)) {
+    if (file.type === 'image/svg+xml' || fileName.endsWith('.svg') || !allowed.includes(file.type)) {
+      this.snackBar.open(
+        this.translate.instant('avatar.invalidType'),
+        this.translate.instant('common.ok'),
+        {
+          duration: 4000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['custom-snackbar']
+        }
+      );
       input.value = '';
       return;
     }
@@ -197,6 +211,7 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     };
     reader.readAsDataURL(file);
   }
+
 
   removeLogo() {
     this.infoForm.controls.logoUrl.setValue(null);
@@ -365,4 +380,8 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
   goToDashboard(): void {
     this.router.navigateByUrl('/admin/umfragen');
   }
+  switchLang(lang: string) {
+    this.lang.use(lang);
+  }
+
 }
