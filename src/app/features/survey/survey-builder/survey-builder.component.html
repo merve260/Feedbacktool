@@ -1,47 +1,47 @@
 <!-- Oberer Bereich: Informationen und Formular (Titel & Zeitraum) -->
 <section class="info-panel">
-  <h2 class="panel-title">Umfrage-Info</h2>
+  <h2 class="panel-title">{{ 'builder.infoTitle' | translate }}</h2>
 
-  <!-- Statischer Hinweis zur Veröffentlichung -->
+  <!-- Hinweis zur Veröffentlichung -->
   <div class="builder-actions" *ngIf="showActions">
     <div class="hint-box">
-      <p><strong>Hinweise zur Veröffentlichung:</strong></p>
+      <p><strong>{{ 'builder.hintTitle' | translate }}</strong></p>
       <ul>
-        <li>Zum Veröffentlichen braucht man mindestens eine Frage, einen Titel und einen Zeitraum.</li>
-        <li>Nach dem Veröffentlichen gibt es im Admin-Bereich einen Teilnehmer-Link.</li>
-        <li>Die Umfrage kann später erneut geöffnet und bearbeitet werden.</li>
+        <li>{{ 'builder.hint1' | translate }}</li>
+        <li>{{ 'builder.hint2' | translate }}</li>
+        <li>{{ 'builder.hint3' | translate }}</li>
       </ul>
     </div>
   </div>
 
-  <!-- Formular für Titel und Zeitraum -->
+  <!-- Formular -->
   <form [formGroup]="infoForm" class="info-form">
-    <!-- Titel der Umfrage -->
+    <!-- Titel -->
     <mat-form-field appearance="outline" class="full">
-      <mat-label>Umfragetitel</mat-label>
+      <mat-label>{{ 'builder.form.titleLabel' | translate }}</mat-label>
       <input
         matInput
         formControlName="title"
         (input)="titleChange.emit(titleCtrl.value)" />
 
       <mat-error *ngIf="titleCtrl.hasError('required')">
-        Titel ist erforderlich.
+        {{ 'builder.form.titleRequired' | translate }}
       </mat-error>
     </mat-form-field>
 
-    <!-- Zeitraum der Umfrage -->
+    <!-- Zeitraum -->
     <div class="range-row">
       <mat-form-field appearance="outline" class="range-field full">
-        <mat-label>Zeitraum</mat-label>
+        <mat-label>{{ 'builder.form.rangeLabel' | translate }}</mat-label>
         <mat-date-range-input [rangePicker]="picker" [dateFilter]="dateFilter" [formGroup]="infoForm">
           <input
             matStartDate
-            placeholder="Start"
+            [placeholder]="'builder.form.startPlaceholder' | translate"
             formControlName="startDate"
             (dateChange)="startDateChange.emit($event.value)" />
           <input
             matEndDate
-            placeholder="Ende"
+            [placeholder]="'builder.form.endPlaceholder' | translate"
             formControlName="endDate"
             (dateChange)="endDateChange.emit($event.value)" />
         </mat-date-range-input>
@@ -49,18 +49,18 @@
         <mat-date-range-picker #picker></mat-date-range-picker>
 
         <mat-error *ngIf="infoForm.hasError('dateInvalid')">
-          Enddatum muss nach dem Startdatum liegen.
+          {{ 'builder.form.dateInvalid' | translate }}
         </mat-error>
       </mat-form-field>
     </div>
-    <!-- Logo Upload (optional) -->
-    <div class="logo-upload">
-      <label class="logo-label">Firmen Logo (optional)</label>
 
-      <!-- Upload Button -->
+    <!-- Logo Upload -->
+    <div class="logo-upload">
+      <label class="logo-label">{{ 'builder.logo.label' | translate }}</label>
+
       <button mat-stroked-button color="primary" type="button" (click)="fileInput.click()">
         <mat-icon>upload</mat-icon>
-        Datei auswählen
+        {{ 'builder.logo.select' | translate }}
       </button>
       <input
         type="file"
@@ -71,8 +71,8 @@
 
       <!-- Preview -->
       <div *ngIf="infoForm.controls.logoUrl.value" class="logo-preview">
-        <img [src]="infoForm.controls.logoUrl.value" alt="Logo Vorschau" />
-        <button mat-icon-button color="warn" (click)="removeLogo()" aria-label="Logo löschen">
+        <img [src]="infoForm.controls.logoUrl.value" [alt]="'builder.logo.previewAlt' | translate" />
+        <button mat-icon-button color="warn" (click)="removeLogo()" [attr.aria-label]="'builder.logo.delete' | translate">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
@@ -80,11 +80,11 @@
   </form>
 </section>
 
-<!-- Zwei Spalten: linke Palette + rechte Canvas -->
+<!-- Zwei Spalten -->
 <div class="builder-container">
-  <!-- Linke Spalte: Fragetypen zum Ziehen -->
+  <!-- Palette -->
   <div class="question-palette">
-    <h3>Fragetypen</h3>
+    <h3>{{ 'builder.palette.title' | translate }}</h3>
     <div
       cdkDropList
       #paletteList="cdkDropList"
@@ -97,14 +97,14 @@
         cdkDrag
         [cdkDragData]="question"
         class="question-item">
-        {{ question.label }}
+        {{ question.label | translate }}
       </div>
     </div>
   </div>
 
-  <!-- Rechte Spalte: Canvas mit den Fragen -->
+  <!-- Canvas -->
   <div class="survey-canvas">
-    <h3>Umfrage Canvas</h3>
+    <h3>{{ 'builder.canvas.title' | translate }}</h3>
     <div
       cdkDropList
       #canvasList="cdkDropList"
@@ -113,19 +113,19 @@
       class="canvas"
       (cdkDropListDropped)="onDrop($event)">
 
-      <!-- Hinweis wenn noch keine Frage vorhanden -->
+      <!-- Empty -->
       <div class="empty-state" *ngIf="!canvasQuestions?.length">
-        <span>Mindestens eine Frage hinzufügen, um zu veröffentlichen.</span>
+        <span>{{ 'builder.canvas.empty' | translate }}</span>
       </div>
 
-      <!-- Liste der Fragen auf der Canvas -->
+      <!-- Fragen -->
       <div *ngFor="let question of canvasQuestions; let i = index" cdkDrag class="canvas-item">
         <span>{{ question.title }}</span>
         <div class="icon-group">
-          <button mat-icon-button (click)="onEdit(i)" aria-label="Bearbeiten">
+          <button mat-icon-button (click)="onEdit(i)" [attr.aria-label]="'builder.canvas.edit' | translate">
             <mat-icon>edit</mat-icon>
           </button>
-          <button *ngIf="currentSurveyId" mat-icon-button color="warn" (click)="onDelete(i)" aria-label="Löschen">
+          <button *ngIf="currentSurveyId" mat-icon-button color="warn" (click)="onDelete(i)" [attr.aria-label]="'builder.canvas.delete' | translate">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
@@ -134,7 +134,7 @@
   </div>
 </div>
 
-<!-- Bereich für Veröffentlichung -->
+<!-- Publish-Bereich -->
 <app-survey-publish
   [surveyTitle]="titleCtrl.value"
   [startDate]="startDateValue"

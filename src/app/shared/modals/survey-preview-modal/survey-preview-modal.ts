@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 import { Question } from '../../../core/models/survey.models';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-survey-preview-modal',
@@ -42,7 +43,8 @@ import { Question } from '../../../core/models/survey.models';
     MatButtonModule,
     MatDialogContent,
     MatDialogTitle,
-    MatDialogActions
+    MatDialogActions,
+    TranslateModule
   ]
 })
 export class SurveyPreviewModalComponent {

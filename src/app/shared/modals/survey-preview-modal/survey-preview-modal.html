@@ -1,5 +1,5 @@
-<!-- Titel des Dialogs -->
-<h2 mat-dialog-title>Vorschau: {{ data.title }}</h2>
+<!-- Kopfbereich / Titel -->
+<h2 mat-dialog-title>{{ 'modal.surveyPreview.title' | translate }}: {{ data.title }}</h2>
 
 <!-- Hauptinhalt -->
 <div mat-dialog-content class="preview-content">
@@ -9,8 +9,12 @@
 
   <!-- Eingabefeld Name (deaktiviert) -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Ihr Name (optional)</mat-label>
-    <input matInput placeholder="Vor- und Nachname" disabled />
+    <mat-label>{{ 'modal.surveyPreview.name' | translate }}</mat-label>
+    <input
+      matInput
+      [placeholder]="'modal.surveyPreview.namePlaceholder' | translate"
+      disabled
+    />
   </mat-form-field>
 
   <!-- Liste der Fragen -->
@@ -41,7 +45,7 @@
         <mat-slider [min]="q.min || 1" [max]="q.max || 10" [step]="q.step || 1" disabled>
           <input matSliderThumb />
         </mat-slider>
-        <small *ngIf="q.thumbLabel">Wertanzeige: aktiviert</small>
+        <small *ngIf="q.thumbLabel">{{ 'modal.surveyPreview.thumbLabel' | translate }}</small>
       </div>
 
       <!-- Sternebewertung -->
@@ -52,14 +56,14 @@
       <!-- Freitext -->
       <div *ngSwitchCase="'freitext'">
         <mat-form-field class="full-width">
-          <mat-label>{{ q.placeholderText || 'Antwort' }}</mat-label>
+          <mat-label>{{ q.placeholderText || ('modal.surveyPreview.answer' | translate) }}</mat-label>
           <input matInput disabled />
         </mat-form-field>
       </div>
 
       <!-- Unbekannter Typ -->
       <div *ngSwitchDefault>
-        <p>Unbekannter Fragetyp</p>
+        <p>{{ 'modal.surveyPreview.unknownType' | translate }}</p>
       </div>
 
     </ng-container>
@@ -68,5 +72,12 @@
 
 <!-- Dialog-Aktion -->
 <div mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" (click)="close()">Schließen</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="close()"
+    [attr.aria-label]="'modal.close' | translate"
+  >
+    {{ 'modal.close' | translate }}
+  </button>
 </div>

@@ -5,27 +5,30 @@ import {
 import { CommonModule } from '@angular/common';
 import { Question } from '../../../../../../core/models/survey.models';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-radio-button-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './radio-button-chart.component.html',
   styleUrls: ['./radio-button-chart.component.scss'],
 })
 export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private chart!: Chart;
 
-  @Input() surveyId!: string;   // ID der Umfrage
-  @Input() question?: Question; // Aktuelle Frage
-  @Input() inDialog = false;    // Flag: wird im Dialog angezeigt?
-  @Input() answers: any[] = []; // Antworten (vom Parent übergeben)
+  @Input() surveyId!: string;
+  @Input() question?: Question;
+  @Input() inDialog = false;
+  @Input() answers: any[] = [];
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  answerCount: number = 0; // Gesamtanzahl Antworten
-  optionCounts: { option: string; count: number }[] = []; // Stimmen pro Option
+  answerCount: number = 0;
+  optionCounts: { option: string; count: number }[] = [];
+
+  constructor(private translate: TranslateService) {}
 
   ngOnInit() {
     this.calculateResults();
@@ -39,7 +42,6 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit() {
-    // Chart erst nach Rendern aufbauen
     setTimeout(() => this.updateChart(), 100);
   }
 
@@ -47,11 +49,9 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
   private calculateResults() {
     if (!this.question) return;
 
-    // Zähler initialisieren
     const counts: Record<string, number> = {};
     this.question.options?.forEach(opt => counts[opt] = 0);
 
-    // Antworten durchgehen
     this.answers.forEach((doc: any) => {
       (doc.answers || []).forEach((ans: any) => {
         if (ans.questionId === this.question?.id && ans.textValue) {
@@ -62,12 +62,11 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
       });
     });
 
-    // Ergebnisse speichern
     this.optionCounts = Object.entries(counts).map(([option, count]) => ({ option, count }));
     this.answerCount = this.optionCounts.reduce((sum, r) => sum + r.count, 0);
   }
 
-  /** Baut das Chart.js Diagramm auf */
+  /** Erstellt oder aktualisiert das Chart */
   private updateChart() {
     if (!this.chartCanvas || this.optionCounts.length === 0) return;
     if (this.chart) this.chart.destroy();
@@ -76,7 +75,6 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
     const labels = this.optionCounts.map(o => o.option);
     const values = this.optionCounts.map(o => o.count);
 
-    // Farben
     const pastelColors = [
       'rgba(54, 162, 235, 0.3)',
       'rgba(153, 102, 255, 0.3)',
@@ -88,7 +86,6 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
     const backgroundColors = values.map((_, i) => pastelColors[i % pastelColors.length]);
     const borderColors = backgroundColors.map(c => c.replace('0.3', '1'));
 
-    // Daten für Chart.js
     const data: ChartConfiguration<'bar'>['data'] = {
       labels,
       datasets: [{
@@ -99,7 +96,6 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
       }]
     };
 
-    // Chart.js Config: Horizontal Bar Chart
     this.chart = new Chart(ctx, {
       type: 'bar',
       data,
@@ -109,22 +105,24 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
         maintainAspectRatio: false,
         scales: {
           x: { beginAtZero: true, ticks: { stepSize: 1 } },
-          y: { ticks: { font: { size: 14 }, stepSize: 1} }
+          y: { ticks: { font: { size: 14 }, stepSize: 1 } }
         },
-
         interaction: {
           mode: 'nearest',
           intersect: true
         },
         plugins: {
-          legend: { display: false }, // keine Legende
+          legend: { display: false },
           tooltip: {
             callbacks: {
               label: (ctx) => {
                 const index = ctx.dataIndex;
                 const opt = this.optionCounts[index]?.option || '';
                 const value = ctx.dataset.data[index] as number;
-                return `${opt}: ${value} Stimmen`;
+                return this.translate.instant('chart.radio.tooltip', {
+                  option: opt,
+                  count: value
+                });
               }
             }
           }

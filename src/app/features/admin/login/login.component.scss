@@ -119,3 +119,24 @@
 .site-footer a:hover {
   text-decoration: underline;
 }
+.lang-switch {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+
+  button {
+    background: #ffffff;
+    border: 1px solid #ae3ebf;
+    padding: 6px 15px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f0f0f0;
+    }
+  }
+}
+

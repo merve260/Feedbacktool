@@ -1,58 +1,79 @@
 <!-- Modal Header -->
 <div class="modal-header">
-  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+  <button
+    mat-icon-button
+    (click)="onCancel()"
+    [attr.aria-label]="'modal.close' | translate"
+    class="close-button">
     <mat-icon>close</mat-icon>
   </button>
 </div>
 
 <div class="modal-container">
-  <h2>Mehrfachauswahl bearbeiten</h2>
+  <!-- Titel -->
+  <h2>{{ 'modal.multipleChoice.edit' | translate }}</h2>
 
   <!-- Fragetitel -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetitel</mat-label>
-    <input [(ngModel)]="data.title" matInput placeholder="z.B. 1. Frage" />
+    <mat-label>{{ 'modal.multipleChoice.title' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.title"
+      [placeholder]="'modal.multipleChoice.titlePlaceholder' | translate" />
   </mat-form-field>
 
   <!-- Fragetext -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetext</mat-label>
-    <input [(ngModel)]="data.text" matInput placeholder="z.B. Was gefällt Ihnen am besten?" />
+    <mat-label>{{ 'modal.multipleChoice.text' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.text"
+      [placeholder]="'modal.multipleChoice.textPlaceholder' | translate" />
   </mat-form-field>
 
   <!-- Antwortoptionen -->
-  <div *ngFor="let option of data.options; let i = index; trackBy: trackByIndex" class="option-row">
+  <div
+    *ngFor="let option of data.options; let i = index; trackBy: trackByIndex"
+    class="option-row">
     <mat-form-field class="option-field">
       <mat-label>{{ getOptionLetter(i) }}</mat-label>
       <input
-        (input)="updateOption(i, $event)"
-        [value]="option"
         matInput
+        [value]="option"
+        (input)="updateOption(i, $event)"
         name="option-{{ i }}"
-        placeholder="Antwortoption"
-      />
+        [placeholder]="'modal.multipleChoice.optionPlaceholder' | translate" />
     </mat-form-field>
 
-    <button (click)="removeOption(i)" *ngIf="data.options.length > 1" color="warn" mat-icon-button>
+    <button
+      mat-icon-button
+      color="warn"
+      (click)="removeOption(i)"
+      *ngIf="data.options.length > 1"
+      [attr.aria-label]="'modal.delete' | translate">
       <mat-icon>delete</mat-icon>
     </button>
   </div>
 
-  <!-- Weitere Option hinzufügen -->
+  <!-- Neue Option hinzufügen -->
   <div>
-    <button (click)="addOption()" mat-stroked-button class="weitereOption">
+    <button
+      mat-stroked-button
+      class="weitereOption"
+      (click)="addOption()"
+      [attr.aria-label]="'modal.multipleChoice.addOption' | translate">
       <mat-icon>add</mat-icon>
-      Weitere Option
+      {{ 'modal.multipleChoice.addOption' | translate }}
     </button>
   </div>
 
   <!-- Vorschau -->
-  <p class="preview-label-titel">Vorschau:</p>
+  <p class="preview-label-titel">{{ 'modal.preview' | translate }}</p>
   <div class="preview-box">
-    <p class="preview-label">Fragetitel</p>
+    <p class="preview-label">{{ 'modal.multipleChoice.title' | translate }}</p>
     <p class="frage-text">{{ data.title }}</p>
 
-    <p class="preview-label">Fragetext</p>
+    <p class="preview-label">{{ 'modal.multipleChoice.text' | translate }}</p>
     <p class="frage-text">{{ data.text }}</p>
 
     <div class="preview-multiple-options">
@@ -64,7 +85,19 @@
 
   <!-- Aktionen -->
   <div class="modal-actions">
-    <button (click)="onCancel()" mat-button>Abbrechen</button>
-    <button (click)="onSave()" color="primary" mat-raised-button>Speichern</button>
+    <button
+      mat-button
+      (click)="onCancel()"
+      [attr.aria-label]="'modal.cancel' | translate">
+      {{ 'modal.cancel' | translate }}
+    </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      [attr.aria-label]="'modal.save' | translate">
+      {{ 'modal.save' | translate }}
+    </button>
   </div>
 </div>

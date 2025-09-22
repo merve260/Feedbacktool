@@ -1,9 +1,7 @@
-// src/app/features/survey/survey-builder/survey-builder.component.ts
-import { Component, EventEmitter, Input, Output, OnInit,OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router, ActivatedRoute } from '@angular/router';
-
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -13,7 +11,6 @@ import {
   FormGroup,
   FormControl
 } from '@angular/forms';
-
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -28,16 +25,16 @@ import { FreitextModalComponent } from '../../../shared/modals/freitext-modal/fr
 import { StarRatingModalComponent } from '../../../shared/modals/star-rating-modal/star-rating-modal.component';
 import { SkalaSliderModalComponent } from '../../../shared/modals/skala-slider-modal/skala-slider-modal.component';
 import { RadioModalComponent } from '../../../shared/modals/radio-modal/radio-modal.component';
-
 import { SurveyPublishComponent } from '../survey-publish/survey-publish.component';
 
 import { Survey, Question, SurveyStatus } from '../../../core/models/survey.models';
 import { AuthService } from '../../../core/auth/auth.service';
-import { take } from 'rxjs/operators';
 import { firstValueFrom } from 'rxjs';
 import { SurveyService } from '../../../core/services/survey.service';
 import { ComponentType } from '@angular/cdk/overlay';
-
+import { TranslateModule } from '@ngx-translate/core';
+import {take} from 'rxjs/operators';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-survey-builder',
@@ -55,49 +52,42 @@ import { ComponentType } from '@angular/cdk/overlay';
     MatIconModule,
     MatDialogModule,
     MatSliderModule,
-    SurveyPublishComponent
+    SurveyPublishComponent,
+    TranslateModule
   ],
   templateUrl: './survey-builder.component.html',
   styleUrls: ['./survey-builder.component.scss']
 })
 export class SurveyBuilderComponent implements OnInit, OnChanges {
 
-  // Eingangs- und Ausgangsparameter für Bindung
+  // Inputs/Outputs
   @Input() surveyId?: string;
   @Input() title: string = '';
   @Output() titleChange = new EventEmitter<string>();
-
   @Input() description: string = '';
   @Output() descriptionChange = new EventEmitter<string>();
-
   @Input() startDate?: Date;
   @Output() startDateChange = new EventEmitter<Date>();
-
   @Input() endDate?: Date;
   @Output() endDateChange = new EventEmitter<Date>();
-
   @Input() questions: Question[] = [];
   @Output() questionsChange = new EventEmitter<Question[]>();
-
   @Input() logoUrl: string | null = null;
   @Output() logoUrlChange = new EventEmitter<string | null>();
-
   @Input() showActions = true;
 
-
-  // Fragetypen links in der Palette
+  // Palette
   questionTypes = [
-    { type: 'multiple', label: 'Mehrfachauswahl' },
-    { type: 'freitext', label: 'Freitext' },
-    { type: 'star',     label: 'Sternebewertung' },
-    { type: 'slider',   label: 'Skala / Slider' },
-    { type: 'radio',    label: 'Radiobutton Auswahl' }
+    { type: 'multiple', label: 'builder.types.multiple' },
+    { type: 'freitext', label: 'builder.types.freitext' },
+    { type: 'star',     label: 'builder.types.star' },
+    { type: 'slider',   label: 'builder.types.slider' },
+    { type: 'radio',    label: 'builder.types.radio' }
   ];
 
-  // Fragen, die im Canvas angezeigt werden
   canvasQuestions: any[] = [];
 
-  // Formular für Titel, Beschreibung und Zeitraum
+  // Form
   infoForm: FormGroup<{
     title: FormControl<string>;
     startDate: FormControl<Date | null>;
@@ -110,14 +100,16 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
   isSaving = false;
   currentSurveyId: string | null = null;
 
-  constructor(
-    private dialog: MatDialog,
-    private surveyService: SurveyService,
-    private auth: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
-    // Initialisierung des Formulars mit Validatoren
+  // Services inject()
+  private dialog = inject(MatDialog);
+  private surveyService = inject(SurveyService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private lang = inject(LanguageService);
+
+
+  constructor() {
     this.infoForm = new FormGroup({
       title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
       startDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
@@ -127,11 +119,9 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     }, { validators: this.dateRangeValidator });
   }
 
-  // Daten laden, wenn bereits eine Umfrage-ID existiert (Bearbeitungsmodus)
   async ngOnInit() {
+    this.lang.use(this.lang.currentLang());
     const id = this.route.snapshot.paramMap.get('id');
-
-    // Nur laden, wenn NICHT von außen via @Input() geliefert
     if (id && (!this.questions || this.questions.length === 0)) {
       this.currentSurveyId = id;
       const result = await this.surveyService.getSurveyWithQuestions(id);
@@ -139,11 +129,11 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
         const { survey, questions } = result;
 
         this.infoForm.patchValue({
-          title:       survey.title,
+          title: survey.title,
           description: survey.description ?? '',
-          startDate:   survey.startAt ? new Date(survey.startAt) : null,
-          endDate:     survey.endAt   ? new Date(survey.endAt)   : null,
-          logoUrl:     survey.logoUrl ?? null
+          startDate: survey.startAt ? new Date(survey.startAt) : null,
+          endDate: survey.endAt ? new Date(survey.endAt) : null,
+          logoUrl: survey.logoUrl ?? null
         });
 
         this.canvasQuestions = questions ?? [];
@@ -156,14 +146,12 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
         this.questionsChange.emit(questions ?? []);
       }
     } else if (this.questions?.length) {
-      // Falls Input schon Fragen liefert → Canvas direkt übernehmen
       this.canvasQuestions = [...this.questions];
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['questions'] && changes['questions'].currentValue) {
-      // Externe questions übernehmen und Canvas aktualisieren
+    if (changes['questions']?.currentValue) {
       this.canvasQuestions = [...this.questions];
     }
   }

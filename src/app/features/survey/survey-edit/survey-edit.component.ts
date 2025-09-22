@@ -1,5 +1,4 @@
-// src/app/features/survey/survey-edit/survey-edit.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SurveyService } from '../../../core/services/survey.service';
 import { Question } from '../../../core/models/survey.models';
@@ -10,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
 import { MatDialog } from '@angular/material/dialog';
 import { SurveyPreviewModalComponent } from '../../../shared/modals/survey-preview-modal/survey-preview-modal';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-survey-edit',
@@ -21,7 +21,8 @@ import { SurveyPreviewModalComponent } from '../../../shared/modals/survey-previ
     NgIf,
     ReactiveFormsModule,
     MatButtonModule,
-    SurveyBuilderComponent
+    SurveyBuilderComponent,
+    TranslateModule
   ]
 })
 export class SurveyEditComponent implements OnInit {
@@ -36,14 +37,13 @@ export class SurveyEditComponent implements OnInit {
   errorMsg = '';
   logoUrl: string | null = null;
 
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private surveyService: SurveyService,
-    private auth: Auth,
-    private dialog: MatDialog
-  ) {}
+  // Services via inject()
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private surveyService = inject(SurveyService);
+  private auth = inject(Auth);
+  private dialog = inject(MatDialog);
+  private translate = inject(TranslateService);
 
   // Beim Laden der Seite: vorhandene Umfrage + Fragen holen
   async ngOnInit() {
@@ -63,7 +63,7 @@ export class SurveyEditComponent implements OnInit {
       // Fragen separat laden
       this.questions = await this.surveyService.listQuestions(this.surveyId);
     } catch (err) {
-      this.errorMsg = 'Fehler beim Laden.';
+      this.errorMsg = this.translate.instant('edit.errorLoad');
     }
   }
 
@@ -97,8 +97,7 @@ export class SurveyEditComponent implements OnInit {
       this.router.navigate(['/admin/umfragen']);
 
     } catch (err) {
-      console.error('Speichern fehlgeschlagen:', err);
-      this.errorMsg = 'Speichern fehlgeschlagen.';
+      this.errorMsg = this.translate.instant('edit.errorSave');
     }
   }
 

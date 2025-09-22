@@ -1,50 +1,74 @@
-<!-- X button -->
+<!-- ===== Modal Header ===== -->
 <div class="modal-header">
-  <button mat-icon-button (click)="onCancel()" aria-label="Schließen" class="close-button">
+  <button
+    mat-icon-button
+    (click)="onCancel()"
+    [attr.aria-label]="'modal.close' | translate"
+    class="close-button">
     <mat-icon>close</mat-icon>
   </button>
 </div>
 
+<!-- ===== Modal Container ===== -->
 <div class="modal-container">
-  <h2>Freitext-Frage bearbeiten</h2>
+  <!-- Titel -->
+  <h2>{{ 'modal.freitext.edit' | translate }}</h2>
 
   <!-- Fragetitel -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetitel</mat-label>
-    <input matInput [(ngModel)]="data.title" placeholder="z.B. 3. Frage" />
+    <mat-label>{{ 'modal.freitext.title' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.title"
+      [placeholder]="'modal.freitext.textPlaceholder' | translate"/>
   </mat-form-field>
 
   <!-- Fragetext -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Fragetext</mat-label>
-    <input matInput [(ngModel)]="data.text" placeholder="z.B. Was denken Sie über unser Produkt?" />
+    <mat-label>{{ 'modal.freitext.text' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.text"/>
   </mat-form-field>
 
   <!-- Antwort Placeholder -->
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Ihre Antwort:</mat-label>
-    <input matInput [(ngModel)]="data.placeholderText" placeholder="z.B. Bitte hier schreiben…" />
+    <mat-label>{{ 'modal.freitext.answer' | translate }}</mat-label>
+    <input
+      matInput
+      [(ngModel)]="data.placeholderText"
+      [placeholder]="'modal.freitext.answerPlaceholder' | translate" />
   </mat-form-field>
 
   <!-- Vorschau -->
-  <p class="preview-label-titel">Vorschau:</p>
+  <p class="preview-label-titel">{{ 'modal.preview' | translate }}</p>
   <div class="preview-box">
-    <p class="preview-label">Fragetitel:</p>
-    <p class="preview-text">{{ data.title }}</p>
+    <!-- Fragetitel -->
+    <p class="preview-label">{{ 'modal.freitext.title' | translate }}</p>
+    <p class="preview-text">
+    </p>
 
-    <p class="preview-label">Fragetext:</p>
-    <p class="preview-text">{{ data.text }}</p>
+    <!-- Fragetext -->
+    <p class="preview-label">{{ 'modal.freitext.text' | translate }}</p>
+    <p class="preview-text">
+    </p>
 
+    <!-- Antwortfeld -->
+    <p class="preview-label">{{ 'modal.freitext.answer' | translate }}</p>
     <textarea
       matInput
-      [placeholder]="data.placeholderText || 'Ihre Antwort...'"
       disabled
-    ></textarea>
+      [value]="data.placeholderText || ('modal.freitext.answerPlaceholder' | translate)">
+</textarea>
   </div>
 
   <!-- Aktionen -->
   <div class="modal-actions">
-    <button mat-button (click)="onCancel()">Abbrechen</button>
-    <button mat-raised-button color="primary" (click)="onSave()">Speichern</button>
+    <button mat-button (click)="onCancel()">
+      {{ 'modal.cancel' | translate }}
+    </button>
+    <button mat-raised-button color="primary" (click)="onSave()">
+      {{ 'modal.save' | translate }}
+    </button>
   </div>
 </div>

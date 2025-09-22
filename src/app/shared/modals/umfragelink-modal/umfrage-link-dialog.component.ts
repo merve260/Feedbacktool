@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { environment } from '../../../../environments/environment';
+import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-umfrage-link-dialog',
@@ -19,7 +20,8 @@ import { environment } from '../../../../environments/environment';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslateModule
   ]
 })
 export class UmfrageLinkDialogComponent {

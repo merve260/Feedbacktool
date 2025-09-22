@@ -1,16 +1,30 @@
 <div class="card" *ngIf="survey; else loading">
   <!-- Titel und Beschreibung der Umfrage -->
-  <h2>Analyse – {{ survey.title }}</h2>
+  <h2>{{ 'results.detailTitle' | translate }} – {{ survey.title }}</h2>
   <p *ngIf="survey.description">{{ survey.description }}</p>
 
   <!-- Meta-Daten der Umfrage -->
   <div class="meta">
-    <span><strong>Status:</strong> {{ survey.status }}</span>
-    <span><strong>Start:</strong> {{ survey.startAt | date:'dd.MM.yyyy' }}</span>
-    <span><strong>Ende:</strong> {{ survey.endAt | date:'dd.MM.yyyy' }}</span>
-    <span><strong>Anzahl Antworten:</strong> {{ answers.length }}</span>
+    <span>
+      <strong>{{ 'results.status' | translate }}:</strong>
+      {{ ('status.' + survey.status) | translate }}
+    </span>
+    <span>
+      <strong>{{ 'results.start' | translate }}:</strong>
+      {{ survey.startAt | date:'dd.MM.yyyy' }}
+    </span>
+    <span>
+      <strong>{{ 'results.end' | translate }}:</strong>
+      {{ survey.endAt | date:'dd.MM.yyyy' }}
+    </span>
+    <span>
+      <strong>{{ 'results.answersCount' | translate }}:</strong>
+      {{ answers.length }}
+    </span>
 
-    <button class="export-btn" (click)="exportToExcel()">Excel Export</button>
+    <button class="export-btn" (click)="exportToExcel()">
+      {{ 'results.export' | translate }}
+    </button>
   </div>
 
   <!-- Charts für jede Frage -->
@@ -23,8 +37,7 @@
           *ngIf="q.type === 'multiple'"
           [surveyId]="survey.id!"
           [question]="q"
-          [answers]="answers"
-         >
+          [answers]="answers">
         </app-multiple-chart>
 
         <!-- Skala (Slider) -->
@@ -32,8 +45,7 @@
           *ngIf="q.type === 'slider'"
           [surveyId]="survey.id!"
           [question]="q"
-          [answers]="answers"
-       >
+          [answers]="answers">
         </app-skala-chart>
 
         <!-- Radio Button Diagramm -->
@@ -41,8 +53,7 @@
           *ngIf="q.type === 'radio'"
           [surveyId]="survey.id!"
           [question]="q"
-          [answers]="answers"
-        >
+          [answers]="answers">
         </app-radio-button-chart>
 
         <!-- Sterne-Bewertung -->
@@ -50,8 +61,7 @@
           *ngIf="q.type === 'star'"
           [surveyId]="survey.id!"
           [question]="q"
-          [answers]="answers"
-          >
+          [answers]="answers">
         </app-star-rating-chart>
 
         <!-- Freitext Antworten -->
@@ -70,6 +80,6 @@
 <!-- Ladezustand -->
 <ng-template #loading>
   <div class="card">
-    <p>Lade Daten...</p>
+    <p>{{ 'results.loading' | translate }}</p>
   </div>
 </ng-template>

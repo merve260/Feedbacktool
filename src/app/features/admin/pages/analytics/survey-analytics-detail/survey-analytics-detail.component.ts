@@ -1,8 +1,5 @@
 // src/app/features/survey/survey-analytics/survey-analytics-detail/survey-analytics-detail.component.ts
 
-// Komponente: Detail-Analyse einer Umfrage
-// Zeigt Charts und ermöglicht Excel-Export
-
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -11,11 +8,7 @@ import {
   doc,
   getDoc,
   collection,
-  collectionData,
-  query,
-  where,
-  orderBy,
-  getDocs
+  collectionData
 } from '@angular/fire/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,14 +18,16 @@ import { combineLatest, firstValueFrom, take } from 'rxjs';
 
 import { Survey, Question } from '../../../../../core/models/survey.models';
 
-// Import der Chart-Komponenten
+// Charts
 import { MultipleChartComponent } from '../charts/multiple-chart/multiple-chart.component';
 import { SkalaChartComponent } from '../charts/skala-chart/skala-chart.component';
 import { RadioButtonChartComponent } from '../charts/radio-button-chart/radio-button-chart.component';
 import { StarRatingChartComponent } from '../charts/star-rating-chart/star-rating-chart.component';
 import { FreiTextListComponent } from '../charts/freitext-list/freitext-list.component';
 import { FreiTextDialogComponent } from '../charts/chart-dialogs/frei-text-dialog.component';
+
 import { AuthService } from '../../../../../core/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-survey-analytics-detail',
@@ -43,7 +38,8 @@ import { AuthService } from '../../../../../core/auth/auth.service';
     SkalaChartComponent,
     RadioButtonChartComponent,
     StarRatingChartComponent,
-    FreiTextListComponent
+    FreiTextListComponent,
+    TranslateModule
   ],
   templateUrl: './survey-analytics-detail.component.html',
   styleUrls: ['./survey-analytics-detail.component.scss'],
@@ -53,6 +49,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
   private firestore = inject(Firestore);
   private dialog = inject(MatDialog);
   private auth = inject(AuthService);
+  private translate = inject(TranslateService);
 
   survey?: Survey;
   questions: Question[] = [];
@@ -67,18 +64,17 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
     if (!u) return;
 
-    // Nur dieses Dokument laden
     const docRef = doc(this.firestore, 'umfragen', id);
     const snap = await getDoc(docRef);
 
     if (!snap.exists()) {
-      alert('Umfrage nicht gefunden.');
+      alert(this.translate.instant('results.notFound'));
       return;
     }
 
     const data = snap.data() as any;
     if (data.ownerId !== u.uid) {
-      alert('Keine Berechtigung für diese Analyse.');
+      alert(this.translate.instant('results.noPermission'));
       return;
     }
 
@@ -89,13 +85,12 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
       endAt: data.endAt instanceof Timestamp ? data.endAt.toDate() : data.endAt,
     } as Survey;
 
-    // Danach Fragen & Antworten laden
     const fragenCol = collection(this.firestore, `umfragen/${id}/fragen`);
     const answersCol = collection(this.firestore, `umfragen/${id}/antworten`);
 
     combineLatest([
-      collectionData(fragenCol, {idField: 'id'}),
-      collectionData(answersCol, {idField: 'id'})
+      collectionData(fragenCol, { idField: 'id' }),
+      collectionData(answersCol, { idField: 'id' })
     ]).subscribe(([fragen, ans]: [any[], any[]]) => {
       this.questions = fragen;
       this.answers = ans;
@@ -113,25 +108,25 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
               (entry.answers || [])
                 .filter((a: any) => a.questionId === q.id && a.textValue)
                 .map((a: any) => ({
-                  name: entry.name || 'Anonym',
+                  name: entry.name || this.translate.instant('results.anonymous'),
                   text: a.textValue.length > 50 ? a.textValue.slice(0, 50) + '…' : a.textValue
                 }))
             );
         }
       });
     });
-}
+  }
 
-  // Export der Antworten nach Excel
+  // Excel-Export (mehrsprachig)
   exportToExcel() {
     if (!this.answers || this.answers.length === 0) {
-      alert('Keine Antworten vorhanden!');
+      alert(this.translate.instant('results.noAnswers'));
       return;
     }
 
     const rows: any[] = [];
     this.answers.forEach((entry: any) => {
-      const name = entry.name || 'Anonym';
+      const name = entry.name || this.translate.instant('results.anonymous');
       const createdAt = entry.createdAt?.toDate?.() || entry.createdAt || '';
 
       (entry.answers || []).forEach((ans: any) => {
@@ -143,66 +138,45 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
           value = ans.numberValue;
         } else if (ans.listValue) {
           value = ans.listValue.join(', ');
-        } else if (ans.dateRangeValue) {
-          const start = ans.dateRangeValue.start
-            ? new Date(ans.dateRangeValue.start).toLocaleString('de-DE', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            : '';
-          const end = ans.dateRangeValue.end
-            ? new Date(ans.dateRangeValue.end).toLocaleString('de-DE', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            : '';
-          value = `${start}${end ? ' – ' + end : ''}`;
         }
 
         rows.push({
-          Teilnehmer: name,
-          'Erstell-Datum': createdAt,
-          Frage: this.questionsMap[ans.questionId] || ans.questionId,
-          'Antwort-Datum': ans.answeredAt?.toDate?.() || ans.answeredAt,
-          Antwort: value,
+          [this.translate.instant('results.excel.participant')]: name,
+          [this.translate.instant('results.excel.createdAt')]: createdAt,
+          [this.translate.instant('results.excel.question')]: this.questionsMap[ans.questionId] || ans.questionId,
+          [this.translate.instant('results.excel.answeredAt')]: ans.answeredAt?.toDate?.() || ans.answeredAt,
+          [this.translate.instant('results.excel.answer')]: value,
         });
       });
     });
 
     if (rows.length === 0) {
-      alert('Keine Antworten in den Dokumenten gefunden.');
+      alert(this.translate.instant('results.noAnswersDocs'));
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(rows, {
-      header: ['Teilnehmer', 'Erstell-Datum', 'Frage', 'Antwort-Datum', 'Antwort'],
-    });
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const sheetName = this.translate.instant('results.excel.sheetName');
+    const workbook = { Sheets: { [sheetName]: worksheet }, SheetNames: [sheetName] };
 
-    const workbook = { Sheets: { Antworten: worksheet }, SheetNames: ['Antworten'] };
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, `umfrage-${this.survey?.title || 'antworten'}.xlsx`);
+    const fileName = `${this.translate.instant('results.excel.filePrefix')}-${this.survey?.title || 'answers'}.xlsx`;
+    saveAs(data, fileName);
   }
 
-  // Dialog für Freitext
   openChartDialog(question: Question) {
     if (question.type === 'freitext') {
       this.dialog.open(FreiTextDialogComponent, {
         width: '90%',
         data: {
-          title: question.title || 'Antworten',
+          title: question.title || this.translate.instant('results.answers'),
           answers: this.answers
             .flatMap((entry: any) =>
               (entry.answers || [])
                 .filter((ans: any) => ans.questionId === question.id && ans.textValue)
                 .map((ans: any) => ({
-                  name: entry.name || 'Anonym',
+                  name: entry.name || this.translate.instant('results.anonymous'),
                   text: ans.textValue
                 }))
             )

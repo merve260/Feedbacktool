@@ -7,8 +7,14 @@
 
   <!-- Zusammenfassung -->
   <div class="summary" *ngIf="answerCount > 0">
-    <p><strong>Durchschnitt:</strong> {{ averageValue | number:'1.1-1' }} / {{ question.max || 10 }}</p>
-    <p><strong>Antworten:</strong> {{ answerCount }}</p>
+    <p>
+      <strong>{{ 'modal.slider.average' | translate }}:</strong>
+      {{ averageValue | number:'1.1-1' }} / {{ question.max || 10 }}
+    </p>
+    <p>
+      <strong>{{ 'modal.slider.answers' | translate }}:</strong>
+      {{ answerCount }}
+    </p>
   </div>
 </div>
 
@@ -16,10 +22,8 @@
 <div class="answer-list" *ngIf="answers && answers.length > 0">
   <ul>
     <li *ngFor="let entry of answers">
-      <strong>{{ entry.name || 'Anonym' }}:</strong>
+      <strong>{{ entry.name || ('modal.slider.anonymous' | translate) }}:</strong>
       {{ getAnswerValue(entry, question?.id!) }}
     </li>
-
   </ul>
 </div>
-
