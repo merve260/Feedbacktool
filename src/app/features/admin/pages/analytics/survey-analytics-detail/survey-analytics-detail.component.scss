@@ -65,6 +65,7 @@ h2 {
   justify-items: stretch;
   align-items: stretch;
   width: 100%;
+  min-height: 400px;
 }
 
 /* Karte für ein einzelnes Diagramm */
@@ -80,6 +81,7 @@ h2 {
   min-height: 360px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
 
   &:hover {
     transform: scale(1.02);
@@ -130,4 +132,8 @@ h2 {
     min-height: auto;
     padding: 0.8rem;
   }
+}
+.chart-card canvas {
+  width: 100% !important;  /* 🔑 canvas responsive */
+  height: 100% !important; /* 🔑 */
 }

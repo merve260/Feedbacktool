@@ -1,4 +1,4 @@
-# 📊 FeedbackTool – Umfrage- und Feedback-System
+# 📊 FeedforwardTool – Umfrage- und Feedback-System
 
 Ein modernes Angular 19.2.12 Projekt mit Firebase Integration.  
 Das Tool ermöglicht es, **Umfragen zu erstellen**, **Links zu teilen** und **Antworten in Echtzeit zu speichern und auszuwerten**.

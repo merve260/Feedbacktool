@@ -114,6 +114,9 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
             );
         }
       });
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
     });
   }
 
