@@ -284,7 +284,8 @@
     }
   },
   "avatar": {
-    "invalidType": "Nur PNG/JPEG/WebP sind erlaubt. SVG nicht erlaubt."
+    "invalidType": "Schöne Datei… aber SVG? Nope. Nur PNG, JPEG oder WebP.",
+    "tooLarge": "Whoa! 🐘 Diese Datei ist viel zu groß! Bitte unter 1MB bleiben."
   },
   "common": {
     "ok": "OK"

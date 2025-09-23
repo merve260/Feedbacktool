@@ -187,6 +187,23 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     const allowed = ['image/png', 'image/jpeg', 'image/webp'];
     const fileName = file.name.toLowerCase();
 
+    // 1MB kontrolü (1 * 1024 * 1024 byte)
+    const maxSize = 1 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.snackBar.open(
+        this.translate.instant('avatar.tooLarge'), // i18n key ekle
+        this.translate.instant('common.ok'),
+        {
+          duration: 4000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['custom-snackbar']
+        }
+      );
+      input.value = '';
+      return;
+    }
+
     if (file.type === 'image/svg+xml' || fileName.endsWith('.svg') || !allowed.includes(file.type)) {
       this.snackBar.open(
         this.translate.instant('avatar.invalidType'),
@@ -201,7 +218,6 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
       input.value = '';
       return;
     }
-
     const reader = new FileReader();
     reader.onload = () => {
       const value = reader.result as string;

@@ -46,7 +46,8 @@ function toDateSafe(v: any): Date | undefined {
 // Bereitet Survey-Daten für Firestore vor
 function prepareSurveyData(
   s: Partial<Survey>,
-  statusOverride?: SurveyStatus
+  statusOverride?: SurveyStatus,
+  isUpdate = false
 ): WithFieldValue<Survey> {
   const sDate = toDateSafe(s.startAt);
   const eDate = toDateSafe(s.endAt);
@@ -58,8 +59,8 @@ function prepareSurveyData(
     status: (statusOverride ?? s.status ?? 'draft') as SurveyStatus,
     startAt: sDate ? Timestamp.fromDate(sDate) : null,
     endAt:   eDate ? Timestamp.fromDate(eDate) : null,
-    ...(s.logoUrl ? { logoUrl: s.logoUrl } : {}),
-    createdAt: (s as any).createdAt ?? serverTimestamp(),
+    ...(s.logoUrl !== undefined ? { logoUrl: s.logoUrl } : {}),
+    createdAt: isUpdate ? undefined : (s as any).createdAt ?? serverTimestamp(),
     updatedAt: serverTimestamp(),
   }) as WithFieldValue<Survey>;
 }
@@ -185,7 +186,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
     const batch = writeBatch(this.firestore as any);
 
     // Survey-Daten aktualisieren
-    batch.set(this.surveyDoc(surveyId), prepareSurveyData(survey), { merge: true });
+    batch.set(this.surveyDoc(surveyId), prepareSurveyData(survey, undefined, true), { merge: true });
 
     // Existierende Fragen laden
     const existingSnap = await getDocs(this.questionsCol(surveyId));
@@ -282,7 +283,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
 
 
   async setSurveyWithId(id: string, s: Partial<Survey>): Promise<void> {
-    await setDoc(this.surveyDoc(id), prepareSurveyData(s), { merge: true });
+    await setDoc(this.surveyDoc(id), prepareSurveyData(s, undefined, true), { merge: true });
     await updateDoc(this.surveyDoc(id), { updatedAt: serverTimestamp() } as any);
   }
 
