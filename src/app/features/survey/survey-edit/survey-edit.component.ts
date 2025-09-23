@@ -74,6 +74,7 @@ export class SurveyEditComponent implements OnInit {
     try {
       this.questions = this.questions.map((q, idx) => ({
         ...q,
+        id: q.id,
         order: idx
       }));
       await this.surveyService.updateSurveyWithQuestions(
