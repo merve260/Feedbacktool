@@ -70,6 +70,8 @@
     "changeAvatar": "Avatar ändern",
     "reset": "Zurücksetzen",
     "save": "Speichern",
+    "saved": "Profil gespeichert!",
+    "unsavedChanges": "Es gibt ungespeicherte Änderungen. Wirklich verlassen?",
     "logout": "Ausloggen"
   },
   "results": {
@@ -288,6 +290,14 @@
     "tooLarge": "Whoa! Diese Datei ist viel zu groß! Bitte unter 1MB bleiben."
   },
   "common": {
-    "ok": "OK"
+    "ok": "OK",
+    "close": "Schließen",
+    "leave": "Verlassen",
+    "cancel": "Abbrechen"
+  },
+  "errors": {
+    "saveFailed": "Fehler beim Speichern!",
+    "fileTooLarge": "Datei ist zu groß (max 1 MB)",
+    "invalidFileType": "Ungültiger Dateityp (nur PNG, JPG, WEBP erlaubt)"
   }
 }
