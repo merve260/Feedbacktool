@@ -87,9 +87,11 @@ export class AdminLayoutComponent {
       if (!file) return;
 
       const allowed = ['image/png', 'image/jpeg', 'image/webp'];
-      if (!allowed.includes(file.type)) {
+
+      // Size check
+      if (file.size > 1024 * 1024) {
         this.snackBar.open(
-          this.translate.instant('avatar.invalidType'),
+          this.translate.instant('avatar.tooLarge'),
           this.translate.instant('common.ok'),
           {
             duration: 4000,
@@ -100,8 +102,23 @@ export class AdminLayoutComponent {
         );
         return;
       }
+      //Typ Check
+      if (!allowed.includes(file.type)) {
+        this.snackBar.open(
+          this.translate.instant('avatar.invalidType'),
+          this.translate.instant('common.ok'),
+          {
+            duration: 10000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['custom-snackbar']
+          }
+        );
+        return;
+      }
     };
   }
+
 
   private toBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {

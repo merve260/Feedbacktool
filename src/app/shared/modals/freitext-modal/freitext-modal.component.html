@@ -43,14 +43,17 @@
   <!-- Vorschau -->
   <p class="preview-label-titel">{{ 'modal.preview' | translate }}</p>
   <div class="preview-box">
+
     <!-- Fragetitel -->
     <p class="preview-label">{{ 'modal.freitext.title' | translate }}</p>
-    <p class="preview-text">
+    <p class="preview-text" *ngIf="data.title">
+      {{ data.title }}
     </p>
 
     <!-- Fragetext -->
     <p class="preview-label">{{ 'modal.freitext.text' | translate }}</p>
-    <p class="preview-text">
+    <p class="preview-text" *ngIf="data.text">
+      {{ data.text }}
     </p>
 
     <!-- Antwortfeld -->
