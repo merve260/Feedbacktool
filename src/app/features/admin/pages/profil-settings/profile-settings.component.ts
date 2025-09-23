@@ -88,12 +88,38 @@ export class ProfileSettingsComponent implements OnInit, CanComponentDeactivate 
 
     input.onchange = async () => {
       const file = input.files?.[0];
-      if (file) {
-        this.avatarPreview = await this.toBase64(file);
-        this.avatarChanged = true;
+      if (!file) return;
+
+      const allowed = ['image/png', 'image/jpeg', 'image/webp'];
+      const fileName = file.name.toLowerCase();
+      const maxSize = 1 * 1024 * 1024; // 1 MB
+
+      // Größe prüfen
+      if (file.size > maxSize) {
+        this.snackBar.open('Datei ist zu groß (max 1 MB)', 'Schließen', {
+          duration: 4000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        return;
       }
+
+      // Dateityp prüfen (kein SVG)
+      if (file.type === 'image/svg+xml' || fileName.endsWith('.svg') || !allowed.includes(file.type)) {
+        this.snackBar.open('Ungültiger Dateityp (nur PNG, JPG, WEBP erlaubt)', 'Schließen', {
+          duration: 4000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        return;
+      }
+
+      // wenn gültig → Base64 umwandeln
+      this.avatarPreview = await this.toBase64(file);
+      this.avatarChanged = true;
     };
   }
+
 
   private toBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
