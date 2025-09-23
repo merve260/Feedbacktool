@@ -187,14 +187,14 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     const allowed = ['image/png', 'image/jpeg', 'image/webp'];
     const fileName = file.name.toLowerCase();
 
-    // 1MB kontrolü (1 * 1024 * 1024 byte)
+    // Size Check
     const maxSize = 1 * 1024 * 1024;
     if (file.size > maxSize) {
       this.snackBar.open(
         this.translate.instant('avatar.tooLarge'), // i18n key ekle
         this.translate.instant('common.ok'),
         {
-          duration: 4000,
+          duration: 7000,
           horizontalPosition: 'right',
           verticalPosition: 'top',
           panelClass: ['custom-snackbar']
@@ -209,7 +209,7 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
         this.translate.instant('avatar.invalidType'),
         this.translate.instant('common.ok'),
         {
-          duration: 4000,
+          duration: 7000,
           horizontalPosition: 'right',
           verticalPosition: 'top',
           panelClass: ['custom-snackbar']
@@ -279,7 +279,6 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     }
   }
 
-  saveDraft() { return this.saveAs('draft'); }
 
   // Getter fürs Template
   get titleCtrl() { return this.infoForm.controls.title; }

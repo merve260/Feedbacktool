@@ -290,7 +290,7 @@
   },
   "avatar": {
     "invalidType": "Nice file… but SVG? Nope. Only PNG, JPEG or WebP.",
-    "tooLarge": "Whoa! 🐘 That file is too big! Keep it under 1MB, please."
+    "tooLarge": "Whoa! That file is too big! Keep it under 1MB, please."
   },
   "common": {
     "ok": "OK"
