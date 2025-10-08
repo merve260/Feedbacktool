@@ -55,7 +55,7 @@ export class ResultsAnalyticsComponent implements OnInit {
   }
 
   openAnalytics(survey: Survey) {
-    this.router.navigate(['/admin/ergebnisse', survey.id]);
+    this.router.navigate(['/admin/results', survey.id]);
   }
 
 }

@@ -269,7 +269,7 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
       }
 
       alert(status === 'published' ? 'Umfrage veröffentlicht.' : 'Entwurf gespeichert.');
-      await this.router.navigateByUrl('/admin/umfragen');
+      await this.router.navigateByUrl('/admin/survey');
 
     } catch (e: any) {
       console.error('SAVE ERROR ->', e);
@@ -393,7 +393,7 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
 
   // Navigation zurück zum Dashboard
   goToDashboard(): void {
-    this.router.navigateByUrl('/admin/umfragen');
+    this.router.navigateByUrl('/admin/survey');
   }
   switchLang(lang: string) {
     this.lang.use(lang);

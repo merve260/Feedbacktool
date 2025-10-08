@@ -212,7 +212,7 @@ export class SurveysDashboardComponent implements OnInit{
     });
   }
   edit(s: Survey) {
-    this.router.navigate(['/admin/umfragen', s.id, 'edit']);
+    this.router.navigate(['/admin/survey', s.id, 'edit']);
   }
 
   getDisplayStatus(s: Survey): 'draft' | 'published' | 'closed' {
