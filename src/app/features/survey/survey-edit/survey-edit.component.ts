@@ -95,7 +95,7 @@ export class SurveyEditComponent implements OnInit {
       this.questions = await this.surveyService.listQuestions(this.surveyId);
 
       // Zurück zum Dashboard
-      this.router.navigate(['/admin/umfragen']);
+      this.router.navigate(['/admin/surveys']);
 
     } catch (err) {
       this.errorMsg = this.translate.instant('edit.errorSave');

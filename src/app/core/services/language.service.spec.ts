@@ -9,7 +9,7 @@ describe('LanguageService (Jest)', () => {
   beforeEach(() => {
     store = {};
 
-    // localStorage tamamen mocklanıyor
+    // Zeigt, wie der Test lokale Speicheraktionen simuliert
     const localStorageMock = {
       getItem: jest.fn((key: string) => store[key] ?? null),
       setItem: jest.fn((key: string, value: string) => {
@@ -46,7 +46,7 @@ describe('LanguageService (Jest)', () => {
     expect(translateMock.setDefaultLang).toHaveBeenCalledWith('de');
     expect(translateMock.use).toHaveBeenCalledWith('de');
   });
-
+ // Überprüft, ob beim Sprachwechsel die Sprache korrekt gespeichert wird
   it('should call translate.use and set localStorage when use() is called', () => {
     service.use('en');
     expect(translateMock.use).toHaveBeenCalledWith('en');

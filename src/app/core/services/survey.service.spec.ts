@@ -7,6 +7,7 @@ describe('SurveyService (Jest)', () => {
   let backendMock: jest.Mocked<FirebaseSurveyAdapter>;
   let firestoreMock: jest.Mocked<Firestore>;
 
+  //Zeigt, wie Firestore-Operationen isoliert getestet werden
   beforeEach(() => {
     backendMock = {
       createDraft: jest.fn(),
@@ -22,7 +23,7 @@ describe('SurveyService (Jest)', () => {
       submitResponse: jest.fn()
     } as any;
 
-    firestoreMock = {} as any; // şimdilik boş, listQuestions için ayrıca mock'larız
+    firestoreMock = {} as any;
 
     service = new SurveyService(backendMock, firestoreMock);
   });
@@ -47,12 +48,10 @@ describe('SurveyService (Jest)', () => {
     expect(result).toEqual(fakeSurvey);
     expect(backendMock.getById).toHaveBeenCalledWith('1');
   });
-
+// Überprüft, ob der Service beim Löschen einer Umfrage die Methode deleteSurvey des Adapters korrekt aufruft
   it('should call backend.deleteSurvey', async () => {
     (backendMock.deleteSurvey as jest.Mock).mockResolvedValue(undefined);
-
     await service.deleteSurvey('1');
-
     expect(backendMock.deleteSurvey).toHaveBeenCalledWith('1');
   });
 

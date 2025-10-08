@@ -75,7 +75,7 @@ export class SurveysDashboardComponent implements OnInit{
         const data: any = roleDoc.data();
         this.displayName = data.displayName || u.displayName || u.email;
       }
-      const colRef = collection(this.afs, 'umfragen');
+      const colRef = collection(this.afs, 'surveys');
       let snap;
       try {
         snap = await getDocs(query(colRef, where('ownerId', '==', u.uid), orderBy('createdAt', 'desc')));
@@ -194,7 +194,7 @@ export class SurveysDashboardComponent implements OnInit{
 
     ref.afterClosed().subscribe(async result => {
       if (result) {
-        await deleteDoc(doc(this.afs, 'umfragen', s.id));
+        await deleteDoc(doc(this.afs, 'surveys', s.id));
         this.allItems = this.allItems.filter(x => x.id !== s.id);
         this.applyView();
       }

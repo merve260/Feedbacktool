@@ -29,7 +29,7 @@ export class AuthService {
     try {
       await signInWithEmailAndPassword(this.auth, email, password);
     } catch (err: any) {
-      throw new Error(this.mapAuthError(err));  // 🔥 burada
+      throw new Error(this.mapAuthError(err));
     }
   }
 

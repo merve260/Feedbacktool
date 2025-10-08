@@ -18,35 +18,35 @@ import { SurveyAnalyticsDetailComponent } from './features/admin/pages/analytics
 
 export const routes: Routes = [
 
-  // --- Öffentliche Route: Login ---
+  // --- Public Route: Login ---
   { path: 'login', component: LoginComponent },
 
-  // --- Builder & Publish (nur für Admins) ---
+  // --- Builder & Publish (Admin only) ---
   { path: 'admin/builder/:id', canActivate: [AuthGuard], component: SurveyBuilderComponent },
   { path: 'admin/builder',     canActivate: [AuthGuard], component: SurveyBuilderComponent },
   { path: 'admin/publish/:id', canActivate: [AuthGuard], component: SurveyPublishComponent },
 
-  // --- Admin-Bereich mit Layout und Unterseiten ---
+  // --- Admin Area with Layout and Subpages ---
   {
     path: 'admin',
     canActivate: [AuthGuard],
     component: AdminLayoutComponent,
     children: [
-      { path: '', redirectTo: 'umfragen', pathMatch: 'full' },
+      { path: '', redirectTo: 'surveys', pathMatch: 'full' },
 
-      // Dashboard: Übersicht aller Umfragen
-      { path: 'umfragen', component: SurveysDashboardComponent, data: { title: 'dashboard.pageTitle' } },
+      // Dashboard: List of all surveys
+      { path: 'surveys', component: SurveysDashboardComponent, data: { title: 'dashboard.pageTitle' } },
 
-      // Umfrage bearbeiten
-      { path: 'umfragen/:id/edit', component: SurveyEditComponent, data: { title: 'survey.editTitle' } },
+      // Edit survey
+      { path: 'surveys/:id/edit', component: SurveyEditComponent, data: { title: 'survey.editTitle' } },
 
-      // Ergebnisse & Analytics
-      { path: 'ergebnisse', component: ResultsAnalyticsComponent, data: { title: 'results.pageTitle' } },
-      { path: 'ergebnisse/:id', component: SurveyAnalyticsDetailComponent, data: { title: 'results.detailTitle' } },
+      // Results & Analytics
+      { path: 'results', component: ResultsAnalyticsComponent, data: { title: 'results.pageTitle' } },
+      { path: 'results/:id', component: SurveyAnalyticsDetailComponent, data: { title: 'results.detailTitle' } },
 
-      // Profil-Einstellungen (mit Guard vor ungespeicherten Änderungen)
+      // Profile settings (guard for unsaved changes)
       {
-        path: 'profil',
+        path: 'profile',
         component: ProfileSettingsComponent,
         canDeactivate: [UnsavedChangesGuard],
         data: { title: 'profile.editTitle' }
@@ -54,12 +54,12 @@ export const routes: Routes = [
     ],
   },
 
-  // --- Öffentlicher Umfrage-Link für Teilnehmer ---
+  // --- Public survey link for participants ---
   { path: 'survey/:id', component: SurveyViewerComponent },
 
-  // --- Startseite → Dashboard ---
-  { path: '', pathMatch: 'full', redirectTo: 'admin/umfragen' },
+  // --- Default start page → Dashboard ---
+  { path: '', pathMatch: 'full', redirectTo: 'admin/surveys' },
 
-  // --- Fallback: unbekannte Routen → Dashboard ---
-  { path: '**', redirectTo: 'admin/umfragen' },
+  // --- Fallback: unknown routes → Dashboard ---
+  { path: '**', redirectTo: 'admin/surveys' },
 ];

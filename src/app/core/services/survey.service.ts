@@ -56,7 +56,7 @@ export class SurveyService {
   }
 
   async listQuestions(surveyId: string): Promise<Question[]> {
-    const colRef = collection(this.firestore, `umfragen/${surveyId}/fragen`);
+    const colRef = collection(this.firestore, `surveys/${surveyId}/questions`);
     const q = query(colRef, orderBy('order'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Question));

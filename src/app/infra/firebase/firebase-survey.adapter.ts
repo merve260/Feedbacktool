@@ -67,9 +67,9 @@ function prepareSurveyData(
 
 @Injectable({ providedIn: 'root' })
 export class FirebaseSurveyAdapter implements SurveyBackend {
-  private readonly rootColName = 'umfragen';
-  private readonly subColName = 'fragen';
-  private readonly responsesSubCol = 'antworten';
+  private readonly rootColName = 'surveys';
+  private readonly subColName = 'questions';
+  private readonly responsesSubCol = 'answers';
 
   constructor(private firestore: Firestore) {}
 
@@ -322,7 +322,7 @@ export class FirebaseSurveyAdapter implements SurveyBackend {
   }
 
   listenToAnswers(surveyId: string): Observable<any[]> {
-    const ref = collection(this.firestore, `umfragen/${surveyId}/antworten`);
+    const ref = collection(this.firestore, `surveys/${surveyId}/answers`);
     return collectionData(ref, { idField: 'id' });
   }
 
