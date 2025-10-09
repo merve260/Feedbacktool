@@ -22,12 +22,12 @@
 
       <!-- Navigation -->
       <nav class="nav">
-        <a mat-list-item routerLink="/admin/umfragen" routerLinkActive="active">
+        <a mat-list-item routerLink="/admin/surveys" routerLinkActive="active">
           <mat-icon matListIcon>assignment</mat-icon>
           <span class="label">{{ 'sidebar.surveys' | translate }}</span>
         </a>
 
-        <a mat-list-item routerLink="/admin/ergebnisse" routerLinkActive="active">
+        <a mat-list-item routerLink="/admin/results" routerLinkActive="active">
           <mat-icon matListIcon>bar_chart</mat-icon>
           <span class="label">{{ 'sidebar.results' | translate }}</span>
         </a>
@@ -43,7 +43,7 @@
           <span class="label">{{ 'sidebar.switch' | translate }}</span>
         </a>
 
-        <a mat-list-item routerLink="/admin/profil" routerLinkActive="active">
+        <a mat-list-item routerLink="/admin/profile" routerLinkActive="active">
           <mat-icon matListIcon>person</mat-icon>
           <span class="label">{{ 'sidebar.profile' | translate }}</span>
         </a>
@@ -98,7 +98,7 @@
 
       <mat-menu #userMenu="matMenu">
         <h4 class="displayname">{{ displayName }}</h4>
-        <button mat-menu-item routerLink="/admin/profil">
+        <button mat-menu-item routerLink="/admin/profile">
           <span>{{ 'menu.profile' | translate }}</span>
         </button>
         <button mat-menu-item (click)="changeAvatar()">

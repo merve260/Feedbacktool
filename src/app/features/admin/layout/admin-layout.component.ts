@@ -58,17 +58,19 @@ export class AdminLayoutComponent {
 
   @HostListener('window:resize')
   onResize() {
-    this.isMobile = window.innerWidth <= 768;
+    if (typeof window !== 'undefined') {
+      this.isMobile = window.innerWidth <= 768;
+    }
   }
 
   pageTitle$: Observable<string> = this.router.events.pipe(
-    filter(e => e instanceof NavigationEnd),
+    filter((e): e is NavigationEnd => e instanceof NavigationEnd),
     map(() => {
       let r = this.route;
       while (r.firstChild) r = r.firstChild;
-      return r.snapshot.data?.['title'] ?? 'Meine Umfragen';
+      return r.snapshot.data?.['title'] || 'Meine Umfragen';
     }),
-    startWith(this.route.snapshot.firstChild?.data?.['title'] ?? 'Meine Umfragen')
+    startWith('Meine Umfragen')
   );
 
   async logout(): Promise<void> {
@@ -116,9 +118,23 @@ export class AdminLayoutComponent {
         );
         return;
       }
+      if (allowed.includes(file.type)) {
+        const base64 = await this.toBase64(file);
+        await this.auth.uploadUserAvatarBase64(base64);
+
+        this.snackBar.open(
+          this.translate.instant('avatar.updated'),
+          this.translate.instant('common.ok'),
+          {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+            panelClass: ['custom-snackbar']
+          }
+        );
+      }
     };
   }
-
 
   private toBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {

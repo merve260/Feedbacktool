@@ -31,9 +31,9 @@ export class LoginComponent implements OnInit {
   currentLang: 'de' | 'en' = 'de';
   ngOnInit(): void {
     // Prüfen: ist der User schon eingeloggt?
-    // → wenn ja, sofort zum Dashboard (/admin/umfragen)
+    // → wenn ja, sofort zum Dashboard (/admin/surveys)
     this.auth.isAuthenticated$.pipe(take(1)).subscribe(ok => {
-      if (ok) this.router.navigateByUrl('/admin/survey');
+      if (ok) this.router.navigateByUrl('/admin/surveys');
     });
     //translate-pipes
     this.translate.setDefaultLang('de');
@@ -58,7 +58,7 @@ export class LoginComponent implements OnInit {
     ).subscribe(ok => {
       if (ok) {
         const redirect = this.route.snapshot.queryParamMap.get('redirectTo');
-        this.router.navigateByUrl(redirect || '/admin/survey');
+        this.router.navigateByUrl(redirect || '/admin/surveys');
       }
     });
   }

@@ -12,7 +12,7 @@ import { UnsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { AdminLayoutComponent } from './features/admin/layout/admin-layout.component';
 import { SurveysDashboardComponent } from './features/admin/pages/dashboard/surveys-dashboard.component';
 import { ResultsAnalyticsComponent } from './features/admin/pages/analytics/results-analytics.component';
-import { ProfileSettingsComponent } from './features/admin/pages/profil-settings/profile-settings.component';
+import { ProfileSettingsComponent } from './features/admin/pages/profile-settings/profile-settings.component';
 import { SurveyEditComponent } from './features/survey/survey-edit/survey-edit.component';
 import { SurveyAnalyticsDetailComponent } from './features/admin/pages/analytics/survey-analytics-detail/survey-analytics-detail.component';
 

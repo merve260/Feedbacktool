@@ -33,7 +33,7 @@ export class ResultsAnalyticsComponent implements OnInit {
     const u = await firstValueFrom(this.auth.user$);
     if (!u) return;
 
-    const surveysCol = collection(this.firestore, 'umfragen');
+    const surveysCol = collection(this.firestore, 'surveys');
     const q = query(
       surveysCol,
       where('ownerId', '==', u.uid),

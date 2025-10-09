@@ -47,7 +47,7 @@ export class SurveyViewerComponent implements OnInit {
 
   surveyId = '';
   surveyData: { title: string; logoUrl?: string | null; questions: Question[] } | null = null;
-  currentLang = 'de'; // default
+  currentLang = 'de';
   currentIndex = 0;
   answers: any[] = [];
   isCompleted = false;

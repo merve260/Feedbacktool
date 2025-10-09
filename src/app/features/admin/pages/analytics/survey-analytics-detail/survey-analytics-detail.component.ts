@@ -64,7 +64,7 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
     if (!u) return;
 
-    const docRef = doc(this.firestore, 'umfragen', id);
+    const docRef = doc(this.firestore, 'surveys', id);
     const snap = await getDoc(docRef);
 
     if (!snap.exists()) {
@@ -85,8 +85,8 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
       endAt: data.endAt instanceof Timestamp ? data.endAt.toDate() : data.endAt,
     } as Survey;
 
-    const fragenCol = collection(this.firestore, `umfragen/${id}/fragen`);
-    const answersCol = collection(this.firestore, `umfragen/${id}/antworten`);
+    const fragenCol = collection(this.firestore, `surveys/${id}/questions`);
+    const answersCol = collection(this.firestore, `surveys/${id}/answers`);
 
     combineLatest([
       collectionData(fragenCol, { idField: 'id' }),

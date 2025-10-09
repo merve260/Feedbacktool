@@ -12,8 +12,8 @@ import {TranslateModule} from '@ngx-translate/core';
 @Component({
   selector: 'app-umfrage-link-dialog',
   standalone: true,
-  templateUrl: './umfrage-link-dialog.component.html',
-  styleUrls: ['./umfrage-link-dialog.component.scss'],
+  templateUrl: './survey-link-dialog.component.html',
+  styleUrls: ['./survey-link-dialog.component.scss'],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -24,12 +24,12 @@ import {TranslateModule} from '@ngx-translate/core';
     TranslateModule
   ]
 })
-export class UmfrageLinkDialogComponent {
+export class SurveyLinkDialogComponent {
   surveyLink: string;
   endDate: Date | null;
 
   constructor(
-    public dialogRef: MatDialogRef<UmfrageLinkDialogComponent>,
+    public dialogRef: MatDialogRef<SurveyLinkDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { id: string; endDate?: string },
     private snackBar: MatSnackBar
   ) {

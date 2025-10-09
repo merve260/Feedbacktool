@@ -29,7 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/dialogs/confirm-dialog.component';
-import {UmfrageLinkDialogComponent} from '../../../../shared/modals/umfragelink-modal/umfrage-link-dialog.component';
+import {SurveyLinkDialogComponent} from '../../../../shared/modals/survey-link-modal/survey-link-dialog.component';
 import {TranslateModule} from '@ngx-translate/core';
 
 @Component({
@@ -206,13 +206,13 @@ export class SurveysDashboardComponent implements OnInit{
     this.router.navigateByUrl('/admin/builder');
   }
   openLinkDialog(survey: Survey) {
-    this.dialog.open(UmfrageLinkDialogComponent, {
+    this.dialog.open(SurveyLinkDialogComponent, {
       width: '720px',
       data: { id: survey.id, endDate: survey.endAt ? survey.endAt.toISOString() : null }
     });
   }
   edit(s: Survey) {
-    this.router.navigate(['/admin/survey', s.id, 'edit']);
+    this.router.navigate(['/admin/surveys', s.id, 'edit']);
   }
 
   getDisplayStatus(s: Survey): 'draft' | 'published' | 'closed' {
