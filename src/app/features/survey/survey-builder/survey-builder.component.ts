@@ -191,7 +191,7 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     const maxSize = 1 * 1024 * 1024;
     if (file.size > maxSize) {
       this.snackBar.open(
-        this.translate.instant('avatar.tooLarge'), // i18n key ekle
+        this.translate.instant('avatar.tooLarge'),
         this.translate.instant('common.ok'),
         {
           duration: 7000,
@@ -236,19 +236,20 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
     this.logoUrlChange.emit(null);
   }
 
-  // Speichern als Draft oder Publish
+  // Methode zum Speichern oder Veröffentlichen einer Umfrage
   async saveAs(status: SurveyStatus) {
+    // Prüft, ob das Formular gültig ist und ob mindestens eine Frage vorhanden ist
     if (this.infoForm.invalid || this.canvasQuestions.length === 0) {
       this.infoForm.markAllAsTouched();
-      alert('Bitte Titel, Zeitraum und mindestens eine Frage angeben.');
+      alert(this.translate.instant('builder.error.missingFields'));
       return;
     }
-
     this.isSaving = true;
     try {
+      // Holt den aktuell eingeloggten Benutzer aus dem AuthService
       const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
-      if (!u) { alert('Bitte einloggen.'); return; }
-
+      if (!u) { alert(this.translate.instant('builder.alert.notLoggedIn')); return; }
+      // Erstellt ein Survey-Objekt mit allen erforderlichen Feldern
       const survey: Omit<Survey, 'id'> = {
         ownerId: u.uid,
         title: (this.titleCtrl.value || '').trim(),
@@ -258,22 +259,21 @@ export class SurveyBuilderComponent implements OnInit, OnChanges {
         status,
         logoUrl: this.logoUrl ?? this.infoForm.controls.logoUrl.value ?? null
       };
-
+      // Wandelt die aktuelle Fragenliste in ein gültiges Payload-Format um
       const qPayload = this.canvasQuestions.map(this.toQuestion);
-
+      // Prüft, ob eine neue Umfrage erstellt oder eine bestehende aktualisiert werden soll
       if (!this.currentSurveyId) {
         const id = await this.surveyService.createSurveyWithQuestions(survey, qPayload);
         this.currentSurveyId = id;
       } else {
         await this.surveyService.updateSurveyWithQuestions(this.currentSurveyId, survey, qPayload);
       }
-
-      alert(status === 'published' ? 'Umfrage veröffentlicht.' : 'Entwurf gespeichert.');
+      // Navigiert nach erfolgreichem Speichern zurück zur Übersicht
       await this.router.navigateByUrl('/admin/surveys');
 
     } catch (e: any) {
       console.error('SAVE ERROR ->', e);
-      alert('Fehler: ' + (e?.code || e?.message || e));
+      alert(this.translate.instant('builder.alert.error') + (e?.code || e?.message || e));
     } finally {
       this.isSaving = false;
     }

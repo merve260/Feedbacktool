@@ -128,6 +128,13 @@
     "errorSave": "Saving failed."
   },
   "builder": {
+    "alert": {
+      "missingFields": "Please provide a title, a valid date range and at least one question.",
+      "notLoggedIn": "Please log in to save the survey.",
+      "published": "Survey published successfully.",
+      "saved": "Draft saved successfully.",
+      "error": "An error occurred: "
+    },
     "infoTitle": "Survey Info",
     "hintTitle": "Publishing notes:",
     "hint1": "To publish you need at least one question, a title and a date range.",

@@ -128,6 +128,13 @@
     "errorSave": "Speichern fehlgeschlagen."
   },
   "builder": {
+    "alert": {
+      "missingFields": "Bitte geben Sie einen Titel, einen Zeitraum und mindestens eine Frage ein.",
+      "notLoggedIn": "Bitte melden Sie sich zuerst an.",
+      "published": "Die Umfrage wurde erfolgreich veröffentlicht.",
+      "saved": "Der Entwurf wurde erfolgreich gespeichert.",
+      "error": "Fehler beim Speichern: "
+    },
     "infoTitle": "Umfrage-Info",
     "hintTitle": "Hinweise zur Veröffentlichung:",
     "hint1": "Zum Veröffentlichen braucht man mindestens eine Frage, einen Titel und einen Zeitraum.",
