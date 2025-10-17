@@ -53,9 +53,11 @@ describe('LanguageService (Jest)', () => {
     expect(window.localStorage.setItem).toHaveBeenCalledWith('lang', 'en');
     expect(window.localStorage.getItem('lang')).toBe('en');
   });
-
+// Test ohne Mock – Überprüft die Funktionalität der Methode currentLang()
   it('should return current language', () => {
+    // Setzt die aktuelle Sprache manuell auf "en"
     translateMock.currentLang = 'en';
+    // Erwartet, dass die Methode currentLang() den korrekten Sprachcode zurückgibt
     expect(service.currentLang()).toBe('en');
   });
 });
