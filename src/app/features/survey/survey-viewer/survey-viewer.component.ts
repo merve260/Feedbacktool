@@ -150,36 +150,51 @@ export class SurveyViewerComponent implements OnInit {
     return total ? ((this.currentIndex + 1) / total) * 100 : 0;
   }
 
+
+  // Speichert die vom Teilnehmer eingegebenen Antworten in Firestore
   async speichern(): Promise<void> {
+    // Wenn keine Umfrage geladen ist, wird die Funktion beendet
     if (!this.surveyData) return;
     try {
+      // Erstellt ein Antwort-Array für jede Frage basierend auf dem Fragetyp
       const responses: Answer[] = this.surveyData.questions.map((q, i) => {
         const val = this.answers[i];
+        // Jedes Antwortobjekt erhält eine eindeutige ID, Frage-ID und Zeitstempel
         const answer: Answer = {
           id: this.generateId(),
           questionId: q.id,
           answeredAt: new Date()
         };
+        // Wenn Fragetyp Radio oder Freitext: speichert Textwert
         if (q.type === 'radio' || q.type === 'freitext') {
           answer.textValue = val ?? '';
+          // Wenn Fragetyp Slider oder Sternbewertung: speichert numerischen Wert
         } else if (q.type === 'slider' || q.type === 'star') {
           answer.numberValue = typeof val === 'number' ? val : Number(val);
+          // Wenn Mehrfachauswahl: erstellt eine Liste der ausgewählten Optionen
         } else if (q.type === 'multiple' && Array.isArray(val) && q.options) {
           answer.listValue = q.options.filter((_, idx) => val[idx]);
         }
+        // Gibt das fertige Antwortobjekt zurück
         return answer;
       });
-
+      // Sendet alle Antworten an den SurveyService zur Speicherung in Firestore
       await this.surveyService.submitResponse(this.surveyId, {
         name: this.respondentName?.trim() || 'Anonym',
         answers: responses
       });
+
+      // Setzt den Status auf "abgeschlossen", wenn alles erfolgreich gespeichert wurde
       this.isCompleted = true;
-    } catch (e: any) {
+
+    }
+    catch (e: any) {
+      // Fehlerbehandlung: speichert die Fehlermeldung für das UI
       console.error(e);
       this.errorMsg = 'viewer.errorSave';
     }
   }
+
 
   private generateId(): string {
     return doc(collection(this.firestore, '_')).id;
