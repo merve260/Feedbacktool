@@ -1,4 +1,3 @@
-// src/app/features/admin/login/login.component.ts
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,7 +30,7 @@ export class LoginComponent implements OnInit {
   currentLang: 'de' | 'en' = 'de';
   ngOnInit(): void {
     // Prüfen: ist der User schon eingeloggt?
-    // → wenn ja, sofort zum Dashboard (/admin/surveys)
+    // -> wenn ja, sofort zum Dashboard (/admin/surveys)
     this.auth.isAuthenticated$.pipe(take(1)).subscribe(ok => {
       if (ok) this.router.navigateByUrl('/admin/surveys');
     });

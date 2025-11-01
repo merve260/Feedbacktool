@@ -45,7 +45,7 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
     setTimeout(() => this.updateChart(), 100);
   }
 
-  /** Berechnet die Ergebnisse aus den Antworten */
+ // Berechnet die Ergebnisse aus den Antworten
   private calculateResults() {
     if (!this.question) return;
 
@@ -66,7 +66,7 @@ export class RadioButtonChartComponent implements OnInit, AfterViewInit, OnDestr
     this.answerCount = this.optionCounts.reduce((sum, r) => sum + r.count, 0);
   }
 
-  /** Erstellt oder aktualisiert das Chart */
+//Erstellt oder aktualisiert das Chart
   private updateChart() {
     if (!this.chartCanvas || this.optionCounts.length === 0) return;
     if (this.chart) this.chart.destroy();

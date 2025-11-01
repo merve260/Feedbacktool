@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/admin/login/login.component';
 import { SurveyBuilderComponent } from './features/survey/survey-builder/survey-builder.component';
 import { SurveyPublishComponent } from './features/survey/survey-publish/survey-publish.component';
-import { SurveyViewerComponent } from './features/survey/survey-viewer/survey-viewer.component';
 
 import { AuthGuard } from './core/auth/auth.guard';
 import { UnsavedChangesGuard } from './core/guards/unsaved-changes.guard';
@@ -54,8 +53,14 @@ export const routes: Routes = [
     ],
   },
 
-  // --- Public survey link for participants ---
-  { path: 'survey/:id', component: SurveyViewerComponent },
+  // Der Survey Viewer wird nur bei Bedarf geladen (Lazy Loading)
+  {
+    path: 'survey/:id',
+    loadComponent: () =>
+      import('./features/survey/survey-viewer/survey-viewer.component')
+        .then(m => m.SurveyViewerComponent)
+  },
+
 
   // --- Default start page → Dashboard ---
   { path: '', pathMatch: 'full', redirectTo: 'admin/surveys' },

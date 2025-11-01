@@ -1,4 +1,3 @@
-// src/app/core/services/survey.service.ts
 import { Injectable } from '@angular/core';
 import { Survey, Question } from '../models/survey.models';
 import { FirebaseSurveyAdapter } from '../../infra/firebase/firebase-survey.adapter';
@@ -76,7 +75,7 @@ export class SurveyService {
     return this.backend.submitResponse(surveyId, payload);
   }
 
-  // Status aktualisieren (z. B. draft → published → closed)
+  // Status aktualisieren (z. B. draft -> published -> closed)
   updateStatus(id: string, status: 'draft' | 'published' | 'closed'): Promise<void> {
     return this.setSurveyWithId(id, { status });
   }

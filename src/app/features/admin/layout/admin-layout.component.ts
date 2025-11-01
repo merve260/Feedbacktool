@@ -48,6 +48,8 @@ export class AdminLayoutComponent {
   currentLang = this.languageService.currentLang();
 
   constructor() {
+    // Initialisierung: Benutzerinformationen und Avatar laden
+    // Lädt Benutzername und Profilbild aus AuthService für Header-Anzeige.
     if (this.auth.userId) {
       this.avatar$ = this.auth.getUserAvatar(this.auth.userId);
     }
@@ -58,6 +60,7 @@ export class AdminLayoutComponent {
 
   @HostListener('window:resize')
   onResize() {
+    // Responsive Verhalten: Prüft Fensterbreite und passt Layout an
     if (typeof window !== 'undefined') {
       this.isMobile = window.innerWidth <= 768;
     }
@@ -74,11 +77,13 @@ export class AdminLayoutComponent {
   );
 
   async logout(): Promise<void> {
+    // Logout: Sitzung beenden und zur Login-Seite navigieren
     await this.auth.logout();
     await this.router.navigateByUrl('/login');
   }
 
   async changeAvatar() {
+    // Avatar ändern: Datei wählen -> prüfen -> in Base64 umwandeln -> speichern
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/png, image/jpeg, image/webp';
@@ -145,6 +150,7 @@ export class AdminLayoutComponent {
     });
   }
   switchLang(lang: string) {
+    // Sprachwechsel über LanguageService (ngx-translate)
     this.languageService.use(lang);
     this.currentLang = lang;
   }

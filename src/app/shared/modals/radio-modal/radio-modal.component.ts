@@ -108,7 +108,7 @@ export class RadioModalComponent {
     });
   }
 
-  // Für *ngFor → stabile Indizes
+  // Für *ngFor -> stabile Indizes
   trackByIndex(index: number, item: string): number {
     return index;
   }

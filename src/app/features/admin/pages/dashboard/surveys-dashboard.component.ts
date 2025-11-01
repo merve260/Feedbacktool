@@ -1,5 +1,3 @@
-// src/app/features/survey/surveys-dashboard/surveys-dashboard.component.ts
-
 import {Component, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';

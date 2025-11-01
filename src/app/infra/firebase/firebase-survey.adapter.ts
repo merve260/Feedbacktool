@@ -1,4 +1,3 @@
-// src/app/infra/firebase/firebase-survey.adapter.ts
 import { Injectable } from '@angular/core';
 import {
   Firestore,

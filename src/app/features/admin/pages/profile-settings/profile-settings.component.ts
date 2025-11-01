@@ -31,12 +31,14 @@ export class ProfileSettingsComponent implements OnInit, CanComponentDeactivate 
   avatarChanged = false;
 
   ngOnInit() {
+    //Benutzer-Daten laden und Formular initialisieren
     this.user$.subscribe(u => {
       if (u) {
         this.form = this.fb.group({
           displayName: [u.displayName || ''],
         });
 
+        //// Avatar des aktuellen Benutzers aus Firebase Storage abrufen
         if (u.uid) {
           this.auth.getUserAvatar(u.uid).subscribe(photo => {
             this.avatarPreview = photo;
@@ -47,10 +49,12 @@ export class ProfileSettingsComponent implements OnInit, CanComponentDeactivate 
   }
 
   canDeactivate(): boolean {
+    //Guard prüft, ob ungespeicherte Änderungen existieren
     return !this.form?.dirty && !this.avatarChanged;
   }
 
   async saveProfile() {
+    //Änderungen im Profil speichern (Name + Avatar)
     try {
       if (this.form?.dirty) {
         const { displayName } = this.form.value;

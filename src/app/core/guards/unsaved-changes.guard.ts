@@ -18,7 +18,7 @@ export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate
     // Wenn die Komponente eine eigene canDeactivate-Methode hat, diese aufrufen
     const result = component.canDeactivate ? component.canDeactivate() : true;
 
-    // Wenn ein synchrones false zurückkommt → Dialog anzeigen
+    // Wenn ein synchrones false zurückkommt -> Dialog anzeigen
     if (result === false) {
       const ref = this.dialog.open(ConfirmDialogComponent, {
         disableClose: true,
@@ -35,7 +35,7 @@ export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate
       return ref.afterClosed();
     }
 
-    // Wenn kein Problem besteht → Navigation erlauben
+    // Wenn kein Problem besteht -> Navigation erlauben
     return result;
   }
 }

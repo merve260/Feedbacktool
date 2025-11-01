@@ -1,4 +1,3 @@
-// src/app/features/survey/survey-publish/survey-publish.component.ts
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';

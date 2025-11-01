@@ -1,6 +1,6 @@
 @use '../../../../styles/_modal-formfield' as *;
 
-/* ===== Modal Header ===== */
+/* Modal Header */
 .modal-header {
   display: flex;
   justify-content: flex-end;
@@ -13,7 +13,7 @@
   }
 }
 
-/* ===== Modal Container ===== */
+/* Modal Container  */
 .modal-container {
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@ h2 {
 
 .full-width { width: 100%; }
 
-/* ===== Vorschau ===== */
+/*  Vorschau  */
 .preview-label-titel {
   font-weight: 600;
   font-size: 14px;
@@ -68,7 +68,7 @@ h2 {
   margin-bottom: 8px;
 }
 
-/* ===== Disabled Textarea in Preview ===== */
+/*  Disabled Textarea in Preview */
 .preview-box textarea[disabled] {
   background-color: #f5f5f5;
   color: #888;
@@ -84,7 +84,7 @@ h2 {
   border-radius: 6px;
 }
 
-/* ===== Aktionen ===== */
+/* Aktionen */
 .modal-actions {
   display: flex;
   justify-content: flex-end;

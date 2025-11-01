@@ -21,18 +21,20 @@ export class StarRatingChartComponent implements OnChanges {
   average: number = 0;
 
   ngOnChanges(changes: SimpleChanges) {
+    //Wenn sich Antworten oder Frage ändern → Ergebnisse neu berechnen
     if (changes['answers'] || changes['question']) {
       this.calculateResults();
     }
   }
 
   private calculateResults() {
+    //Sternebewertung (1–5) aus allen Antworten zusammenzählen
     if (!this.question) return;
 
     const counts: Record<number, number> = { 1:0, 2:0, 3:0, 4:0, 5:0 };
     let sum = 0;
     let count = 0;
-
+  //Alle Dokumente durchlaufen und Bewertungen dieser Frage auswerten
     this.answers.forEach(doc => {
       (doc.answers || []).forEach((ans: any) => {
         if (ans.questionId === this.question?.id && ans.numberValue !== undefined) {
@@ -45,12 +47,12 @@ export class StarRatingChartComponent implements OnChanges {
         }
       });
     });
-
+  //Statistische Kennzahlen speichern (Gesamtzahl + Durchschnitt)
     this.counts = counts;
     this.total = count;
     this.average = count > 0 ? sum / count : 0;
   }
 
-  // Math für Template
+  // // Math-Funktionen im Template verfügbar machen (z. B. für Rundung)
   protected readonly Math = Math;
 }

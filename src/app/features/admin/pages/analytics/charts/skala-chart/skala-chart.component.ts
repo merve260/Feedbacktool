@@ -36,10 +36,12 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
   private counts: Record<number, number> = {};
 
   ngOnInit() {
+    // Initiale Berechnung der Skala-Ergebnisse beim Laden der Komponente
     this.calculateResults();
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // Wenn sich Antworten oder Frage ändern → Diagramm und Daten aktualisieren
     if (changes['answers'] || changes['question']) {
       this.calculateResults();
       this.updateChart();
@@ -47,6 +49,7 @@ export class SkalaChartComponent implements OnInit, AfterViewInit, OnDestroy, On
   }
 
   ngAfterViewInit() {
+    // Chart erst nach dem Rendern des Canvas-Elements aufbauen
     setTimeout(() => this.updateChart(), 100);
   }
 

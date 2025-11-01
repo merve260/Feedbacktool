@@ -47,7 +47,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
   }
 
   ngAfterViewInit() {
-    // Canvas erst nach Rendern verfügbar → dann Chart aufbauen
+    // Canvas erst nach Rendern verfügbar -> dann Chart aufbauen
     setTimeout(() => this.updateChart(), 100);
   }
 
@@ -74,7 +74,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
       });
     });
 
-    // Ergebnisse in Array umwandeln → für Chart.js
+    // Ergebnisse in Array umwandeln -> für Chart.js
     this.chartData = Object.entries(counts).map(([option, count]) => ({ option, count }));
 
     // Meistgewählte Optionen berechnen
@@ -85,9 +85,7 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
     this.updateChart();
   }
 
-  /**
-   * Erstellt oder aktualisiert das Chart
-   */
+  //Erstellt oder aktualisiert das Chart
   private updateChart() {
     if (!this.chartCanvas || this.chartData.length === 0) return;
     if (this.chart) this.chart.destroy(); // Vorheriges Chart löschen
@@ -134,9 +132,8 @@ export class MultipleChartComponent implements OnInit, AfterViewInit, OnDestroy,
     });
   }
 
-  /**
-   * Generiert Farben für die Optionen
-   */
+  // Generiert Farben für die Optionen
+
   private generateColors(count: number) {
     const base = [
       [255, 99, 132],   // pink

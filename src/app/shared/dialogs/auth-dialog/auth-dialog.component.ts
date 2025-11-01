@@ -1,4 +1,3 @@
-// src/app/features/shared/auth-dialog/auth-dialog.component.ts
 import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';

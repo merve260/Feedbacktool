@@ -1,6 +1,6 @@
 @use '../../../../styles/_modal-formfield' as *;
 
-/* ===== Modal Header ===== */
+/* Modal Header */
 .modal-header {
   display: flex;
   justify-content: flex-end;
@@ -14,7 +14,7 @@
   }
 }
 
-/* ===== Container ===== */
+/* Container */
 .modal-container {
   display: flex;
   flex-direction: column;
@@ -41,15 +41,15 @@ h2 {
   width: 100%;
 }
 
-/* ===== Optionen ===== */
+/*  Optionen  */
 .option-row {
   display: flex;
-  align-items: flex-start; /* ikon yukarıya da hizalansın */
+  align-items: flex-start;
   gap: 12px;
   margin-bottom: 12px;
 
   .option-field {
-    flex: 1; /* input esner */
+    flex: 1;
   }
 
   button {
@@ -58,7 +58,7 @@ h2 {
   }
 }
 
-/* Input’ları daha ferah göster */
+
 ::ng-deep .mat-mdc-form-field-infix {
   padding: 10px 0 !important;
 }
@@ -67,7 +67,7 @@ h2 {
   border-radius: 10px !important;
 }
 
-/* ===== Add Option Button ===== */
+/* Add Option Button */
 .add-option {
   display: inline-flex;
   align-items: center;
@@ -80,7 +80,7 @@ h2 {
   font-size: 0.9rem;
 }
 
-/* ===== Preview ===== */
+/*  Preview */
 .preview-label-titel {
   font-weight: 600;
   font-size: 14px;
@@ -126,7 +126,7 @@ h2 {
   pointer-events: none;
 }
 
-/* ===== Actions ===== */
+/*  Actions  */
 .modal-actions {
   display: flex;
   justify-content: flex-end;

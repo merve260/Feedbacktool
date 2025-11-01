@@ -1,5 +1,3 @@
-// src/app/features/survey/survey-analytics/survey-analytics-detail/survey-analytics-detail.component.ts
-
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -64,6 +62,8 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     const u = await firstValueFrom(this.auth.user$.pipe(take(1)));
     if (!u) return;
 
+    // Firestore-Dokument laden und Besitz prüfen
+    // Lädt die ausgewählte Umfrage und stellt sicher, dass der aktuelle Benutzer der Eigentümer (ownerId) ist.
     const docRef = doc(this.firestore, 'surveys', id);
     const snap = await getDoc(docRef);
 
@@ -88,6 +88,8 @@ export class SurveyAnalyticsDetailComponent implements OnInit {
     const fragenCol = collection(this.firestore, `surveys/${id}/questions`);
     const answersCol = collection(this.firestore, `surveys/${id}/answers`);
 
+    // Echtzeit-Abonnement für Fragen und Antworten
+    // Kombiniert beide Firestore-Streams (Fragen + Antworten) und aktualisiert das Dashboard automatisch.
     combineLatest([
       collectionData(fragenCol, { idField: 'id' }),
       collectionData(answersCol, { idField: 'id' })
